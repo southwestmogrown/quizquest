@@ -6,6 +6,14 @@ A gamified Learning Management System that turns markdown into interactive web l
 
 **Phase: Wireframing**
 
+### Research
+
+| Document | Description |
+|----------|-------------|
+| [Competitor Reviews](docs/research/competitor-reviews.md) | Pain points, wish lists, and gaps found in Codecademy, boot.dev, and Code Ninjas reviews |
+
+### Wireframes
+
 MVP wireframes are in [`docs/wireframes/`](docs/wireframes/README.md):
 
 | View | Description |
