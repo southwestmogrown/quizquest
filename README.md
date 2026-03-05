@@ -11,6 +11,7 @@ A gamified Learning Management System that turns markdown into interactive web l
 | Document | Description |
 |----------|-------------|
 | [Competitor Reviews](docs/research/competitor-reviews.md) | Pain points, wish lists, and gaps found in Codecademy, boot.dev, and Code Ninjas reviews |
+| [Tech Stack Analysis](docs/tech-stack-analysis/tech-stack-analysis.md) | Recommended tech stack with candidate options, tradeoffs, frameworks, and packages |
 
 ### Wireframes
 
