@@ -157,6 +157,42 @@ function validateCodeConfig(
         `but sum is ${totalWeight}.`
     );
   }
+  const groups = grading.groups as Array<{
+    id?: unknown;
+    tests?: unknown[];
+  }>;
+  const groupIds = new Set<string>();
+  for (const group of groups) {
+    if (typeof group.id !== "string" || !group.id.trim()) {
+      throw new Error(
+        `Code lesson in ${lessonPath}: each grading group must have a non-empty string "id".`
+      );
+    }
+    const gid = group.id;
+    if (groupIds.has(gid)) {
+      throw new Error(
+        `Code lesson in ${lessonPath}: duplicate group id "${gid}" in code.grading.groups.`
+      );
+    }
+    groupIds.add(gid);
+    if (Array.isArray(group.tests)) {
+      const testIds = new Set<string>();
+      for (const test of group.tests as Array<{ id?: unknown }>) {
+        if (typeof test.id !== "string" || !test.id.trim()) {
+          throw new Error(
+            `Code lesson in ${lessonPath}: each test in group "${gid}" must have a non-empty string "id".`
+          );
+        }
+        const tid = test.id;
+        if (testIds.has(tid)) {
+          throw new Error(
+            `Code lesson in ${lessonPath}: duplicate test id "${tid}" in group "${gid}".`
+          );
+        }
+        testIds.add(tid);
+      }
+    }
+  }
   return code as CodeLesson["code"];
 }
 
