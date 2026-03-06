@@ -95,6 +95,20 @@ Optional:
 * `tags` (string array)
 
 ### 5.2 Reading Lesson Example
+
+```yaml
+---
+lessonSlug: what-is-go
+title: What is Go?
+type: reading
+xpReward: 10
+---
+
+# What is Go?
+
+Go is a statically typed, compiled language.
+```
+## 5.3 Quiz Lesson Example (Single Question)
 ```md
 ---
 lessonSlug: quiz-control-flow
@@ -113,15 +127,18 @@ quiz:
       correct: false
       explanation: Use `return` to exit the function.
 ---
-```
-## Quiz: Control Flow
+
+# Quiz: Control Flow
+
 Choose the correct answer.
+```
 
 Rules:
 * MVP supports exactly one correct choice.
 * Each choice must include id, text, correct, and explanation.
 
 ## 5.4 Code Lesson Example (Multi-language + Weighted Test Groups)
+
 ```md
 ---
 lessonSlug: hello-world
@@ -168,6 +185,7 @@ code:
 Write a program that prints `Hello, world!`.
 
 ```
+
 ## Supported code.language values (MVP)
 * go
 * python
