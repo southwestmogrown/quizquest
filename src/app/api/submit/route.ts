@@ -46,6 +46,9 @@ const MAX_CODE_BYTES = 64 * 1024; // 64 KB
 /** Client-side fetch deadline: runner timeout + 5 s grace period (ms). */
 const FETCH_TIMEOUT_MS = (DEFAULT_TIMEOUT_SECONDS + 5) * 1_000;
 
+/** Allowed slug pattern: lowercase letters, digits, hyphens only. */
+const SLUG_REGEX = /^[a-z0-9-]+$/;
+
 // ---------------------------------------------------------------------------
 // Handler
 // ---------------------------------------------------------------------------
@@ -74,9 +77,27 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
   }
 
+  const trimmedCourseSlug = courseSlug.trim();
+
+  if (!SLUG_REGEX.test(trimmedCourseSlug)) {
+    return NextResponse.json(
+      { error: "Invalid courseSlug: must contain only lowercase letters, digits, and hyphens" },
+      { status: 422 }
+    );
+  }
+
   if (typeof lessonSlug !== "string" || lessonSlug.trim() === "") {
     return NextResponse.json(
       { error: "Missing or invalid field: lessonSlug" },
+      { status: 422 }
+    );
+  }
+
+  const trimmedLessonSlug = lessonSlug.trim();
+
+  if (!SLUG_REGEX.test(trimmedLessonSlug)) {
+    return NextResponse.json(
+      { error: "Invalid lessonSlug: must contain only lowercase letters, digits, and hyphens" },
       { status: 422 }
     );
   }
@@ -88,9 +109,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  if (!SUPPORTED_LANGUAGES.has(language.trim())) {
+  const trimmedLanguage = language.trim();
+
+  if (!SUPPORTED_LANGUAGES.has(trimmedLanguage)) {
     return NextResponse.json(
-      { error: `Unsupported language: ${language.trim()}` },
+      { error: `Unsupported language: ${trimmedLanguage}` },
       { status: 422 }
     );
   }
@@ -114,7 +137,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let codeLesson: CodeLesson;
   let allLessonsOrdered: string[];
   try {
-    const course = loadCourse(courseSlug.trim());
+    const course = loadCourse(trimmedCourseSlug);
 
     // Collect all lesson slugs in course order (for unlock logic).
     allLessonsOrdered = course.chapters.flatMap((ch) =>
@@ -124,33 +147,42 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Find the target lesson.
     const lesson = course.chapters
       .flatMap((ch) => ch.lessons)
-      .find((l) => l.lessonSlug === lessonSlug.trim());
+      .find((l) => l.lessonSlug === trimmedLessonSlug);
 
     if (!lesson) {
       return NextResponse.json(
-        { error: `Lesson not found: ${lessonSlug.trim()}` },
+        { error: `Lesson not found: ${trimmedLessonSlug}` },
         { status: 404 }
       );
     }
 
     if (lesson.type !== "code") {
       return NextResponse.json(
-        { error: `Lesson "${lessonSlug.trim()}" is not a code lesson` },
+        { error: `Lesson "${trimmedLessonSlug}" is not a code lesson` },
         { status: 422 }
       );
     }
 
     codeLesson = lesson;
-  } catch {
+  } catch (err) {
+    // Distinguish "course not found" (content file missing) from validation
+    // or unexpected errors, which should surface as 500 rather than 404.
+    if (err instanceof Error && /not found/i.test(err.message)) {
+      return NextResponse.json(
+        { error: `Course not found: ${trimmedCourseSlug}` },
+        { status: 404 }
+      );
+    }
+    console.error("Error loading course for submission:", err);
     return NextResponse.json(
-      { error: `Course not found: ${courseSlug.trim()}` },
-      { status: 404 }
+      { error: "Internal server error while loading course content" },
+      { status: 500 }
     );
   }
 
   // ----- 3. Call the code-runner service ----------------------------------
   const runnerRequest: CodeRunnerRequest = {
-    language: language.trim(),
+    language: trimmedLanguage,
     code,
     stdin: "",
     timeoutSeconds: DEFAULT_TIMEOUT_SECONDS,
@@ -189,8 +221,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  // Infrastructure failures — do not grade or update DB (runner contract §7.2).
-  if (runnerResponse.error) {
+  // Infrastructure failures — do not grade or update DB (runner contract §7.2, spec §9).
+  // Both an `error` field and a `timedOut` flag indicate infra failures.
+  if (runnerResponse.error || runnerResponse.timedOut) {
     return NextResponse.json(
       { error: "Runner unavailable" },
       { status: 503 }
@@ -225,7 +258,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     await tx.user.upsert({
       where: { id: DEMO_USER_ID },
       update: {},
-      create: { id: DEMO_USER_ID, displayName: "Demo User" },
+      create: { id: DEMO_USER_ID, displayName: "Learner" },
     });
 
     // Upsert UserProgress for this lesson.
@@ -233,7 +266,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       where: {
         userId_lessonSlug: {
           userId: DEMO_USER_ID,
-          lessonSlug: lessonSlug.trim(),
+          lessonSlug: trimmedLessonSlug,
         },
       },
     });
@@ -251,21 +284,25 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       where: {
         userId_lessonSlug: {
           userId: DEMO_USER_ID,
-          lessonSlug: lessonSlug.trim(),
+          lessonSlug: trimmedLessonSlug,
         },
       },
       update: {
         bestXpAwarded: newBestXp,
-        ...(passed && {
-          state: "completed",
-          // Preserve the original completedAt timestamp; only set to `now` on
-          // the very first completion (when existingProgress has no completedAt).
-          completedAt: existingProgress?.completedAt ?? now,
-        }),
+        ...(passed
+          ? {
+              state: "completed",
+              // Preserve the original completedAt timestamp; only set to `now` on
+              // the very first completion (when existingProgress has no completedAt).
+              completedAt: existingProgress?.completedAt ?? now,
+            }
+          : existingProgress?.state !== "completed"
+          ? { state: "in_progress" }
+          : {}),
       },
       create: {
         userId: DEMO_USER_ID,
-        lessonSlug: lessonSlug.trim(),
+        lessonSlug: trimmedLessonSlug,
         bestXpAwarded: newBestXp,
         state: passed ? "completed" : "in_progress",
         completedAt: passed ? now : null,
@@ -317,7 +354,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       await tx.activityEvent.create({
         data: {
           userId: DEMO_USER_ID,
-          lessonSlug: lessonSlug.trim(),
+          lessonSlug: trimmedLessonSlug,
           eventType: "xp_awarded",
           xpDelta: delta,
         },
@@ -328,7 +365,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     await tx.activityEvent.create({
       data: {
         userId: DEMO_USER_ID,
-        lessonSlug: lessonSlug.trim(),
+        lessonSlug: trimmedLessonSlug,
         eventType: "code_submitted",
         xpDelta: 0,
       },
@@ -336,7 +373,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Unlock the next lesson if the lesson was just completed.
     if (lessonNowCompleted) {
-      const currentIndex = allLessonsOrdered.indexOf(lessonSlug.trim());
+      const currentIndex = allLessonsOrdered.indexOf(trimmedLessonSlug);
       const nextSlug =
         currentIndex >= 0 && currentIndex < allLessonsOrdered.length - 1
           ? allLessonsOrdered[currentIndex + 1]

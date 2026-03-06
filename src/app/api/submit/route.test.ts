@@ -392,6 +392,25 @@ describe("POST /api/submit — infrastructure failures (HTTP 503)", () => {
     expect(body.error).toBe("Runner unavailable");
   });
 
+  it("returns 503 when runner response has timedOut: true (no grading or DB writes)", async () => {
+    mockRunnerOk(makeRunnerResponse({ timedOut: true, exitCode: -1, stdout: "", stderr: "" }));
+    const tx = getTxMock();
+    const res = await POST(
+      makeRequest({
+        courseSlug: "learn-go",
+        lessonSlug: "hello-world",
+        language: "go",
+        code: "x",
+      })
+    );
+    expect(res.status).toBe(503);
+    const body = await res.json();
+    expect(body.error).toBe("Runner unavailable");
+    // No DB writes should have occurred.
+    expect(tx.userProgress.upsert).not.toHaveBeenCalled();
+    expect(tx.userStats.upsert).not.toHaveBeenCalled();
+  });
+
   it("returns 503 when fetch is aborted by the client-side timeout", async () => {
     vi.stubGlobal(
       "fetch",
@@ -548,7 +567,9 @@ describe("POST /api/submit — XP logic", () => {
   });
 
   it("awards incremental xpDelta when new score is higher than prior best", async () => {
-    // Use a partial-score course: 2 groups, first group weight 40, second 60
+    // Use a partial-score course: 2 groups with equal weights (50 + 50 = 100).
+    // First group passes (exit code) → scorePercent 50, xpForScore = 50.
+    // Both groups pass on the new submission → scorePercent 100, xpForScore = 100.
     const partialCourse: Course = {
       ...MOCK_COURSE,
       chapters: [
