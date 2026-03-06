@@ -1,0 +1,137 @@
+// QuizQuest — Prisma Schema
+//
+// Spec references:
+//   docs/mvp-functional-spec.md  §2 (Demo User), §6 (Progression), §7 (XP/Scoring), §8 (Streak)
+//   docs/grading-and-scoring.md  §6 (Anti-farming XP rule)
+//
+// Migration plan: prisma/MIGRATION_PLAN.md
+// Seed script:    prisma/seed.ts
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// User
+// ---------------------------------------------------------------------------
+
+model User {
+  id          String   @id @default(cuid())
+  displayName String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Aggregate XP across all lessons
+  totalXp Int @default(0)
+
+  // Current streak length in consecutive calendar days
+  currentStreak Int @default(0)
+
+  // The server-date of the most recent completion event (used for streak logic)
+  lastCompletionDate DateTime?
+
+  // Relations
+  lessonProgress UserLessonProgress[]
+  activityEvents ActivityEvent[]
+
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// Per-lesson progress
+// ---------------------------------------------------------------------------
+
+// Tracks each user's state for every lesson they have interacted with.
+model UserLessonProgress {
+  id         String   @id @default(cuid())
+  userId     String
+  courseSlug String
+  lessonSlug String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Progression state (see docs/mvp-functional-spec.md §6.1)
+  state LessonState @default(AVAILABLE)
+
+  // Best score achieved across all submissions (0–100)
+  bestScorePercent Float @default(0)
+
+  // Best XP awarded for this lesson (anti-farming baseline)
+  // See docs/grading-and-scoring.md §6.1
+  bestXpAwarded Int @default(0)
+
+  // Number of times the user has submitted this lesson
+  submissionCount Int @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseSlug, lessonSlug])
+  @@map("user_lesson_progress")
+}
+
+// ---------------------------------------------------------------------------
+// Activity event log
+// ---------------------------------------------------------------------------
+
+// Append-only event log for auditing, analytics, and future replay.
+// Every meaningful user action produces an event.
+model ActivityEvent {
+  id        String    @id @default(cuid())
+  userId    String
+  createdAt DateTime  @default(now())
+  eventType EventType
+
+  // Payload fields — nullable because not every event has all fields
+  courseSlug String?
+  lessonSlug String?
+
+  // For LESSON_COMPLETED and CODE_SUBMITTED events
+  scorePercent Float?
+  xpAwarded    Int?
+  newTotalXp   Int?
+  newStreak    Int?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("activity_events")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum LessonState {
+  LOCKED
+  AVAILABLE
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum EventType {
+  // User opened a lesson for the first time
+  LESSON_OPENED
+
+  // User clicked "Run" on a code lesson (no grading)
+  CODE_RUN
+
+  // User clicked "Submit" on a code lesson (graded)
+  CODE_SUBMITTED
+
+  // User submitted a correct quiz answer
+  QUIZ_ANSWERED_CORRECT
+
+  // User submitted an incorrect quiz answer
+  QUIZ_ANSWERED_INCORRECT
+
+  // User clicked "Mark Complete" on a reading lesson
+  READING_COMPLETED
+
+  // Lesson reached COMPLETED state and XP was awarded
+  LESSON_COMPLETED
+}

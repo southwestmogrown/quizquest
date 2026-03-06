@@ -1,0 +1,12 @@
+chapterSlug: getting-started
+title: Getting Started
+lessons:
+  - lessonSlug: what-is-go
+    title: What is Go?
+    type: reading
+  - lessonSlug: hello-world
+    title: Hello World
+    type: code
+  - lessonSlug: quiz-variables
+    title: "Quiz: Variables"
+    type: quiz

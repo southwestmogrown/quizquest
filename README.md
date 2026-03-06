@@ -1,37 +1,36 @@
-# QuizQuest
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-A gamified Learning Management System that turns markdown into interactive web lessons with an in-browser code editor.
+## Getting Started
 
-## Project Status
+First, run the development server:
 
-**Phase: Wireframing**
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-### Research
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-| Document | Description |
-|----------|-------------|
-| [Competitor Reviews](docs/research/competitor-reviews.md) | Pain points, wish lists, and gaps found in Codecademy, boot.dev, and Code Ninjas reviews |
-| [Tech Stack Analysis](docs/tech-stack-analysis/tech-stack-analysis.md) | Recommended tech stack with candidate options, tradeoffs, frameworks, and packages |
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-### Wireframes
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-MVP wireframes are in [`docs/wireframes/`](docs/wireframes/README.md):
+## Learn More
 
-| View | Description |
-|------|-------------|
-| [Lesson View](docs/wireframes/01-lesson-view.md) | Split-panel layout: markdown content + code editor with run/submit |
-| [Course Outline](docs/wireframes/02-course-outline.md) | Chapter/lesson navigation with progress tracking |
-| [Dashboard](docs/wireframes/03-dashboard.md) | Landing page with "continue learning" and stats |
-| [Course Catalog](docs/wireframes/04-course-catalog.md) | Browse and discover available courses |
+To learn more about Next.js, take a look at the following resources:
 
-## MVP Features (Planned)
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-- Markdown-to-HTML page generation (static site generator)
-- In-browser IDE with run and submit functionality
-- Three lesson types: code exercises, reading, and multiple choice
-- XP system and progress tracking
-- Linear course progression with chapter unlocking
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## License
+## Deploy on Vercel
 
-MIT
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
