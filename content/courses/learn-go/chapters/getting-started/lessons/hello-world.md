@@ -14,7 +14,7 @@ code:
         import "fmt"
 
         func main() {
-          // TODO: print Hello, world!
+          fmt.Println("Hello, World!")
         }
   run:
     entrypoint: main.go
@@ -36,9 +36,9 @@ code:
         tests:
           - id: prints_hello
             type: stdout_contains
-            expected: Hello, world!
+            expected: Hello, World!
 ---
 
 # Hello World
 
-Write a program that prints `Hello, world!` to standard output.
+Write a program that prints `Hello, World!` to standard output.

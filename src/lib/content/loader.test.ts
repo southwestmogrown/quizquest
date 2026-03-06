@@ -16,6 +16,30 @@ const FIXTURES_ROOT = path.join(
 );
 
 describe("loadCourse", () => {
+  it("loads the learn-go course with no validation errors", () => {
+    const course = loadCourse("learn-go");
+
+    expect(course.courseSlug).toBe("learn-go");
+    expect(course.title).toBe("Learn Go");
+    expect(course.difficulty).toBe("beginner");
+    expect(course.chapters).toHaveLength(2);
+
+    // All three lesson types must be present
+    const allLessons = course.chapters.flatMap((ch) => ch.lessons);
+    const types = allLessons.map((l) => l.type);
+    expect(types).toContain("reading");
+    expect(types).toContain("quiz");
+    expect(types).toContain("code");
+
+    // Code lesson grading: at least 2 groups, weights sum to 100
+    const codeLesson = allLessons.find((l) => l.type === "code");
+    expect(codeLesson).toBeDefined();
+    const { grading } = (codeLesson as CodeLesson).code;
+    expect(grading.groups.length).toBeGreaterThanOrEqual(2);
+    const weightSum = grading.groups.reduce((sum, g) => sum + g.weight, 0);
+    expect(weightSum).toBe(100);
+  });
+
   it("loads a reading lesson with correct fields", () => {
     const course = loadCourse(TEST_COURSE_SLUG);
     const chapterOne = course.chapters[0];
