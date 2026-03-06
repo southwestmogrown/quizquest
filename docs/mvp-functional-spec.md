@@ -48,6 +48,22 @@ MVP supports three lesson types:
 - **Quiz**: Multiple choice + "Submit Answer".
 - **Code**: Split panel editor + "Run" and "Submit".
 
+### 4.1 Quiz — Wrong Answer Behavior
+
+When a user submits an incorrect quiz answer:
+
+1. The selected choice is highlighted in red.
+2. The correct choice is highlighted in green.
+3. An explanation is displayed below the answer choices.
+4. The user may retry (re-select and re-submit) until correct.
+5. XP is only awarded on the first correct submission (see Section 7.4).
+
+### 4.2 Code — Run vs Submit
+
+- **Run**: Executes code and shows stdout/stderr in the output panel. Does not grade, does not award XP, does not affect streak.
+- **Submit**: Executes code and runs grading against hidden test cases. Awards XP and updates streak on passing.
+- **Reset**: Restores the editor to the lesson's original starter code and clears the output panel.
+
 ## 5) Routes (MVP)
 
 - `/courses` — Course Catalog
@@ -61,7 +77,7 @@ MVP supports three lesson types:
 
 - `locked`
 - `available`
-- `in_progress`
+- `in_progress` — entered when the user opens an `available` lesson for the first time
 - `completed`
 
 ### 6.2 Unlocking Rules (Linear)
@@ -120,27 +136,70 @@ Default behavior (server-date based for MVP):
 - Missing a day resets streak to 1.
 - Multiple completions on the same day do not increment streak.
 
-## 9) Acceptance Criteria (Representative)
+## 9) Rank Progression
 
-### 9.1 Run Does Not Award XP
+Users are assigned a rank label based on their cumulative total XP. The rank is displayed in the Dashboard Stats Card and updated after each XP award.
+
+| XP Range     | Rank        |
+|--------------|-------------|
+| 0 – 99       | Novice      |
+| 100 – 499    | Apprentice  |
+| 500 – 999    | Journeyman  |
+| 1,000 – 2,499 | Adept      |
+| 2,500 – 4,999 | Expert     |
+| 5,000+       | Master      |
+
+Rank is cosmetic in MVP — it carries no unlock or gating logic.
+
+## 10) Completion Overlay
+
+After any successful completion event (Mark Complete, correct quiz submit, passing code submit), a modal overlay appears on top of the Lesson View.
+
+The overlay must display:
+
+- Lesson name
+- XP earned on this submission (`+N XP earned!`)
+- Updated total XP (`Total: N XP`)
+- Updated course progress bar and lesson fraction (e.g., `15/22 lessons`)
+- Current streak (e.g., `Streak: 3 days`)
+- A primary **Next Lesson →** button
+- A secondary **Back to Course** button
+
+The overlay is dismissed when the user clicks either button.
+
+## 11) Acceptance Criteria (Representative)
+
+### 11.1 Run Does Not Award XP
 
 **Given** a code lesson is open  
 **When** the user clicks **Run**  
 **Then** stdout/stderr updates in the output panel and XP/streak do not change.
 
-### 9.2 Partial Credit Persists
+### 11.2 Partial Credit Persists
 
 **Given** a code lesson with two weighted test groups  
 **When** the user passes only the first group  
 **Then** the score is partial, XP is awarded proportionally (subject to anti-farming), and the lesson remains not completed.
 
-### 9.3 Locking Enforcement
+### 11.3 Locking Enforcement
 
 **Given** a lesson is locked  
 **When** the user navigates directly to its URL  
 **Then** the app must not allow completion and must show a locked state or redirect.
 
-## 10) Open Decisions (Must Be Closed Before Broad Implementation)
+### 11.4 Quiz Wrong Answer Does Not Complete Lesson
+
+**Given** a quiz lesson is open  
+**When** the user selects an incorrect answer and clicks **Submit Answer**  
+**Then** the incorrect choice is highlighted red, the correct choice is highlighted green, an explanation is shown, XP is not awarded, and the lesson remains not completed.
+
+### 11.5 Completion Overlay Appears on Success
+
+**Given** a lesson completes successfully (any type)  
+**When** the completion event is triggered  
+**Then** the completion overlay appears with correct XP, total XP, progress, and streak values.
+
+## 12) Open Decisions (Must Be Closed Before Broad Implementation)
 
 - Timezone strategy for streak (server date vs user locale).
 - Whether quiz correctness/explanations remain in-repo (MVP) or become hidden later.
