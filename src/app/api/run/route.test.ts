@@ -36,6 +36,11 @@ function mockRunnerOk(runnerPayload: Record<string, unknown>) {
   );
 }
 
+/** Return the fetch mock that was most recently stubbed (after mockRunnerOk). */
+function getStubFetch() {
+  return vi.mocked(globalThis.fetch);
+}
+
 // ---------------------------------------------------------------------------
 // Validation — HTTP 422
 // ---------------------------------------------------------------------------
@@ -95,6 +100,12 @@ describe("POST /api/run — validation (HTTP 422)", () => {
     const res = await POST(makeRequest({ language: "go", code: "   \n  " }));
     expect(res.status).toBe(422);
   });
+
+  it("returns 413 when code exceeds 64 KB", async () => {
+    const bigCode = "x".repeat(64 * 1024 + 1);
+    const res = await POST(makeRequest({ language: "go", code: bigCode }));
+    expect(res.status).toBe(413);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -144,6 +155,28 @@ describe("POST /api/run — successful execution (HTTP 200)", () => {
     expect(body).not.toHaveProperty("timedOut");
     expect(body).not.toHaveProperty("error");
   });
+
+  it("forwards the correct request body to the runner (stdin, timeoutSeconds, language)", async () => {
+    await POST(makeRequest({ language: "go", code: "package main\nfunc main(){}" }));
+    const fetchMock = getStubFetch();
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toMatch(/\/run$/);
+    expect(JSON.parse(init.body as string)).toEqual({
+      language: "go",
+      code: "package main\nfunc main(){}",
+      stdin: "",
+      timeoutSeconds: 10,
+    });
+  });
+
+  it("trims whitespace from language before forwarding to the runner", async () => {
+    await POST(makeRequest({ language: "  go  ", code: "package main\nfunc main(){}" }));
+    const fetchMock = getStubFetch();
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(JSON.parse(init.body as string).language).toBe("go");
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -180,5 +213,42 @@ describe("POST /api/run — infrastructure failures (HTTP 503)", () => {
     expect(res.status).toBe(503);
     const body = await res.json();
     expect(body.error).toBe("Runner unavailable");
+  });
+
+  it("returns 503 when fetch is aborted by the client-side timeout", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockRejectedValue(new DOMException("signal timed out", "TimeoutError"))
+    );
+    const res = await POST(makeRequest({ language: "go", code: "package main\nfunc main(){}" }));
+    expect(res.status).toBe(503);
+    const body = await res.json();
+    expect(body.error).toBe("Runner unavailable");
+  });
+
+  it("returns 413 when the runner responds with 413", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 413,
+        json: () => Promise.resolve({ error: "code too large" }),
+      })
+    );
+    const res = await POST(makeRequest({ language: "go", code: "package main\nfunc main(){}" }));
+    expect(res.status).toBe(413);
+  });
+
+  it("returns 422 when the runner responds with 422", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 422,
+        json: () => Promise.resolve({ error: "unsupported language" }),
+      })
+    );
+    const res = await POST(makeRequest({ language: "go", code: "package main\nfunc main(){}" }));
+    expect(res.status).toBe(422);
   });
 });

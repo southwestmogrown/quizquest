@@ -18,9 +18,19 @@ const SUPPORTED_LANGUAGES = new Set(["go"]);
 /** Default timeout forwarded to the runner (contract §6). */
 const DEFAULT_TIMEOUT_SECONDS = 10;
 
-/** Base URL of the code-runner service. */
-const CODE_RUNNER_URL =
-  process.env.CODE_RUNNER_URL ?? "http://localhost:8080";
+/** Base URL of the code-runner service (trailing slashes normalised). */
+const _RAW_RUNNER_URL = process.env.CODE_RUNNER_URL;
+const CODE_RUNNER_URL = (
+  _RAW_RUNNER_URL && _RAW_RUNNER_URL.trim() !== ""
+    ? _RAW_RUNNER_URL.trim()
+    : "http://localhost:8080"
+).replace(/\/+$/, "");
+
+/** Maximum allowed code size in bytes (contract §6). */
+const MAX_CODE_BYTES = 64 * 1024; // 64 KB
+
+/** Client-side fetch deadline: runner timeout + 5 s grace period (ms). */
+const FETCH_TIMEOUT_MS = (DEFAULT_TIMEOUT_SECONDS + 5) * 1_000;
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   // ----- 1. Parse and validate the request body ---------------------------
@@ -57,6 +67,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
   }
 
+  // Contract §6 — reject requests exceeding the 64 KB code size limit.
+  if (Buffer.byteLength(code, "utf8") > MAX_CODE_BYTES) {
+    return NextResponse.json(
+      { error: "Code exceeds the 64 KB size limit" },
+      { status: 413 }
+    );
+  }
+
   // ----- 2. Call the code-runner service ----------------------------------
   const runnerRequest: CodeRunnerRequest = {
     language: language.trim(),
@@ -71,9 +89,18 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(runnerRequest),
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     });
 
     if (!res.ok) {
+      // Forward caller-side errors from the runner (contract §7.3).
+      if (res.status === 413 || res.status === 422) {
+        const errBody = await res.json().catch(() => ({})) as { error?: string };
+        return NextResponse.json(
+          { error: errBody.error ?? "Invalid request" },
+          { status: res.status }
+        );
+      }
       return NextResponse.json(
         { error: "Runner unavailable" },
         { status: 503 }
