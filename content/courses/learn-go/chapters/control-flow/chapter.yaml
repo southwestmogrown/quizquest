@@ -1,0 +1,9 @@
+chapterSlug: control-flow
+title: Control Flow
+lessons:
+  - lessonSlug: if-and-loops
+    title: If Statements and Loops
+    type: reading
+  - lessonSlug: quiz-control-flow
+    title: "Quiz: Control Flow"
+    type: quiz
