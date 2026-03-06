@@ -16,7 +16,18 @@ This document defines:
 ## 2) Directory Layout
 
 All content lives under:
-`content/ courses/ <courseSlug>/ course.yaml chapters/ <chapterSlug>/ chapter.yaml lessons/ <lessonSlug>.md`
+
+```
+content/
+  courses/
+    <courseSlug>/
+      course.yaml
+      chapters/
+        <chapterSlug>/
+          chapter.yaml
+          lessons/
+            <lessonSlug>.md
+```
 
 Notes:
 
@@ -52,8 +63,10 @@ chapters:
     title: Control Flow
 ```
 
-## 4) chapter.yaml Schema
+## 4) `chapter.yaml` Schema
+
 Required fields:
+
 * `chapterSlug` (string)
 * `title` (string)
 * `lessons` (ordered list)
@@ -79,9 +92,11 @@ lessons:
 ```
 
 ## 5) Lesson Markdown + Frontmatter
+
 Lesson files are Markdown with YAML frontmatter.
 
 ### 5.1 Common Frontmatter Fields
+
 Required:
 
 * `lessonSlug` (string)
@@ -96,7 +111,7 @@ Optional:
 
 ### 5.2 Reading Lesson Example
 
-```yaml
+```md
 ---
 lessonSlug: what-is-go
 title: What is Go?
@@ -108,7 +123,9 @@ xpReward: 10
 
 Go is a statically typed, compiled language.
 ```
-## 5.3 Quiz Lesson Example (Single Question)
+
+### 5.3 Quiz Lesson Example (Single Question)
+
 ```md
 ---
 lessonSlug: quiz-control-flow
@@ -137,7 +154,7 @@ Rules:
 * MVP supports exactly one correct choice.
 * Each choice must include id, text, correct, and explanation.
 
-## 5.4 Code Lesson Example (Multi-language + Weighted Test Groups)
+### 5.4 Code Lesson Example (Multi-language + Weighted Test Groups)
 
 ```md
 ---
@@ -186,33 +203,36 @@ Write a program that prints `Hello, world!`.
 
 ```
 
-## Supported code.language values (MVP)
-* go
-* python
-* javascript
+### 5.5 Supported `code.language` Values (MVP)
 
-## Supported test types (MVP)
-* exit_code
-* stdout_contains
-* stdout_equals
-* stderr_contains
+* `go`
+* `python`
+* `javascript`
 
-## visibility values
+### 5.6 Supported Test Types (MVP)
 
-* hidden: contributes to score but not shown to user
-* summary: group-level results shown (pass rate, points)
-* detailed: per-test details shown (optional for MVP UI)
+* `exit_code`
+* `stdout_contains`
+* `stdout_equals`
+* `stderr_contains`
+
+### 5.7 `visibility` Values
+
+* `hidden`: contributes to score but not shown to user
+* `summary`: group-level results shown (pass rate, points)
+* `detailed`: per-test details shown (optional for MVP UI)
 
 ## 6) Validation Rules (Content Linting)
 
 Content validation must fail CI if:
 
 * Any slug is missing or duplicated within a course.
-* Any lesson declared in chapter.yaml has no corresponding <lessonSlug>.md.
-*Any test group weight is missing or group weights do not sum to 100.
-passingScorePercent is not between 1 and 100.
+* Any lesson declared in `chapter.yaml` has no corresponding `<lessonSlug>.md`.
+* Any test group weight is missing or group weights do not sum to 100.
+* `passingScorePercent` is not between 1 and 100.
 * A quiz lesson does not have exactly one correct choice (MVP rule).
 
 ## 7) Forward Compatibility Notes
+
 * `starterFiles` supports multiple files even if the initial runner implementation only supports single-file execution.
 * Quiz lessons can later evolve to multiple questions without breaking the folder structure.

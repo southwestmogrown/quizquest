@@ -195,28 +195,38 @@ Example JSON:
 ```
 
 ## 8) Display Rules (UI)
+
 Use visibility to determine what is shown to the user:
 
-* hidden: do not show the group or its tests.
-* summary: show group name and contribution summary (and optionally pass rate).
-* detailed: show per-test results (MVP can treat as summary if needed).
-  
+* `hidden`: do not show the group or its tests.
+* `summary`: show group name and contribution summary (and optionally pass rate).
+* `detailed`: show per-test results (MVP can treat as summary if needed).
+
 ## 9) Error Handling
+
 If code execution fails due to infrastructure issues (timeout, runner unavailable), return an error response that:
 
 * does not mark lesson complete
 * does not award XP
-* preserves the user’s code in the editor
+* preserves the user's code in the editor
 * shows an actionable message in the output panel
 
 Recommendation:
 
 * Treat infra errors as distinct from failing tests.
-  
-## 10) Notes for Multi-Language Support
+
+## 10) Reading and Quiz Lesson XP
+
+This document focuses on code lessons. For completeness:
+
+- **Reading lessons**: `scorePercent` is always 100 on completion. `xpForScore = xpReward`. The anti-farming rule still applies — re-completing a reading lesson does not re-award XP.
+- **Quiz lessons**: A correct answer awards `xpReward` in full (`scorePercent = 100`). An incorrect answer awards no XP. The anti-farming rule applies — the first correct submission awards `xpReward`; subsequent correct submissions award nothing.
+
+## 11) Notes for Multi-Language Support
+
 MVP multi-language means:
 
-* Each code lesson declares exactly one language in code.language.
+* Each code lesson declares exactly one language in `code.language`.
 * The runner must support that language.
 * Test definitions remain language-agnostic when possible (stdout/stderr/exit code checks).
 * Language-specific tests (unit testing frameworks) are out of scope for MVP unless explicitly added later.
