@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// User
+// ---------------------------------------------------------------------------
+
+model User {
+  id          String   @id
+  displayName String
+
+  progress   UserProgress[]
+  stats      UserStats?
+  activities ActivityEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// UserProgress — per-user, per-lesson state
+// ---------------------------------------------------------------------------
+
+enum LessonState {
+  locked
+  available
+  in_progress
+  completed
+}
+
+model UserProgress {
+  id          String      @id @default(cuid())
+  userId      String
+  lessonSlug  String
+  state       LessonState @default(locked)
+  bestXpAwarded Int       @default(0)
+  completedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, lessonSlug])
+  @@index([userId])
+  @@index([lessonSlug])
+}
+
+// ---------------------------------------------------------------------------
+// UserStats — aggregate counters per user
+// ---------------------------------------------------------------------------
+
+model UserStats {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  totalXp          Int      @default(0)
+  currentStreak    Int      @default(0)
+  lastActivityDate DateTime?
+  rank             String   @default("Beginner")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// ActivityEvent — append-only audit log
+// ---------------------------------------------------------------------------
+
+enum ActivityEventType {
+  lesson_started
+  lesson_completed
+  quiz_answered
+  code_submitted
+  streak_extended
+  xp_awarded
+}
+
+model ActivityEvent {
+  id         String            @id @default(cuid())
+  userId     String
+  lessonSlug String
+  eventType  ActivityEventType
+  xpDelta    Int               @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, createdAt])
+}
