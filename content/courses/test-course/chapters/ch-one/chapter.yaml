@@ -1,0 +1,9 @@
+chapterSlug: ch-one
+title: Chapter One
+lessons:
+  - lessonSlug: reading-lesson
+    title: Reading Lesson
+    type: reading
+  - lessonSlug: quiz-lesson
+    title: Quiz Lesson
+    type: quiz

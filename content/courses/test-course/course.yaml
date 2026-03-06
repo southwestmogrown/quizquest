@@ -1,0 +1,11 @@
+courseSlug: test-course
+title: Test Course
+description: A course used for unit testing the content loader.
+difficulty: beginner
+estimatedHours: 1
+totalXp: 100
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One
+  - chapterSlug: ch-two
+    title: Chapter Two

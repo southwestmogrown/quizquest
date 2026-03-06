@@ -1,0 +1,11 @@
+courseSlug: learn-go
+title: Learn Go
+description: Master Go from zero to backend developer.
+difficulty: beginner
+estimatedHours: 12
+totalXp: 1200
+chapters:
+  - chapterSlug: getting-started
+    title: Getting Started
+  - chapterSlug: control-flow
+    title: Control Flow

@@ -1,0 +1,6 @@
+chapterSlug: ch-two
+title: Chapter Two
+lessons:
+  - lessonSlug: code-lesson
+    title: Code Lesson
+    type: code
