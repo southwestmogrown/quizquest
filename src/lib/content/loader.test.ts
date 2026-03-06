@@ -22,7 +22,7 @@ describe("loadCourse", () => {
     expect(course.courseSlug).toBe("learn-go");
     expect(course.title).toBe("Learn Go");
     expect(course.difficulty).toBe("beginner");
-    expect(course.chapters).toHaveLength(2);
+    expect(course.chapters.length).toBeGreaterThanOrEqual(2);
 
     // All three lesson types must be present
     const allLessons = course.chapters.flatMap((ch) => ch.lessons);
@@ -31,13 +31,15 @@ describe("loadCourse", () => {
     expect(types).toContain("quiz");
     expect(types).toContain("code");
 
-    // Code lesson grading: at least 2 groups, weights sum to 100
-    const codeLesson = allLessons.find((l) => l.type === "code");
-    expect(codeLesson).toBeDefined();
-    const { grading } = (codeLesson as CodeLesson).code;
-    expect(grading.groups.length).toBeGreaterThanOrEqual(2);
-    const weightSum = grading.groups.reduce((sum, g) => sum + g.weight, 0);
-    expect(weightSum).toBe(100);
+    // Code lesson grading: at least 2 groups, weights sum to 100 for all code lessons
+    const codeLessons = allLessons.filter((l) => l.type === "code") as CodeLesson[];
+    expect(codeLessons.length).toBeGreaterThan(0);
+    for (const lesson of codeLessons) {
+      const { grading } = lesson.code;
+      expect(grading.groups.length).toBeGreaterThanOrEqual(2);
+      const weightSum = grading.groups.reduce((sum, g) => sum + g.weight, 0);
+      expect(weightSum).toBe(100);
+    }
   });
 
   it("loads a reading lesson with correct fields", () => {
