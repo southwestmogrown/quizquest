@@ -268,7 +268,7 @@ describe("gradeSubmission — edge cases", () => {
     expect(result.groups[0].testsPassed).toBe(4);
   });
 
-  it("returns passed false when scorePercent equals but does not exceed a strict threshold", () => {
+  it("returns passed false when scorePercent is below passingScorePercent", () => {
     // passingScorePercent 80, scorePercent is exactly 40 → fails
     const config: GradingConfig = {
       ...TWO_GROUP_CONFIG,
@@ -291,5 +291,101 @@ describe("gradeSubmission — edge cases", () => {
 
     expect(result.scorePercent).toBe(40);
     expect(result.passed).toBe(true);
+  });
+
+  it("fails closed when stdout_contains expected is a non-string (invalid config)", () => {
+    const config: GradingConfig = {
+      passingScorePercent: 100,
+      groups: [
+        {
+          id: "g",
+          name: "G",
+          weight: 100,
+          visibility: "detailed",
+          tests: [
+            // Simulate a misconfigured numeric expected for a string test type.
+            { id: "t", type: "stdout_contains", expected: 0 as unknown as string },
+          ],
+        },
+      ],
+    };
+    const response = makeResponse({ stdout: "0", exitCode: 0 });
+    const result = gradeSubmission(REQUEST, response, config);
+
+    // Should fail closed (0%) rather than coercing and accidentally passing.
+    expect(result.scorePercent).toBe(0);
+    expect(result.passed).toBe(false);
+  });
+
+  it("fails closed when stderr_contains expected is a non-string (invalid config)", () => {
+    const config: GradingConfig = {
+      passingScorePercent: 100,
+      groups: [
+        {
+          id: "g",
+          name: "G",
+          weight: 100,
+          visibility: "detailed",
+          tests: [
+            { id: "t", type: "stderr_contains", expected: 42 as unknown as string },
+          ],
+        },
+      ],
+    };
+    const response = makeResponse({ stderr: "42", exitCode: 0 });
+    const result = gradeSubmission(REQUEST, response, config);
+
+    expect(result.scorePercent).toBe(0);
+    expect(result.passed).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Infrastructure error / timeout short-circuit (runner contract §7.2, spec §9)
+// ---------------------------------------------------------------------------
+
+describe("gradeSubmission — infra errors", () => {
+  it("returns scorePercent 0 and passed false when error is set", () => {
+    const response: CodeRunnerResponse = {
+      stdout: "",
+      stderr: "",
+      exitCode: -1,
+      timedOut: false,
+      error: "runner unavailable",
+    };
+    const result = gradeSubmission(REQUEST, response, TWO_GROUP_CONFIG);
+
+    expect(result.scorePercent).toBe(0);
+    expect(result.passed).toBe(false);
+    expect(result.groups).toEqual([]);
+  });
+
+  it("returns scorePercent 0 and passed false when timedOut is true", () => {
+    const response: CodeRunnerResponse = {
+      stdout: "",
+      stderr: "",
+      exitCode: -1,
+      timedOut: true,
+    };
+    const result = gradeSubmission(REQUEST, response, TWO_GROUP_CONFIG);
+
+    expect(result.scorePercent).toBe(0);
+    expect(result.passed).toBe(false);
+    expect(result.groups).toEqual([]);
+  });
+
+  it("forwards stdout/stderr/exitCode even on infra error", () => {
+    const response: CodeRunnerResponse = {
+      stdout: "partial",
+      stderr: "boom",
+      exitCode: -1,
+      timedOut: false,
+      error: "container spawn failure",
+    };
+    const result = gradeSubmission(REQUEST, response, TWO_GROUP_CONFIG);
+
+    expect(result.stdout).toBe("partial");
+    expect(result.stderr).toBe("boom");
+    expect(result.exitCode).toBe(-1);
   });
 });

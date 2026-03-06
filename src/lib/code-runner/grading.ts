@@ -25,7 +25,10 @@ function evaluateTest(
       return response.exitCode === (test.expected as number);
 
     case "stdout_contains":
-      return response.stdout.includes(test.expected as string);
+      if (typeof test.expected !== "string") {
+        return false;
+      }
+      return response.stdout.includes(test.expected);
 
     case "stdout_equals": {
       // Normalize Windows line endings before comparison (§5.1).
@@ -34,7 +37,10 @@ function evaluateTest(
     }
 
     case "stderr_contains":
-      return response.stderr.includes(test.expected as string);
+      if (typeof test.expected !== "string") {
+        return false;
+      }
+      return response.stderr.includes(test.expected);
 
     default:
       return false;
@@ -65,6 +71,19 @@ export function gradeSubmission(
   runnerResponse: CodeRunnerResponse,
   gradingConfig: GradingConfig
 ): GradingResult {
+  // Infra errors/timeouts must not be graded or mark the lesson complete
+  // (see runner contract §7.2 and grading spec §9).
+  if (runnerResponse.error || runnerResponse.timedOut) {
+    return {
+      scorePercent: 0,
+      passed: false,
+      groups: [],
+      stdout: runnerResponse.stdout,
+      stderr: runnerResponse.stderr,
+      exitCode: runnerResponse.exitCode,
+    };
+  }
+
   const groups: GradingGroupResult[] = gradingConfig.groups.map((group) => {
     const testsTotal = group.tests.length;
 
