@@ -13,13 +13,18 @@ import type {
   LessonRef,
   DifficultyLevel,
   LessonType,
+  CodeLanguage,
 } from "./types";
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-const CONTENT_ROOT = path.join(process.cwd(), "content", "courses");
+export const DEFAULT_CONTENT_ROOT = path.join(
+  process.cwd(),
+  "content",
+  "courses"
+);
 
 const VALID_DIFFICULTIES: DifficultyLevel[] = [
   "beginner",
@@ -56,6 +61,105 @@ function assertLessonType(value: unknown, filePath: string): LessonType {
   return value as LessonType;
 }
 
+function assertXpReward(value: unknown, filePath: string): number {
+  const xp = Number(value);
+  if (!Number.isFinite(xp) || !Number.isInteger(xp)) {
+    throw new Error(
+      `Invalid xpReward "${value}" in ${filePath}. Expected a finite integer.`
+    );
+  }
+  return xp;
+}
+
+function validateQuizConfig(
+  quiz: unknown,
+  lessonPath: string
+): QuizLesson["quiz"] {
+  if (!quiz || typeof quiz !== "object") {
+    throw new Error(
+      `Quiz lesson in ${lessonPath} is missing required "quiz" frontmatter.`
+    );
+  }
+  const q = quiz as Record<string, unknown>;
+  if (typeof q.prompt !== "string" || !q.prompt) {
+    throw new Error(
+      `Quiz lesson in ${lessonPath}: "quiz.prompt" must be a non-empty string.`
+    );
+  }
+  if (!Array.isArray(q.choices) || q.choices.length === 0) {
+    throw new Error(
+      `Quiz lesson in ${lessonPath}: "quiz.choices" must be a non-empty array.`
+    );
+  }
+  const correctCount = (q.choices as Array<{ correct?: boolean }>).filter(
+    (c) => c.correct === true
+  ).length;
+  if (correctCount !== 1) {
+    throw new Error(
+      `Quiz lesson in ${lessonPath}: exactly one choice must have correct: true, ` +
+        `but found ${correctCount}.`
+    );
+  }
+  return quiz as QuizLesson["quiz"];
+}
+
+const VALID_LANGUAGES: CodeLanguage[] = ["go", "python", "javascript"];
+
+function validateCodeConfig(
+  code: unknown,
+  lessonPath: string
+): CodeLesson["code"] {
+  if (!code || typeof code !== "object") {
+    throw new Error(
+      `Code lesson in ${lessonPath} is missing required "code" frontmatter.`
+    );
+  }
+  const c = code as Record<string, unknown>;
+  if (!VALID_LANGUAGES.includes(c.language as CodeLanguage)) {
+    throw new Error(
+      `Code lesson in ${lessonPath}: unsupported language "${c.language}". ` +
+        `Expected one of: ${VALID_LANGUAGES.join(", ")}.`
+    );
+  }
+  const grading = c.grading as Record<string, unknown> | undefined;
+  if (!grading) {
+    throw new Error(
+      `Code lesson in ${lessonPath}: "code.grading" is required.`
+    );
+  }
+  const passingScore = Number(grading.passingScorePercent);
+  if (!Number.isFinite(passingScore) || passingScore < 1 || passingScore > 100) {
+    throw new Error(
+      `Code lesson in ${lessonPath}: "code.grading.passingScorePercent" must be ` +
+        `between 1 and 100, got "${grading.passingScorePercent}".`
+    );
+  }
+  if (!Array.isArray(grading.groups) || grading.groups.length === 0) {
+    throw new Error(
+      `Code lesson in ${lessonPath}: "code.grading.groups" must be a non-empty array.`
+    );
+  }
+  const totalWeight = (grading.groups as Array<{ weight?: unknown }>).reduce(
+    (sum, g) => {
+      const w = Number(g.weight);
+      if (!Number.isFinite(w)) {
+        throw new Error(
+          `Code lesson in ${lessonPath}: grading group weight "${g.weight}" is not a valid number.`
+        );
+      }
+      return sum + w;
+    },
+    0
+  );
+  if (totalWeight !== 100) {
+    throw new Error(
+      `Code lesson in ${lessonPath}: grading group weights must sum to 100, ` +
+        `but sum is ${totalWeight}.`
+    );
+  }
+  return code as CodeLesson["code"];
+}
+
 // ---------------------------------------------------------------------------
 // Lesson loader
 // ---------------------------------------------------------------------------
@@ -70,10 +174,27 @@ function loadLesson(lessonPath: string, lessonRef: LessonRef): Lesson {
 
   const lessonType = assertLessonType(frontmatter.type, lessonPath);
 
+  if (lessonType !== lessonRef.type) {
+    throw new Error(
+      `Lesson type mismatch for "${lessonRef.lessonSlug}" in ${lessonPath}. ` +
+        `Frontmatter type is "${lessonType}" but chapter.yaml expects "${lessonRef.type}".`
+    );
+  }
+
+  if (frontmatter.lessonSlug !== undefined && frontmatter.lessonSlug !== null) {
+    const fmSlug = String(frontmatter.lessonSlug);
+    if (fmSlug !== lessonRef.lessonSlug) {
+      throw new Error(
+        `Lesson slug mismatch in ${lessonPath}. ` +
+          `Frontmatter lessonSlug is "${fmSlug}" but chapter.yaml expects "${lessonRef.lessonSlug}".`
+      );
+    }
+  }
+
   const base = {
-    lessonSlug: String(frontmatter.lessonSlug ?? lessonRef.lessonSlug),
+    lessonSlug: lessonRef.lessonSlug,
     title: String(frontmatter.title ?? lessonRef.title),
-    xpReward: Number(frontmatter.xpReward),
+    xpReward: assertXpReward(frontmatter.xpReward, lessonPath),
     body: body.trim(),
     ...(frontmatter.estimatedMinutes !== undefined && {
       estimatedMinutes: Number(frontmatter.estimatedMinutes),
@@ -86,28 +207,18 @@ function loadLesson(lessonPath: string, lessonRef: LessonRef): Lesson {
   }
 
   if (lessonType === "quiz") {
-    if (!frontmatter.quiz) {
-      throw new Error(
-        `Quiz lesson "${base.lessonSlug}" in ${lessonPath} is missing required "quiz" frontmatter.`
-      );
-    }
     return {
       ...base,
       type: "quiz",
-      quiz: frontmatter.quiz as QuizLesson["quiz"],
+      quiz: validateQuizConfig(frontmatter.quiz, lessonPath),
     } satisfies QuizLesson;
   }
 
   // lessonType === "code"
-  if (!frontmatter.code) {
-    throw new Error(
-      `Code lesson "${base.lessonSlug}" in ${lessonPath} is missing required "code" frontmatter.`
-    );
-  }
   return {
     ...base,
     type: "code",
-    code: frontmatter.code as CodeLesson["code"],
+    code: validateCodeConfig(frontmatter.code, lessonPath),
   } satisfies CodeLesson;
 }
 
@@ -121,9 +232,13 @@ interface RawChapterYaml {
   lessons: LessonRef[];
 }
 
-function loadChapter(courseSlug: string, chapterRef: ChapterRef): Chapter {
+function loadChapter(
+  courseSlug: string,
+  chapterRef: ChapterRef,
+  contentRoot: string
+): Chapter {
   const chapterDir = path.join(
-    CONTENT_ROOT,
+    contentRoot,
     courseSlug,
     "chapters",
     chapterRef.chapterSlug
@@ -165,20 +280,25 @@ interface RawCourseYaml {
 /**
  * Load a single course by its slug.
  *
- * Reads `content/courses/<courseSlug>/course.yaml` and all referenced
+ * Reads `<contentRoot>/<courseSlug>/course.yaml` and all referenced
  * `chapter.yaml` and `.md` lesson files, returning a fully typed `Course`.
  *
+ * @param courseSlug  URL-safe slug matching the directory name under `contentRoot`.
+ * @param contentRoot Override the content root directory (default: `content/courses/`).
  * @throws if any required file is missing or a field fails validation.
  */
-export function loadCourse(courseSlug: string): Course {
-  const courseYamlPath = path.join(CONTENT_ROOT, courseSlug, "course.yaml");
+export function loadCourse(
+  courseSlug: string,
+  contentRoot = DEFAULT_CONTENT_ROOT
+): Course {
+  const courseYamlPath = path.join(contentRoot, courseSlug, "course.yaml");
 
   const raw = readYamlFile<RawCourseYaml>(courseYamlPath);
 
   const difficulty = assertDifficulty(raw.difficulty, courseYamlPath);
 
   const chapters: Chapter[] = raw.chapters.map((chapterRef) =>
-    loadChapter(courseSlug, chapterRef)
+    loadChapter(courseSlug, chapterRef, contentRoot)
   );
 
   return {
@@ -193,21 +313,23 @@ export function loadCourse(courseSlug: string): Course {
 }
 
 /**
- * Load all courses found under `content/courses/`.
+ * Load all courses found under `contentRoot` (default: `content/courses/`).
  *
  * Each sub-directory is treated as a course slug.
+ * Returns an empty array if `contentRoot` does not exist.
  *
- * @throws if `content/courses/` does not exist or any course fails to load.
+ * @param contentRoot Override the content root directory (default: `content/courses/`).
+ * @throws if any individual course fails to load (missing files or validation errors).
  */
-export function loadAllCourses(): Course[] {
-  if (!fs.existsSync(CONTENT_ROOT)) {
+export function loadAllCourses(contentRoot = DEFAULT_CONTENT_ROOT): Course[] {
+  if (!fs.existsSync(contentRoot)) {
     return [];
   }
 
-  const entries = fs.readdirSync(CONTENT_ROOT, { withFileTypes: true });
+  const entries = fs.readdirSync(contentRoot, { withFileTypes: true });
   const courseSlugs = entries
     .filter((e) => e.isDirectory())
     .map((e) => e.name);
 
-  return courseSlugs.map((slug) => loadCourse(slug));
+  return courseSlugs.map((slug) => loadCourse(slug, contentRoot));
 }

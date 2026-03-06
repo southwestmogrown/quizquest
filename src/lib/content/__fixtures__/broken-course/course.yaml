@@ -1,0 +1,9 @@
+courseSlug: broken-course
+title: Broken Course
+description: A fixture course whose chapter references a non-existent lesson file.
+difficulty: beginner
+estimatedHours: 1
+totalXp: 50
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One

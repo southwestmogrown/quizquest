@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import path from "path";
 import { loadCourse, loadAllCourses } from "./loader";
 import type {
   ReadingLesson,
@@ -8,6 +9,11 @@ import type {
 
 // Tests rely on the fixture course at content/courses/test-course/
 const TEST_COURSE_SLUG = "test-course";
+// Broken fixtures live outside content/courses/ so they don't affect loadAllCourses
+const FIXTURES_ROOT = path.join(
+  process.cwd(),
+  "src/lib/content/__fixtures__"
+);
 
 describe("loadCourse", () => {
   it("loads a reading lesson with correct fields", () => {
@@ -72,11 +78,10 @@ describe("loadCourse", () => {
   });
 
   it("throws a descriptive error when a lesson .md file is missing", () => {
-    // The test-course fixture is complete; to trigger a missing-lesson error
-    // we attempt to load a non-existent course that happens to have a
-    // chapter.yaml listing a non-existent lesson — the easiest way is to
-    // verify the error message shape by checking loadCourse("does-not-exist").
-    expect(() => loadCourse("does-not-exist")).toThrow(/not found/i);
+    // broken-course has a chapter.yaml that references ghost-lesson.md which does not exist
+    expect(() => loadCourse("broken-course", FIXTURES_ROOT)).toThrow(
+      /Lesson file not found.*ghost-lesson/
+    );
   });
 });
 
@@ -94,5 +99,9 @@ describe("loadAllCourses", () => {
       expect(course.title).toBeTruthy();
       expect(Array.isArray(course.chapters)).toBe(true);
     }
+  });
+
+  it("returns an empty array when the content root does not exist", () => {
+    expect(loadAllCourses("/tmp/does-not-exist")).toEqual([]);
   });
 });
