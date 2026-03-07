@@ -12,6 +12,7 @@ const DIFFICULTY_LABEL: Record<Course["difficulty"], string> = {
 };
 
 export default function CourseCard({ course }: CourseCardProps) {
+  const chapterCount = course.chapters.length;
   return (
     <Link
       href={`/courses/${course.courseSlug}`}
@@ -27,7 +28,7 @@ export default function CourseCard({ course }: CourseCardProps) {
       </div>
       <p className="flex-1 text-sm text-foreground/60">{course.description}</p>
       <div className="flex items-center gap-4 text-xs text-foreground/50">
-        <span>{course.chapters.length} chapter{course.chapters.length !== 1 ? "s" : ""}</span>
+        <span>{chapterCount} chapter{chapterCount !== 1 ? "s" : ""}</span>
         <span>{course.estimatedHours}h estimated</span>
         <span>{course.totalXp} XP</span>
       </div>

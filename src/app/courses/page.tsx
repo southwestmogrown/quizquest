@@ -1,12 +1,15 @@
 import { loadAllCourses } from "@/lib/content/loader";
+import type { Course } from "@/lib/content/types";
 import CourseCard from "@/components/CourseCard";
 
 export default function CoursesPage() {
-  let courses;
+  let courses: Course[] = [];
+  let loadError = false;
   try {
-    courses = loadAllCourses();
-  } catch {
-    courses = [];
+    courses = loadAllCourses().sort((a, b) => a.title.localeCompare(b.title));
+  } catch (err) {
+    console.error("[CoursesPage] Failed to load courses:", err);
+    loadError = true;
   }
 
   return (
@@ -18,7 +21,11 @@ export default function CoursesPage() {
         Choose a course to start learning.
       </p>
 
-      {courses.length === 0 ? (
+      {loadError ? (
+        <p className="text-center text-foreground/50">
+          Failed to load courses. Please try again later.
+        </p>
+      ) : courses.length === 0 ? (
         <p className="text-center text-foreground/50">
           No courses available yet. Check back soon!
         </p>
