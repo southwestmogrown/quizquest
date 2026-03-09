@@ -1,11 +1,13 @@
 // ---------------------------------------------------------------------------
-// /courses/[courseSlug]/lessons/[lessonSlug] — Reading Lesson page
+// /courses/[courseSlug]/lessons/[lessonSlug] — Lesson page (reading & quiz)
 //
-// Renders a reading lesson: markdown content + "Mark Complete" button.
+// Renders a reading lesson (markdown + "Mark Complete") or a quiz lesson
+// (multiple-choice prompt + "Submit Answer").
 // Locked lessons show a locked state instead of the content.
 //
 // Server component — loads course content and DB progress, converts markdown
-// to HTML, then delegates interactive behaviour to MarkCompleteClient.
+// to HTML where needed, then delegates interactive behaviour to the
+// appropriate client component.
 // ---------------------------------------------------------------------------
 
 import { notFound } from "next/navigation";
@@ -14,8 +16,9 @@ import { marked } from "marked";
 import { loadCourse } from "@/lib/content/loader";
 import { db } from "@/lib/db";
 import MarkCompleteClient from "./MarkCompleteClient";
+import QuizClient from "./QuizClient";
 import type { LessonState } from "@prisma/client";
-import type { ReadingLesson } from "@/lib/content/types";
+import type { ReadingLesson, QuizLesson } from "@/lib/content/types";
 
 // This page reads database state on every request and must not be
 // pre-rendered or cached by Next.js.
@@ -73,12 +76,10 @@ export default async function LessonPage({
     notFound();
   }
 
-  // This page only handles reading lessons; other types will have their own pages.
-  if (lesson.type !== "reading") {
+  // This page handles reading and quiz lessons; other types will have their own pages.
+  if (lesson.type !== "reading" && lesson.type !== "quiz") {
     notFound();
   }
-
-  const readingLesson = lesson as ReadingLesson;
 
   // ----- 3. Fetch lesson state from DB ------------------------------------
   const progressRow = await db.userProgress.findUnique({
@@ -113,12 +114,8 @@ export default async function LessonPage({
     : null;
   const courseHref = `/courses/${courseSlug}`;
 
-  // ----- 6. Convert markdown to HTML (server-side) -----------------------
-  const htmlContent = await marked(readingLesson.body, { async: true });
+  // ----- 6. Render locked state (shared for all lesson types) -------------
 
-  // ----- 7. Render --------------------------------------------------------
-
-  // Locked state — show a message instead of content.
   if (isLocked) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-12">
@@ -132,7 +129,7 @@ export default async function LessonPage({
         <div className="mt-12 flex flex-col items-center gap-4 text-center">
           <LockIcon />
           <h1 className="text-2xl font-bold text-gray-900">
-            {readingLesson.title}
+            {lesson.title}
           </h1>
           <p className="max-w-sm text-gray-500">
             This lesson is locked. Complete the previous lessons to unlock it.
@@ -147,6 +144,65 @@ export default async function LessonPage({
       </main>
     );
   }
+
+  // ----- 7. Render quiz lesson --------------------------------------------
+
+  if (lesson.type === "quiz") {
+    const quizLesson = lesson as QuizLesson;
+    return (
+      <main className="mx-auto max-w-3xl px-6 py-12">
+        {/* Back link */}
+        <Link
+          href={courseHref}
+          className="mb-6 inline-flex items-center gap-1 text-sm text-foreground/60 hover:text-foreground"
+        >
+          ← Back to course
+        </Link>
+
+        {/* Lesson header */}
+        <div className="mt-4 flex items-center justify-between gap-4">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            {quizLesson.title}
+          </h1>
+          <span className="shrink-0 rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+            {quizLesson.xpReward} XP
+          </span>
+        </div>
+
+        {quizLesson.estimatedMinutes && (
+          <p className="mt-2 text-sm text-foreground/50">
+            ⏱ {quizLesson.estimatedMinutes} min
+          </p>
+        )}
+
+        {/* Quiz prompt + choices (client) */}
+        <div className="mt-8">
+          <QuizClient
+            courseSlug={courseSlug}
+            lessonSlug={lessonSlug}
+            lessonTitle={quizLesson.title}
+            prompt={quizLesson.quiz.prompt}
+            choices={quizLesson.quiz.choices.map((c) => ({
+              id: c.id,
+              text: c.text,
+              explanation: c.explanation,
+            }))}
+            totalLessons={totalCount}
+            completedLessons={completedCount}
+            nextLessonHref={nextLessonHref}
+            courseHref={courseHref}
+          />
+        </div>
+      </main>
+    );
+  }
+
+  // ----- 8. Render reading lesson -----------------------------------------
+
+  const readingLesson = lesson as ReadingLesson;
+
+  // Convert markdown to HTML (server-side).
+  const htmlContent = await marked(readingLesson.body, { async: true });
 
   // Available / in_progress / completed state — show lesson content.
   return (
