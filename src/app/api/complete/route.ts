@@ -14,6 +14,10 @@ import { computeXpDelta, computeStreak, computeRank } from "@/lib/code-runner/xp
 import { loadCourse } from "@/lib/content/loader";
 import { db } from "@/lib/db";
 
+// This route performs database operations on every request and must not be
+// pre-rendered or cached by Next.js.
+export const dynamic = "force-dynamic";
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------

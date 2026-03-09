@@ -14,6 +14,10 @@ import { db } from "@/lib/db";
 import ProgressBar from "@/components/ProgressBar";
 import type { LessonState } from "@prisma/client";
 
+// This page reads database state on every request and must not be
+// pre-rendered or cached by Next.js.
+export const dynamic = "force-dynamic";
+
 /** Hard-coded demo user for the MVP. */
 const DEMO_USER_ID = "demo-user";
 

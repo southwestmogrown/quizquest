@@ -17,6 +17,10 @@ import MarkCompleteClient from "./MarkCompleteClient";
 import type { LessonState } from "@prisma/client";
 import type { ReadingLesson } from "@/lib/content/types";
 
+// This page reads database state on every request and must not be
+// pre-rendered or cached by Next.js.
+export const dynamic = "force-dynamic";
+
 /** Hard-coded demo user for the MVP. */
 const DEMO_USER_ID = "demo-user";
 
