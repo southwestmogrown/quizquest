@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Course } from "@/lib/content/types";
 
 const DIFFICULTY_STYLES: Record<Course["difficulty"], string> = {
