@@ -19,6 +19,10 @@ import { loadCourse } from "@/lib/content/loader";
 import type { CodeLesson } from "@/lib/content/types";
 import { db } from "@/lib/db";
 
+// This route performs database operations on every request and must not be
+// pre-rendered or cached by Next.js.
+export const dynamic = "force-dynamic";
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
