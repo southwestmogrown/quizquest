@@ -23,6 +23,17 @@ async function main() {
     },
   });
 
+  // Unlock the first lesson of learn-go so the course outline shows an
+  // immediately actionable lesson.  Subsequent lessons are unlocked
+  // automatically by the submit API when the previous lesson is completed.
+  await prisma.userProgress.upsert({
+    where: {
+      userId_lessonSlug: { userId: user.id, lessonSlug: "what-is-go" },
+    },
+    update: {},
+    create: { userId: user.id, lessonSlug: "what-is-go", state: "available" },
+  });
+
   console.log(`✅ Seeded demo user: ${user.id} (${user.displayName})`);
 }
 

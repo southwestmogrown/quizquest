@@ -1,0 +1,218 @@
+// ---------------------------------------------------------------------------
+// /courses/[courseSlug] — Course Outline page
+//
+// Renders all chapters and lessons for a course.  Lesson state
+// (locked / available / in_progress / completed) is read from the DB for the
+// hard-coded demo user.  Locked lessons show a lock icon and are not
+// clickable; all other states link to the lesson player.
+// ---------------------------------------------------------------------------
+
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { loadCourse } from "@/lib/content/loader";
+import { db } from "@/lib/db";
+import ProgressBar from "@/components/ProgressBar";
+import type { LessonState } from "@prisma/client";
+
+/** Hard-coded demo user for the MVP. */
+const DEMO_USER_ID = "demo-user";
+
+// ---------------------------------------------------------------------------
+// Icons
+// ---------------------------------------------------------------------------
+
+function LockIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="h-4 w-4 shrink-0"
+    >
+      <path
+        fillRule="evenodd"
+        d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="h-4 w-4 shrink-0 text-green-500"
+    >
+      <path
+        fillRule="evenodd"
+        d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// State badge
+// ---------------------------------------------------------------------------
+
+const STATE_LABEL: Record<LessonState, string> = {
+  locked: "Locked",
+  available: "Start",
+  in_progress: "Continue",
+  completed: "Review",
+};
+
+// ---------------------------------------------------------------------------
+// Page
+// ---------------------------------------------------------------------------
+
+export default async function CourseOutlinePage({
+  params,
+}: {
+  params: Promise<{ courseSlug: string }>;
+}) {
+  const { courseSlug } = await params;
+
+  // Load course content -------------------------------------------------------
+  let course;
+  try {
+    course = loadCourse(courseSlug);
+  } catch {
+    notFound();
+  }
+
+  // Flatten all lessons in order ---------------------------------------------
+  const allLessons = course.chapters.flatMap((ch) => ch.lessons);
+  const allSlugs = allLessons.map((l) => l.lessonSlug);
+
+  // Fetch progress for the demo user -----------------------------------------
+  const progressRows = await db.userProgress.findMany({
+    where: { userId: DEMO_USER_ID, lessonSlug: { in: allSlugs } },
+    select: { lessonSlug: true, state: true },
+  });
+
+  const stateMap = new Map<string, LessonState>(
+    progressRows.map((r) => [r.lessonSlug, r.state])
+  );
+
+  // Progress counts -----------------------------------------------------------
+  const totalCount = allLessons.length;
+  const completedCount = [...stateMap.values()].filter(
+    (s) => s === "completed"
+  ).length;
+  const progressPercent =
+    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+  // ---------------------------------------------------------------------------
+  // Render
+  // ---------------------------------------------------------------------------
+
+  return (
+    <main className="mx-auto max-w-3xl px-6 py-12">
+      {/* Back link */}
+      <Link
+        href="/courses"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-foreground/60 hover:text-foreground"
+      >
+        ← All courses
+      </Link>
+
+      {/* Course header */}
+      <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground">
+        {course.title}
+      </h1>
+      <p className="mt-2 text-foreground/60">{course.description}</p>
+
+      {/* Overall progress */}
+      <section aria-label="Course progress" className="mt-6">
+        <div className="mb-1 flex items-center justify-between text-sm text-foreground/70">
+          <span id="progress-label">Progress</span>
+          <span>
+            {completedCount} / {totalCount} lessons completed
+          </span>
+        </div>
+        <ProgressBar
+          percent={progressPercent}
+          labelledBy="progress-label"
+        />
+      </section>
+
+      {/* Chapters and lessons */}
+      <div className="mt-10 flex flex-col gap-8">
+        {course.chapters.map((chapter, chapterIndex) => (
+          <section key={chapter.chapterSlug} aria-labelledby={`chapter-${chapter.chapterSlug}`}>
+            <h2
+              id={`chapter-${chapter.chapterSlug}`}
+              className="mb-3 text-xs font-semibold uppercase tracking-widest text-foreground/50"
+            >
+              Chapter {chapterIndex + 1} — {chapter.title}
+            </h2>
+
+            <ul className="flex flex-col gap-2" role="list">
+              {chapter.lessons.map((lesson) => {
+                const state: LessonState =
+                  stateMap.get(lesson.lessonSlug) ?? "locked";
+                const isLocked = state === "locked";
+                const lessonHref = `/courses/${courseSlug}/lessons/${lesson.lessonSlug}`;
+
+                return (
+                  <li key={lesson.lessonSlug}>
+                    {isLocked ? (
+                      /* Locked — not interactive */
+                      <div
+                        aria-label={`${lesson.title} — locked`}
+                        className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white px-4 py-3 opacity-50"
+                      >
+                        <div className="flex items-center gap-3 text-gray-500">
+                          <LockIcon />
+                          <span className="text-sm font-medium">
+                            {lesson.title}
+                          </span>
+                        </div>
+                        <span className="shrink-0 text-xs text-gray-400">
+                          {lesson.xpReward} XP
+                        </span>
+                      </div>
+                    ) : (
+                      /* Available / in_progress / completed — clickable */
+                      <Link
+                        href={lessonHref}
+                        className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white px-4 py-3 transition hover:border-blue-400 hover:shadow-sm"
+                        aria-label={`${lesson.title} — ${state}`}
+                      >
+                        <div className="flex items-center gap-3 text-gray-800">
+                          {state === "completed" ? (
+                            <CheckIcon />
+                          ) : (
+                            <div className="h-4 w-4 shrink-0 rounded-full border-2 border-blue-500" />
+                          )}
+                          <span className="text-sm font-medium">
+                            {lesson.title}
+                          </span>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-2">
+                          <span className="text-xs text-gray-400">
+                            {lesson.xpReward} XP
+                          </span>
+                          <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                            {STATE_LABEL[state]}
+                          </span>
+                        </div>
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </main>
+  );
+}
