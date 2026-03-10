@@ -12,12 +12,17 @@
 // ---------------------------------------------------------------------------
 
 import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 import type { CodeRunnerRequest, CodeRunnerResponse } from "@/lib/code-runner/types";
 import { gradeSubmission } from "@/lib/code-runner/grading";
 import { computeXpDelta, computeStreak, computeRank } from "@/lib/code-runner/xp";
 import { loadCourse } from "@/lib/content/loader";
-import type { CodeLesson } from "@/lib/content/types";
+import type { CodeLesson, Course } from "@/lib/content/types";
+import { unlockNextLesson } from "@/lib/progression";
 import { db } from "@/lib/db";
+
+/** Prisma interactive-transaction client (no top-level transaction/connect methods). */
+type Tx = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">;
 
 // This route performs database operations on every request and must not be
 // pre-rendered or cached by Next.js.
@@ -139,14 +144,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   // ----- 2. Load lesson from content --------------------------------------
   let codeLesson: CodeLesson;
-  let allLessonsOrdered: string[];
+  let course: Course;
   try {
-    const course = loadCourse(trimmedCourseSlug);
-
-    // Collect all lesson slugs in course order (for unlock logic).
-    allLessonsOrdered = course.chapters.flatMap((ch) =>
-      ch.lessons.map((l) => l.lessonSlug)
-    );
+    course = loadCourse(trimmedCourseSlug);
 
     // Find the target lesson.
     const lesson = course.chapters
@@ -257,7 +257,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     newTotalXp,
     newStreak,
     lessonCompleted,
-  } = await db.$transaction(async (tx) => {
+  } = await db.$transaction(async (tx: Tx) => {
     // Upsert the demo user (ensures it exists for FK constraints).
     await tx.user.upsert({
       where: { id: DEMO_USER_ID },
@@ -377,39 +377,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Unlock the next lesson if the lesson was just completed.
     if (lessonNowCompleted) {
-      const currentIndex = allLessonsOrdered.indexOf(trimmedLessonSlug);
-      const nextSlug =
-        currentIndex >= 0 && currentIndex < allLessonsOrdered.length - 1
-          ? allLessonsOrdered[currentIndex + 1]
-          : null;
-
-      if (nextSlug) {
-        const nextProgress = await tx.userProgress.findUnique({
-          where: {
-            userId_lessonSlug: { userId: DEMO_USER_ID, lessonSlug: nextSlug },
-          },
-        });
-
-        if (!nextProgress) {
-          await tx.userProgress.create({
-            data: {
-              userId: DEMO_USER_ID,
-              lessonSlug: nextSlug,
-              state: "available",
-            },
-          });
-        } else if (nextProgress.state === "locked") {
-          await tx.userProgress.update({
-            where: {
-              userId_lessonSlug: {
-                userId: DEMO_USER_ID,
-                lessonSlug: nextSlug,
-              },
-            },
-            data: { state: "available" },
-          });
-        }
-      }
+      await unlockNextLesson(tx, DEMO_USER_ID, course, trimmedLessonSlug);
     }
 
     return {

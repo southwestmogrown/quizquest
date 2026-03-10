@@ -18,10 +18,14 @@
 // ---------------------------------------------------------------------------
 
 import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 import { computeXpDelta, computeStreak, computeRank } from "@/lib/code-runner/xp";
 import { loadCourse } from "@/lib/content/loader";
 import type { QuizLesson } from "@/lib/content/types";
 import { db } from "@/lib/db";
+
+/** Prisma interactive-transaction client (no top-level transaction/connect methods). */
+type Tx = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">;
 
 // This route performs database operations on every request and must not be
 // pre-rendered or cached by Next.js.
@@ -193,7 +197,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const now = new Date();
 
   const { xpDelta, newTotalXp, newStreak, lessonCompleted } =
-    await db.$transaction(async (tx) => {
+    await db.$transaction(async (tx: Tx) => {
       // Upsert the demo user (ensures it exists for FK constraints).
       await tx.user.upsert({
         where: { id: DEMO_USER_ID },
