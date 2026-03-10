@@ -1,8 +1,9 @@
 // ---------------------------------------------------------------------------
-// /courses/[courseSlug]/lessons/[lessonSlug] — Lesson page (reading & quiz)
+// /courses/[courseSlug]/lessons/[lessonSlug] — Lesson page (reading, quiz & code)
 //
-// Renders a reading lesson (markdown + "Mark Complete") or a quiz lesson
-// (multiple-choice prompt + "Submit Answer").
+// Renders a reading lesson (markdown + "Mark Complete"), a quiz lesson
+// (multiple-choice prompt + "Submit Answer"), or a code lesson (split-panel
+// editor + Run/Submit/Reset buttons).
 // Locked lessons show a locked state instead of the content.
 //
 // Server component — loads course content and DB progress, converts markdown
@@ -17,8 +18,9 @@ import { loadCourse } from "@/lib/content/loader";
 import { db } from "@/lib/db";
 import MarkCompleteClient from "./MarkCompleteClient";
 import QuizClient from "./QuizClient";
+import CodeClient from "./CodeClient";
 import type { LessonState } from "@prisma/client";
-import type { ReadingLesson, QuizLesson } from "@/lib/content/types";
+import type { ReadingLesson, QuizLesson, CodeLesson } from "@/lib/content/types";
 
 // This page reads database state on every request and must not be
 // pre-rendered or cached by Next.js.
@@ -73,11 +75,6 @@ export default async function LessonPage({
   const lesson = allLessons.find((l) => l.lessonSlug === lessonSlug);
 
   if (!lesson) {
-    notFound();
-  }
-
-  // This page handles reading and quiz lessons; other types will have their own pages.
-  if (lesson.type !== "reading" && lesson.type !== "quiz") {
     notFound();
   }
 
@@ -197,7 +194,57 @@ export default async function LessonPage({
     );
   }
 
-  // ----- 8. Render reading lesson -----------------------------------------
+  // ----- 8. Render code lesson --------------------------------------------
+
+  if (lesson.type === "code") {
+    const codeLesson = lesson as CodeLesson;
+    const starterCode = codeLesson.code.starterFiles[0]?.content ?? "";
+    const htmlContent = await marked(codeLesson.body, { async: true });
+
+    return (
+      <main className="mx-auto max-w-7xl px-6 py-8">
+        {/* Back link */}
+        <Link
+          href={courseHref}
+          className="mb-4 inline-flex items-center gap-1 text-sm text-foreground/60 hover:text-foreground"
+        >
+          ← Back to course
+        </Link>
+
+        {/* Lesson header */}
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            {codeLesson.title}
+          </h1>
+          <span className="shrink-0 rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+            {codeLesson.xpReward} XP
+          </span>
+        </div>
+
+        {codeLesson.estimatedMinutes && (
+          <p className="mb-6 text-sm text-foreground/50">
+            ⏱ {codeLesson.estimatedMinutes} min
+          </p>
+        )}
+
+        {/* Split-panel editor (client) */}
+        <CodeClient
+          courseSlug={courseSlug}
+          lessonSlug={lessonSlug}
+          lessonTitle={codeLesson.title}
+          language={codeLesson.code.language}
+          starterCode={starterCode}
+          htmlContent={htmlContent}
+          totalLessons={totalCount}
+          completedLessons={completedCount}
+          nextLessonHref={nextLessonHref}
+          courseHref={courseHref}
+        />
+      </main>
+    );
+  }
+
+  // ----- 9. Render reading lesson -----------------------------------------
 
   const readingLesson = lesson as ReadingLesson;
 
