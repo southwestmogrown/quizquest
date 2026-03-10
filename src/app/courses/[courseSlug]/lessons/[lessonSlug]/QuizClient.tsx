@@ -9,8 +9,7 @@
 // ---------------------------------------------------------------------------
 
 import { useState } from "react";
-import Link from "next/link";
-import ProgressBar from "@/components/ProgressBar";
+import CompletionOverlay from "@/components/CompletionOverlay";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -134,10 +133,6 @@ export default function QuizClient({
   // Overlay progress data.
   const updatedCompleted =
     result?.lessonCompleted ? completedLessons + 1 : completedLessons;
-  const progressPercent =
-    totalLessons > 0
-      ? Math.round((updatedCompleted / totalLessons) * 100)
-      : 0;
 
   return (
     <>
@@ -207,74 +202,16 @@ export default function QuizClient({
 
       {/* Completion overlay — shown on a correct answer */}
       {result?.correct && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Lesson complete"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-        >
-          <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
-            {/* Header */}
-            <h2 className="text-center text-2xl font-bold text-gray-900">
-              🎉 Lesson Complete!
-            </h2>
-            <p className="mt-1 text-center text-sm text-gray-500">
-              {lessonTitle}
-            </p>
-
-            {/* XP */}
-            <div className="mt-6 space-y-1">
-              <p className="text-center text-xl font-semibold text-blue-600">
-                +{result.xpDelta ?? 0} XP earned!
-              </p>
-              <p className="text-center text-sm text-gray-500">
-                Total: {(result.newTotalXp ?? 0).toLocaleString()} XP
-              </p>
-            </div>
-
-            {/* Course progress */}
-            <div className="mt-6">
-              <p className="mb-2 text-sm font-medium text-gray-700">
-                Course Progress
-              </p>
-              <ProgressBar percent={progressPercent} label="Course progress" />
-              <p className="mt-1 text-right text-xs text-gray-500">
-                {updatedCompleted} / {totalLessons} lessons
-              </p>
-            </div>
-
-            {/* Streak */}
-            <p className="mt-4 text-center text-sm text-gray-600">
-              🔥 Streak: {result.newStreak ?? 0}{" "}
-              {(result.newStreak ?? 0) === 1 ? "day" : "days"}
-            </p>
-
-            {/* Actions */}
-            <div className="mt-8 flex flex-col gap-3">
-              {nextLessonHref ? (
-                <Link
-                  href={nextLessonHref}
-                  className="block rounded-lg bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-                >
-                  Next Lesson →
-                </Link>
-              ) : (
-                <Link
-                  href={courseHref}
-                  className="block rounded-lg bg-blue-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-                >
-                  Back to Course →
-                </Link>
-              )}
-              <Link
-                href={courseHref}
-                className="block rounded-lg border border-gray-300 px-4 py-2.5 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-              >
-                Back to Course
-              </Link>
-            </div>
-          </div>
-        </div>
+        <CompletionOverlay
+          lessonTitle={lessonTitle}
+          xpDelta={result.xpDelta ?? 0}
+          newTotalXp={result.newTotalXp ?? 0}
+          newStreak={result.newStreak ?? 0}
+          completedLessons={updatedCompleted}
+          totalLessons={totalLessons}
+          nextLessonHref={nextLessonHref}
+          courseHref={courseHref}
+        />
       )}
     </>
   );
