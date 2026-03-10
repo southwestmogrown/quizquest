@@ -306,7 +306,7 @@ export default async function DashboardPage() {
 
   const totalXp = userStats?.totalXp ?? 0;
   const currentStreak = userStats?.currentStreak ?? 0;
-  const rank = userStats?.rank ?? rankForXp(totalXp);
+  const rank = userStats?.rank ?? rankForXp(userStats?.totalXp ?? 0);
   const totalCompletedLessons = allProgress.filter(
     (p) => p.state === "completed"
   ).length;
