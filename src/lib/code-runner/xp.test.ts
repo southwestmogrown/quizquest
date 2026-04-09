@@ -114,44 +114,44 @@ describe("computeRank — boundary values", () => {
     expect(computeRank(0)).toBe("Novice");
   });
 
-  it("returns Novice for 99 XP (top of Novice range)", () => {
-    expect(computeRank(99)).toBe("Novice");
+  it("returns Novice for 299 XP (top of Novice range)", () => {
+    expect(computeRank(299)).toBe("Novice");
   });
 
-  it("returns Apprentice for 100 XP (bottom of Apprentice range)", () => {
-    expect(computeRank(100)).toBe("Apprentice");
+  it("returns Apprentice for 300 XP (bottom of Apprentice range)", () => {
+    expect(computeRank(300)).toBe("Apprentice");
   });
 
-  it("returns Apprentice for 499 XP (top of Apprentice range)", () => {
-    expect(computeRank(499)).toBe("Apprentice");
+  it("returns Apprentice for 899 XP (top of Apprentice range)", () => {
+    expect(computeRank(899)).toBe("Apprentice");
   });
 
-  it("returns Journeyman for 500 XP (bottom of Journeyman range)", () => {
-    expect(computeRank(500)).toBe("Journeyman");
+  it("returns Journeyman for 900 XP (bottom of Journeyman range)", () => {
+    expect(computeRank(900)).toBe("Journeyman");
   });
 
-  it("returns Journeyman for 999 XP (top of Journeyman range)", () => {
-    expect(computeRank(999)).toBe("Journeyman");
+  it("returns Journeyman for 1799 XP (top of Journeyman range)", () => {
+    expect(computeRank(1_799)).toBe("Journeyman");
   });
 
-  it("returns Adept for 1000 XP (bottom of Adept range)", () => {
-    expect(computeRank(1_000)).toBe("Adept");
+  it("returns Adept for 1800 XP (bottom of Adept range)", () => {
+    expect(computeRank(1_800)).toBe("Adept");
   });
 
-  it("returns Adept for 2499 XP (top of Adept range)", () => {
-    expect(computeRank(2_499)).toBe("Adept");
+  it("returns Adept for 2999 XP (top of Adept range)", () => {
+    expect(computeRank(2_999)).toBe("Adept");
   });
 
-  it("returns Expert for 2500 XP (bottom of Expert range)", () => {
-    expect(computeRank(2_500)).toBe("Expert");
+  it("returns Expert for 3000 XP (bottom of Expert range)", () => {
+    expect(computeRank(3_000)).toBe("Expert");
   });
 
-  it("returns Expert for 4999 XP (top of Expert range)", () => {
-    expect(computeRank(4_999)).toBe("Expert");
+  it("returns Expert for 4499 XP (top of Expert range)", () => {
+    expect(computeRank(4_499)).toBe("Expert");
   });
 
-  it("returns Master for 5000 XP (bottom of Master range)", () => {
-    expect(computeRank(5_000)).toBe("Master");
+  it("returns Master for 4500 XP (bottom of Master range)", () => {
+    expect(computeRank(4_500)).toBe("Master");
   });
 
   it("returns Master for very large XP values", () => {

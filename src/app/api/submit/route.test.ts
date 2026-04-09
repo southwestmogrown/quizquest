@@ -877,15 +877,15 @@ describe("POST /api/submit — streak", () => {
 // ---------------------------------------------------------------------------
 
 describe("POST /api/submit — rank", () => {
-  it("updates rank to Apprentice when XP crosses 100", async () => {
+  it("updates rank to Apprentice when XP crosses 300", async () => {
     mockRunnerOk(makeRunnerResponse({ stdout: "Hello, World!\n", exitCode: 0 }));
     const tx = getTxMock();
     tx.userProgress.findUnique.mockResolvedValue(null);
-    // Existing 50 XP; lesson awards 100 → total = 150 → Apprentice
+    // Existing 250 XP; lesson awards 100 → total = 350 → Apprentice
     tx.userStats.findUnique.mockResolvedValue({
       id: "s1",
       userId: "demo-user",
-      totalXp: 50,
+      totalXp: 250,
       currentStreak: 0,
       lastActivityDate: null,
       rank: "Novice",
@@ -902,7 +902,7 @@ describe("POST /api/submit — rank", () => {
       })
     );
     const body = await res.json();
-    expect(body.newTotalXp).toBe(150);
+    expect(body.newTotalXp).toBe(350);
     // Verify upsert was called with rank "Apprentice"
     const upsertCall = tx.userStats.upsert.mock.calls[0] as [{ update: { rank: string } }];
     expect(upsertCall[0].update.rank).toBe("Apprentice");

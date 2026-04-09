@@ -11,7 +11,7 @@
 //   Reset   — restores the editor to starter code and clears the output panel.
 // ---------------------------------------------------------------------------
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { go } from "@codemirror/lang-go";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
@@ -107,6 +107,7 @@ export default function CodeClient({
   const [error, setError] = useState<string | null>(null);
   const [runOutput, setRunOutput] = useState<RunOutput | null>(null);
   const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null);
+  const [showFlash, setShowFlash] = useState(false);
 
   const isRunning = loading !== "idle";
 
@@ -159,12 +160,22 @@ export default function CodeClient({
       }
       const data = (await res.json()) as SubmitResult;
       setSubmitResult(data);
+      if (data.passed && data.lessonCompleted) {
+        setShowFlash(true);
+      }
     } catch {
       setError("Network error. Please check your connection and try again.");
     } finally {
       setLoading("idle");
     }
   }
+
+  // Auto-dismiss the success flash after 1.8 s, then let the overlay appear.
+  useEffect(() => {
+    if (!showFlash) return;
+    const t = setTimeout(() => setShowFlash(false), 1800);
+    return () => clearTimeout(t);
+  }, [showFlash]);
 
   function handleReset() {
     setCode(starterCode);
@@ -362,8 +373,41 @@ export default function CodeClient({
         </div>
       </div>
 
-      {/* Completion overlay — shown on a passing submission */}
-      {submitResult?.lessonCompleted && (
+      {/* Success flash — brief win moment before the completion overlay */}
+      {showFlash && submitResult && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+        >
+          <div className="animate-flash-in text-center">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-500/20 ring-4 ring-green-500/40">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="h-10 w-10 text-green-400"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <h2 className="mt-5 text-3xl font-bold text-white">
+              Challenge Complete!
+            </h2>
+            <p className="mt-2 text-xl font-semibold text-indigo-300">
+              +{submitResult.xpDelta} XP
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Completion overlay — shown after the flash clears */}
+      {submitResult?.lessonCompleted && !showFlash && (
         <CompletionOverlay
           lessonTitle={lessonTitle}
           xpDelta={submitResult.xpDelta}

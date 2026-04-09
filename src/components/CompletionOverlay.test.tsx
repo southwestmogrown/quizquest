@@ -86,15 +86,15 @@ describe("CompletionOverlay", () => {
     expect(html).toContain('href="/courses/go-basics"');
   });
 
-  it("replaces Next Lesson with Back to Course as primary button on the last lesson", () => {
+  it("shows course-complete state with Browse All Courses CTA on the last lesson", () => {
     const html = renderToStaticMarkup(
       <CompletionOverlay {...BASE_PROPS} nextLessonHref={null} />
     );
     // Should not contain "Next Lesson" text
     expect(html).not.toContain("Next Lesson");
-    // "Back to Course →" is the primary action
-    expect(html).toContain("Back to Course →");
-    expect(html).toContain('href="/courses/go-basics"');
+    // Primary CTA navigates to the course catalog
+    expect(html).toContain("Browse All Courses");
+    expect(html).toContain('href="/courses"');
   });
 
   it("renders the dialog with correct ARIA attributes", () => {

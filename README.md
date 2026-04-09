@@ -24,12 +24,12 @@ Progress persists in PostgreSQL. Completing a lesson unlocks the next, awards XP
 
 | Rank | XP |
 |---|---|
-| Novice | 0 – 99 |
-| Apprentice | 100 – 499 |
-| Journeyman | 500 – 999 |
-| Adept | 1,000 – 2,499 |
-| Expert | 2,500 – 4,999 |
-| Master | 5,000+ |
+| Novice | 0 – 299 |
+| Apprentice | 300 – 899 |
+| Journeyman | 900 – 1,799 |
+| Adept | 1,800 – 2,999 |
+| Expert | 3,000 – 4,499 |
+| Master | 4,500+ |
 
 ---
 

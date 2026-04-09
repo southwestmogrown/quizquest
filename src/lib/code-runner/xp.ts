@@ -102,21 +102,25 @@ export type Rank =
 /**
  * Return the rank label for a given total XP value.
  *
- * XP range → Rank (spec §9):
- *   0 – 99       → Novice
- *   100 – 499    → Apprentice
- *   500 – 999    → Journeyman
- *   1,000 – 2,499 → Adept
- *   2,500 – 4,999 → Expert
- *   5,000+       → Master
+ * Thresholds are calibrated against an estimated full catalog of ~5 courses
+ * (~4 500 XP total). Completing one full course lands in Journeyman; completing
+ * the catalog reaches Master.
+ *
+ * XP range → Rank:
+ *   0 – 299       → Novice
+ *   300 – 899     → Apprentice
+ *   900 – 1,799   → Journeyman
+ *   1,800 – 2,999 → Adept
+ *   3,000 – 4,499 → Expert
+ *   4,500+        → Master
  *
  * @param totalXp  Cumulative XP (non-negative integer).
  */
 export function computeRank(totalXp: number): Rank {
-  if (totalXp >= 5_000) return "Master";
-  if (totalXp >= 2_500) return "Expert";
-  if (totalXp >= 1_000) return "Adept";
-  if (totalXp >= 500) return "Journeyman";
-  if (totalXp >= 100) return "Apprentice";
+  if (totalXp >= 4_500) return "Master";
+  if (totalXp >= 3_000) return "Expert";
+  if (totalXp >= 1_800) return "Adept";
+  if (totalXp >= 900) return "Journeyman";
+  if (totalXp >= 300) return "Apprentice";
   return "Novice";
 }

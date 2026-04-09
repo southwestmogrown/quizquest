@@ -20,6 +20,7 @@ import MarkCompleteClient from "./MarkCompleteClient";
 import QuizClient from "./QuizClient";
 import CodeClient from "./CodeClient";
 import LessonNav from "@/components/LessonNav";
+import LessonBreadcrumb from "@/components/LessonBreadcrumb";
 import type { LessonState } from "@prisma/client";
 import type { ReadingLesson, QuizLesson, CodeLesson } from "@/lib/content/types";
 
@@ -100,6 +101,18 @@ export default async function LessonPage({
   const completedCount = progressRows.filter((r) => r.state === "completed").length;
   const totalCount = allLessons.length;
 
+  // Build per-lesson state map for the breadcrumb.
+  const stateMap = new Map<string, LessonState>(
+    progressRows.map((r) => [r.lessonSlug, r.state])
+  );
+  const lessonMarkers = allLessons.map((l) => ({
+    slug: l.lessonSlug,
+    title: l.title,
+    state: (stateMap.get(l.lessonSlug) ?? "locked") as LessonState,
+    href: `/courses/${courseSlug}/lessons/${l.lessonSlug}`,
+    isCurrent: l.lessonSlug === lessonSlug,
+  }));
+
   // ----- 5. Determine prev/next lesson hrefs ------------------------------------
   const allLessonSlugs = allLessons.map((l) => l.lessonSlug);
   const currentIndex = allLessonSlugs.indexOf(lessonSlug);
@@ -127,6 +140,13 @@ export default async function LessonPage({
         >
           ← Back to course
         </Link>
+
+        <LessonBreadcrumb
+          lessons={lessonMarkers}
+          completedCount={completedCount}
+          totalCount={totalCount}
+          currentIndex={currentIndex}
+        />
 
         <div className="mt-12 flex flex-col items-center gap-4 text-center">
           <LockIcon />
@@ -160,6 +180,13 @@ export default async function LessonPage({
         >
           ← Back to course
         </Link>
+
+        <LessonBreadcrumb
+          lessons={lessonMarkers}
+          completedCount={completedCount}
+          totalCount={totalCount}
+          currentIndex={currentIndex}
+        />
 
         {/* Lesson header */}
         <div className="mt-4 flex items-center justify-between gap-4">
@@ -218,6 +245,13 @@ export default async function LessonPage({
           ← Back to course
         </Link>
 
+        <LessonBreadcrumb
+          lessons={lessonMarkers}
+          completedCount={completedCount}
+          totalCount={totalCount}
+          currentIndex={currentIndex}
+        />
+
         {/* Lesson header */}
         <div className="mb-6 flex items-center justify-between gap-4">
           <h1 className="text-3xl font-bold tracking-tight text-slate-50">
@@ -270,6 +304,13 @@ export default async function LessonPage({
       >
         ← Back to course
       </Link>
+
+      <LessonBreadcrumb
+        lessons={lessonMarkers}
+        completedCount={completedCount}
+        totalCount={totalCount}
+        currentIndex={currentIndex}
+      />
 
       {/* Lesson header */}
       <div className="mt-4 flex items-center justify-between gap-4">
