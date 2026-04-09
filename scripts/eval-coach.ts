@@ -12,7 +12,7 @@
 // Environment:
 //   COACH_PROVIDER   - "ollama" (default) | "anthropic"
 //   OLLAMA_BASE_URL  - default http://localhost:11434
-//   OLLAMA_MODEL     - default qwen2.5:3b
+//   OLLAMA_MODEL     - default phi4-mini
 //   ANTHROPIC_API_KEY - required when COACH_PROVIDER=anthropic
 // ---------------------------------------------------------------------------
 
@@ -182,7 +182,7 @@ async function callOllama(
   messages: Array<{ role: "user" | "assistant"; content: string }>
 ): Promise<string> {
   const baseUrl = process.env.OLLAMA_BASE_URL ?? "http://localhost:11434";
-  const model = process.env.OLLAMA_MODEL ?? "qwen2.5:3b";
+  const model = process.env.OLLAMA_MODEL ?? "phi4-mini";
 
   const res = await fetch(`${baseUrl}/api/chat`, {
     method: "POST",
@@ -278,7 +278,7 @@ async function main() {
   console.log(`\n🧪 Socratic Coach Eval Harness`);
   console.log(`   Provider: ${provider}`);
   if (provider === "ollama") {
-    const model = process.env.OLLAMA_MODEL ?? "qwen2.5:3b";
+    const model = process.env.OLLAMA_MODEL ?? "phi4-mini";
     console.log(`   Model: ${model}`);
     console.log(`   Base URL: ${process.env.OLLAMA_BASE_URL ?? "http://localhost:11434"}`);
   }
