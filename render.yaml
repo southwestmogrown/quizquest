@@ -10,7 +10,7 @@ services:
     name: quizquest
     runtime: node
     region: oregon
-    buildCommand: npm install -g pnpm@10 && pnpm install --frozen-lockfile && pnpm build
+    buildCommand: npm install -g pnpm@10 && pnpm install --frozen-lockfile && npx prisma migrate deploy && pnpm build
     startCommand: pnpm start
     envVars:
       - key: DATABASE_URL

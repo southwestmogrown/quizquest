@@ -141,14 +141,31 @@ All 5 require `?` in the response.
 
 ---
 
+## Interaction Logging
+
+Every coach response is persisted to the `CoachLog` table for future fine-tuning.
+
+**Schema fields:** `sessionId`, `userId`, `lessonSlug`, `systemPrompt`, `userMessage`, `coachResponse`, `model`, `provider`, `rating` (1 / -1 / null), `createdAt`
+
+**Flow:**
+1. Client generates a `sessionId` (`crypto.randomUUID()`) when the coach panel opens.
+2. After streaming completes, the API writes the log row and emits `data: {"logId": "..."}` before `[DONE]`.
+3. The client attaches the `logId` to the message bubble and shows 👍/👎 buttons.
+4. Clicking a thumb fires `PATCH /api/coach/[logId]/rate` with `{ rating: 1 | -1 }`.
+
+**Fine-tuning use:** Good ratings (1) = examples to reinforce; bad ratings (-1) = examples to learn away from. A few hundred rated interactions is enough to start prompt eval or fine-tuning a small model.
+
+---
+
 ## Source Files
 
 | File | Purpose |
 |------|---------|
 | `src/lib/coach/prompt.ts` | Prompt builders — edit to tune |
 | `scripts/eval-coach.ts` | Eval harness + 5 test cases |
-| `src/app/api/coach/route.ts` | API route — loads lesson server-side, streams SSE |
-| `src/components/SocraticCoach.tsx` | Chat drawer UI (code/quiz: Socratic; reading: Q&A) |
+| `src/app/api/coach/route.ts` | API route — loads lesson server-side, streams SSE, logs to DB |
+| `src/app/api/coach/[logId]/rate/route.ts` | PATCH endpoint — sets rating 1 or -1 on a log row |
+| `src/components/SocraticCoach.tsx` | Chat drawer UI — renders Markdown, thumbs up/down per message |
 | `src/app/…/MarkCompleteClient.tsx` | Reading lesson — "Ask the Coach" button |
 | `src/app/…/CodeClient.tsx` | Code lesson — "I'm stuck" button |
 | `src/app/…/QuizClient.tsx` | Quiz lesson — "I'm stuck" button, auto-open at 2 failures |

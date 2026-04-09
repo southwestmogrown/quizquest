@@ -85,6 +85,29 @@ enum ActivityEventType {
   xp_awarded
 }
 
+// ---------------------------------------------------------------------------
+// CoachLog — one row per coach response turn, for fine-tuning corpus
+// ---------------------------------------------------------------------------
+
+model CoachLog {
+  id            String   @id @default(cuid())
+  sessionId     String
+  userId        String
+  lessonSlug    String
+  systemPrompt  String
+  userMessage   String
+  coachResponse String
+  model         String
+  provider      String
+  rating        Int?     // 1 = thumbs up, -1 = thumbs down, null = unrated
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([lessonSlug])
+  @@index([sessionId])
+}
+
 model ActivityEvent {
   id         String            @id @default(cuid())
   userId     String

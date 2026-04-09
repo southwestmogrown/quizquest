@@ -7,6 +7,7 @@ import {
   buildReadingCoachPrompt,
   type CoachContext,
 } from "@/lib/coach/prompt";
+import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,7 @@ interface ConversationMessage {
 }
 
 interface CoachRequest {
+  sessionId: string;
   courseSlug: string;
   lessonSlug: string;
   learnerCode?: string;
@@ -39,13 +41,14 @@ const SSE_DONE = "data: [DONE]\n\n";
 
 // ---------------------------------------------------------------------------
 // Ollama fallback (eval / local dev)
+// Returns the full accumulated response text.
 // ---------------------------------------------------------------------------
 
 async function streamOllama(
   systemPrompt: string,
   messages: ConversationMessage[],
   controller: ReadableStreamDefaultController
-): Promise<void> {
+): Promise<string> {
   const baseUrl =
     process.env.OLLAMA_BASE_URL ?? "http://localhost:11434";
   const model = process.env.OLLAMA_MODEL ?? "gemma3:4b";
@@ -69,6 +72,7 @@ async function streamOllama(
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
+  let fullResponse = "";
 
   while (true) {
     const { done, value } = await reader.read();
@@ -82,6 +86,7 @@ async function streamOllama(
         };
         const text = parsed.message?.content;
         if (text) {
+          fullResponse += text;
           controller.enqueue(new TextEncoder().encode(sseChunk(text)));
         }
       } catch {
@@ -89,17 +94,20 @@ async function streamOllama(
       }
     }
   }
+
+  return fullResponse;
 }
 
 // ---------------------------------------------------------------------------
 // Anthropic streaming
+// Returns the full accumulated response text.
 // ---------------------------------------------------------------------------
 
 async function streamAnthropic(
   systemPrompt: string,
   messages: ConversationMessage[],
   controller: ReadableStreamDefaultController
-): Promise<void> {
+): Promise<string> {
   const client = new Anthropic();
 
   const stream = await client.messages.stream({
@@ -112,16 +120,21 @@ async function streamAnthropic(
     })),
   });
 
+  let fullResponse = "";
+
   for await (const event of stream) {
     if (
       event.type === "content_block_delta" &&
       event.delta.type === "text_delta"
     ) {
+      fullResponse += event.delta.text;
       controller.enqueue(
         new TextEncoder().encode(sseChunk(event.delta.text))
       );
     }
   }
+
+  return fullResponse;
 }
 
 // ---------------------------------------------------------------------------
@@ -139,7 +152,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     );
   }
 
-  const { courseSlug, lessonSlug, learnerCode, learnerChoiceId, conversationHistory } =
+  const { sessionId, courseSlug, lessonSlug, learnerCode, learnerChoiceId, conversationHistory } =
     body;
 
   if (!courseSlug || !lessonSlug) {
@@ -194,15 +207,48 @@ export async function POST(req: NextRequest): Promise<Response> {
     );
   }
 
+  const provider = process.env.COACH_PROVIDER ?? "anthropic";
+  const modelName =
+    provider === "ollama"
+      ? (process.env.OLLAMA_MODEL ?? "gemma3:4b")
+      : "claude-opus-4-6";
+
+  // The last user message in history is the current turn.
+  const userMessage =
+    [...conversationHistory].reverse().find((m) => m.role === "user")?.content ?? "";
+
   // SSE stream.
   const stream = new ReadableStream({
     async start(controller) {
+      let coachResponse = "";
       try {
-        const provider = process.env.COACH_PROVIDER ?? "anthropic";
         if (provider === "ollama") {
-          await streamOllama(systemPrompt, conversationHistory, controller);
+          coachResponse = await streamOllama(systemPrompt, conversationHistory, controller);
         } else {
-          await streamAnthropic(systemPrompt, conversationHistory, controller);
+          coachResponse = await streamAnthropic(systemPrompt, conversationHistory, controller);
+        }
+
+        // Persist the interaction for future fine-tuning.
+        try {
+          const log = await db.coachLog.create({
+            data: {
+              sessionId: sessionId ?? "unknown",
+              userId: "demo-user",
+              lessonSlug,
+              systemPrompt,
+              userMessage,
+              coachResponse,
+              model: modelName,
+              provider,
+            },
+          });
+          // Send logId to client so it can attach ratings.
+          controller.enqueue(
+            new TextEncoder().encode(`data: ${JSON.stringify({ logId: log.id })}\n\n`)
+          );
+        } catch (dbErr) {
+          console.error("[coach] log write error", dbErr);
+          // Don't surface DB errors to the learner — stream already sent.
         }
       } catch (err) {
         console.error("[coach] stream error", err);

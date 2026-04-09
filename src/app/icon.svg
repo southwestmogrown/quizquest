@@ -1,5 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="7" fill="#4f46e5"/>
-  <circle cx="14" cy="15" r="6.5" stroke="white" stroke-width="2.8" fill="none"/>
-  <line x1="18.6" y1="20.6" x2="24" y2="26" stroke="white" stroke-width="2.8" stroke-linecap="round"/>
+  <!-- Dark background -->
+  <rect width="32" height="32" rx="7" fill="#0f172a"/>
+
+  <!-- Isometric cube faces -->
+  <polygon points="16,3 27,9.5 16,16 5,9.5" fill="#1e1b4b"/>
+  <polygon points="27,9.5 27,22.5 16,29 16,16" fill="#181640"/>
+  <polygon points="5,9.5 16,16 16,29 5,22.5" fill="#141232"/>
+
+  <!-- Cube edges — bright indigo glow -->
+  <line x1="16" y1="3" x2="27" y2="9.5" stroke="#6366f1" stroke-width="1.2"/>
+  <line x1="16" y1="3" x2="5" y2="9.5" stroke="#6366f1" stroke-width="1.2"/>
+  <line x1="27" y1="9.5" x2="27" y2="22.5" stroke="#4f46e5" stroke-width="1"/>
+  <line x1="5" y1="9.5" x2="5" y2="22.5" stroke="#4f46e5" stroke-width="1"/>
+  <line x1="27" y1="22.5" x2="16" y2="29" stroke="#4f46e5" stroke-width="1"/>
+  <line x1="5" y1="22.5" x2="16" y2="29" stroke="#4f46e5" stroke-width="1"/>
+
+  <!-- Q lettermark: circle center (15,13) r=8, gap at lower-right (~30°–65°)      -->
+  <!-- Arc goes counterclockwise (long way: up → left → bottom → end of gap)        -->
+  <path d="M 22 17 A 8 8 0 1 0 18.4 20.2" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <!-- Q tail: starts inside the ring, crosses through the gap, extends beyond       -->
+  <line x1="17" y1="15.5" x2="24" y2="22.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
 </svg>

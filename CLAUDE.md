@@ -248,6 +248,15 @@ From **quizquest-runner-internal** logs, look for:
 - `POST /run infra error: ...` — execution-time failure (perms, disk, etc.)
 - `POST /run completed: exitCode=...` — successful execution
 
+### Schema migrations on Render
+
+`render.yaml` build command runs `npx prisma migrate deploy` before `pnpm build`. Every push to `main` automatically applies any pending migrations before the new app code goes live. `migrate deploy` is additive-only — it never drops tables or columns unless the migration SQL explicitly does so.
+
+To apply a migration manually (e.g. without a full deploy), use the **Shell** tab on the `quizquest` web service:
+```bash
+npx prisma migrate deploy
+```
+
 ### Old runner service
 
 There is/was a public web service named `quizquest-runner` (separate from `quizquest-runner-internal`). It can be suspended or deleted — the app no longer references it.
@@ -263,6 +272,10 @@ There is/was a public web service named `quizquest-runner` (separate from `quizq
   - Reading: Q&A mode ("Ask the Coach" button → answers questions about lesson content)
   - `ANTHROPIC_API_KEY` wired on Render; gemma3:4b as local eval model
 - Design system applied sitewide (landing page, courses, dashboard, lessons)
+- Coach interaction logging (`CoachLog` table) — every response persisted with sessionId, systemPrompt, userMessage, coachResponse, model, provider; thumbs up/down rating UI on each message bubble; `PATCH /api/coach/[logId]/rate` endpoint
+- `render.yaml` build command runs `prisma migrate deploy` before `pnpm build` — schema migrations apply automatically on every deploy
+- SVG logo/favicon (`src/app/icon.svg`) — indigo Q-mark icon; TopNavBar updated with icon mark + split wordmark
+- Coach responses rendered as Markdown (react-markdown) — bold, lists, inline code styled to match dark theme
 
 **P0 — Next up**
 - **README for recruiters** — deployment architecture diagram, live demo link, tech decisions; highest-leverage portfolio artifact

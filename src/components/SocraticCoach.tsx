@@ -24,6 +24,8 @@ export interface SocraticCoachProps {
 interface Message {
   role: "user" | "assistant";
   content: string;
+  logId?: string;
+  rating?: 1 | -1;
 }
 
 export default function SocraticCoach({
@@ -38,6 +40,7 @@ export default function SocraticCoach({
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [initialized, setInitialized] = useState(false);
+  const sessionIdRef = useRef<string>(crypto.randomUUID());
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -71,6 +74,7 @@ export default function SocraticCoach({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          sessionId: sessionIdRef.current,
           courseSlug,
           lessonSlug,
           learnerCode: lessonType === "code" ? learnerCode : undefined,
@@ -107,16 +111,28 @@ export default function SocraticCoach({
           const payload = line.slice(6).trim();
           if (payload === "[DONE]") break;
           try {
-            const { text } = JSON.parse(payload) as { text: string };
-            setMessages((prev) => {
-              const next = [...prev];
-              const last = next[next.length - 1];
-              next[next.length - 1] = {
-                ...last,
-                content: last.content + text,
-              };
-              return next;
-            });
+            const parsed = JSON.parse(payload) as { text?: string; logId?: string };
+            if (parsed.text) {
+              setMessages((prev) => {
+                const next = [...prev];
+                const last = next[next.length - 1];
+                next[next.length - 1] = {
+                  ...last,
+                  content: last.content + parsed.text,
+                };
+                return next;
+              });
+            }
+            if (parsed.logId) {
+              setMessages((prev) => {
+                const next = [...prev];
+                next[next.length - 1] = {
+                  ...next[next.length - 1],
+                  logId: parsed.logId,
+                };
+                return next;
+              });
+            }
           } catch {
             // skip malformed chunks
           }
@@ -137,11 +153,28 @@ export default function SocraticCoach({
     }
   }
 
+  async function handleRate(logId: string, msgIndex: number, rating: 1 | -1) {
+    // Optimistically update UI.
+    setMessages((prev) => {
+      const next = [...prev];
+      next[msgIndex] = { ...next[msgIndex], rating };
+      return next;
+    });
+    try {
+      await fetch(`/api/coach/${logId}/rate`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating }),
+      });
+    } catch {
+      // Silent — rating is best-effort
+    }
+  }
+
   async function handleSend() {
     const text = input.trim();
     if (!text || streaming) return;
     setInput("");
-    // Current messages minus the initial user message that was already added.
     await sendToCoach(messages, text);
   }
 
@@ -188,7 +221,7 @@ export default function SocraticCoach({
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+            className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
           >
             <div
               className={`max-w-[85%] rounded-lg px-3 py-2 text-sm leading-relaxed ${
@@ -218,6 +251,36 @@ export default function SocraticCoach({
                 <span className="animate-pulse text-slate-500">▍</span>
               )}
             </div>
+
+            {/* Thumbs up/down — only on completed assistant messages with a logId */}
+            {msg.role === "assistant" && msg.logId && msg.content && (
+              <div className="flex gap-1 mt-1">
+                <button
+                  onClick={() => void handleRate(msg.logId!, i, 1)}
+                  aria-label="Helpful"
+                  title="Helpful"
+                  className={`rounded px-1.5 py-0.5 text-xs transition ${
+                    msg.rating === 1
+                      ? "text-emerald-400"
+                      : "text-slate-600 hover:text-slate-400"
+                  }`}
+                >
+                  👍
+                </button>
+                <button
+                  onClick={() => void handleRate(msg.logId!, i, -1)}
+                  aria-label="Not helpful"
+                  title="Not helpful"
+                  className={`rounded px-1.5 py-0.5 text-xs transition ${
+                    msg.rating === -1
+                      ? "text-rose-400"
+                      : "text-slate-600 hover:text-slate-400"
+                  }`}
+                >
+                  👎
+                </button>
+              </div>
+            )}
           </div>
         ))}
         <div ref={bottomRef} />
