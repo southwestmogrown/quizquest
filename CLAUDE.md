@@ -49,7 +49,8 @@ PostgreSQL does not auto-start in WSL2. Each session:
 
 ```bash
 sudo service postgresql start
-source ~/.bashrc   # to get pnpm on PATH
+source ~/.bashrc       # to get pnpm on PATH
+docker compose up -d   # code runner on :8080 (requires Docker Desktop WSL2 integration)
 pnpm dev
 ```
 
@@ -131,7 +132,7 @@ Validate content: `pnpm validate-content`
 - **Anti-farming**: XP delta = `max(0, xpForScore - bestXpAwarded)` — re-submitting same score awards 0 XP.
 - **Demo user**: app is hardcoded to `demo-user` — no auth system.
 
-## Current State (as of 2026-04-09)
+## Current State (as of 2026-04-09, updated M2)
 
 ### Completed backlog (21 original issues)
 
@@ -161,24 +162,30 @@ Validate content: `pnpm validate-content`
 | M0-2: Root page replaced with real landing page (hero, features, CTA) | Done |
 | M0-3: CourseCard wrapped in `<Link href>` — cards are clickable; tests updated | Done |
 
-**Test count: 209/209 passing.**
+### M1 — Core UX (completed 2026-04-09)
+
+| Issue | Status |
+|---|---|
+| M1-1: Prev/next lesson nav — `LessonNav` component on all lesson types | Done |
+| M1-2: Auto-enroll on first course visit — first lesson unlocked on outline page load | Done |
+| M1-3: Filter `test-course` from catalog and dashboard | Done |
+| M1-4: Fix activity feed — `lesson_completed` events now store actual xpDelta | Done |
+| M1-5: `@tailwindcss/typography` installed and wired via `@plugin` in globals.css | Done |
+
+**Test count: 67/67 passing (unit). Build clean.**
 
 ### Design system (in progress)
-
-A full MVP roadmap exists at `.claude/plans/valiant-crafting-crescent.md`.
 
 Stitch (Google frontend design AI) generated a design system brief. Output is at `docs/Stitch-design-system.md`. Design direction: **"Engineering Editorial"** — dark theme (`#020617` slate-950 bg), deep indigo accent (`#4f46e5`), glass panels (`backdrop-blur`, `bg-slate-900/60`), Plus Jakarta Sans + JetBrains Mono fonts, glow effects. This is a significant departure from the current light/blue-600 design — implementation is the next major UI milestone.
 
 ## Remaining / Next Steps (priority order)
 
-See `.claude/plans/valiant-crafting-crescent.md` for the full breakdown. Summary:
-
 **P0 — Done**
 - Navigation, landing page, clickable course cards (M0 complete)
 
-**P1 — Next up**
-- **M1: Core UX** — prev/next lesson nav, auto-enroll on first course visit, filter `test-course` from catalog, fix activity feed events, verify `@tailwindcss/typography`
-- **M2: Code runner** — Go subprocess runner (local), Docker sidecar, Railway deploy
+**P1 — Done / Next up**
+- **M1: Core UX** — complete ✓
+- **M2: Code runner** — complete ✓ (`runner/` Go service, `docker-compose.yml` sidecar, `runner/railway.toml`)
 - **M3-2: Landing page polish** — upgrade to Stitch "Engineering Editorial" design system
 - **M4: Deployment** — Vercel (Next.js) + Neon (PostgreSQL, use `?pgbouncer=true&connection_limit=1` on DATABASE_URL) + Railway (runner)
 

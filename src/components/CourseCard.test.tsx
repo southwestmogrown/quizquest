@@ -43,19 +43,19 @@ describe("CourseCard", () => {
 
   it("applies beginner difficulty styling", () => {
     const html = renderToStaticMarkup(<CourseCard course={baseCourse} href="/courses/intro-to-go" />);
-    expect(html).toContain("bg-green-100");
+    expect(html).toContain("bg-green-500/20");
   });
 
   it("applies intermediate difficulty styling", () => {
     const course = { ...baseCourse, difficulty: "intermediate" as const };
     const html = renderToStaticMarkup(<CourseCard course={course} href="/courses/intro-to-go" />);
-    expect(html).toContain("bg-yellow-100");
+    expect(html).toContain("bg-yellow-500/20");
   });
 
   it("applies advanced difficulty styling", () => {
     const course = { ...baseCourse, difficulty: "advanced" as const };
     const html = renderToStaticMarkup(<CourseCard course={course} href="/courses/intro-to-go" />);
-    expect(html).toContain("bg-red-100");
+    expect(html).toContain("bg-red-500/20");
   });
 
   it("renders an anchor tag with the correct href", () => {

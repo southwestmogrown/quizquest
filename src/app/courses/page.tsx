@@ -16,19 +16,19 @@ export default function CoursesPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
-      <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
+      <h1 className="mb-2 text-3xl font-bold tracking-tight text-slate-50">
         Course Catalog
       </h1>
-      <p className="mb-8 text-foreground/60">
+      <p className="mb-8 text-slate-400">
         Choose a course to start learning.
       </p>
 
       {loadError ? (
-        <p className="text-center text-foreground/50">
+        <p className="text-center text-slate-500">
           Failed to load courses. Please try again later.
         </p>
       ) : courses.length === 0 ? (
-        <p className="text-center text-foreground/50">
+        <p className="text-center text-slate-500">
           No courses available yet. Check back soon!
         </p>
       ) : (

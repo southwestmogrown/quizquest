@@ -96,17 +96,19 @@ export default function Home() {
     <main className="flex flex-col">
       {/* Hero */}
       <section className="flex flex-col items-center justify-center gap-8 px-6 py-24 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-foreground/10 bg-foreground/5 px-4 py-1.5 text-sm font-medium text-foreground/60">
-          <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-4 py-1.5 text-sm font-medium text-indigo-300">
+          <span className="inline-block h-2 w-2 rounded-full bg-indigo-400 shadow-[0_0_6px_rgba(99,102,241,0.8)]" />
           Open-source portfolio project
         </div>
 
-        <h1 className="max-w-3xl text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl">
+        <h1 className="max-w-3xl text-5xl font-black tracking-tight text-slate-50 sm:text-6xl">
           Learn by doing,{" "}
-          <span className="text-blue-600">not just reading</span>
+          <span className="bg-gradient-to-r from-indigo-400 to-indigo-300 bg-clip-text text-transparent">
+            not just reading
+          </span>
         </h1>
 
-        <p className="max-w-xl text-lg leading-relaxed text-foreground/65">
+        <p className="max-w-xl text-lg leading-relaxed text-slate-400">
           QuizQuest turns Markdown files into interactive web lessons — complete
           with in-browser code challenges, quizzes, XP, and streaks.
         </p>
@@ -114,13 +116,13 @@ export default function Home() {
         <div className="flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/courses"
-            className="rounded-lg bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            className="rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-950/50 transition hover:from-indigo-500 hover:to-indigo-400"
           >
             Browse Courses →
           </Link>
           <Link
             href="/dashboard"
-            className="rounded-lg border border-foreground/20 bg-transparent px-6 py-3 text-base font-semibold text-foreground transition-colors hover:bg-foreground/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            className="rounded-lg border border-white/10 px-6 py-3 text-base font-semibold text-slate-300 transition hover:border-white/20 hover:text-slate-50"
           >
             View Dashboard →
           </Link>
@@ -128,15 +130,15 @@ export default function Home() {
       </section>
 
       {/* Divider */}
-      <div className="mx-auto w-full max-w-5xl border-t border-foreground/10" />
+      <div className="mx-auto w-full max-w-5xl border-t border-white/5" />
 
       {/* Features */}
       <section className="px-6 py-20">
         <div className="mx-auto max-w-5xl">
-          <h2 className="mb-3 text-center text-3xl font-bold tracking-tight text-foreground">
+          <h2 className="mb-3 text-center text-3xl font-bold tracking-tight text-slate-50">
             Everything you need to level up
           </h2>
-          <p className="mb-14 text-center text-base text-foreground/60">
+          <p className="mb-14 text-center text-base text-slate-400">
             Designed to keep you engaged — every lesson has a clear goal and a
             reward.
           </p>
@@ -145,16 +147,16 @@ export default function Home() {
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="flex gap-4 rounded-xl border border-foreground/10 bg-foreground/[0.03] p-6 transition-colors hover:border-foreground/20 hover:bg-foreground/[0.06]"
+                className="flex gap-4 rounded-xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md transition hover:border-indigo-500/20 hover:bg-slate-900/60"
               >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-600/10 text-blue-600">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-400">
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="mb-1.5 font-semibold text-foreground">
+                  <h3 className="mb-1.5 font-semibold text-slate-50">
                     {feature.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-foreground/60">
+                  <p className="text-sm leading-relaxed text-slate-400">
                     {feature.description}
                   </p>
                 </div>
@@ -166,17 +168,17 @@ export default function Home() {
 
       {/* CTA footer strip */}
       <section className="px-6 pb-24">
-        <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 rounded-2xl bg-blue-600 px-8 py-14 text-center text-white">
-          <h2 className="text-3xl font-bold tracking-tight">
+        <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-600/20 to-slate-900/60 px-8 py-14 text-center backdrop-blur-md">
+          <h2 className="text-3xl font-bold text-slate-50">
             Ready to start learning?
           </h2>
-          <p className="max-w-md text-base text-blue-100">
+          <p className="max-w-md text-base text-slate-400">
             Pick a course, earn your first XP, and build a streak — all in
             under five minutes.
           </p>
           <Link
             href="/courses"
-            className="rounded-lg bg-white px-6 py-3 text-base font-semibold text-blue-600 shadow-sm transition-colors hover:bg-blue-50"
+            className="rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-950/50 transition hover:from-indigo-500 hover:to-indigo-400"
           >
             Browse Courses →
           </Link>

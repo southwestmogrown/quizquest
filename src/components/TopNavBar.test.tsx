@@ -4,6 +4,7 @@ import TopNavBar from "./TopNavBar";
 
 vi.mock("next/navigation", () => ({
   usePathname: vi.fn(),
+  useRouter: vi.fn(() => ({ push: vi.fn() })),
 }));
 
 vi.mock("next/link", () => ({
@@ -48,18 +49,24 @@ describe("TopNavBar", () => {
   it("highlights the active /courses link", () => {
     vi.mocked(usePathname).mockReturnValue("/courses");
     const html = renderToStaticMarkup(<TopNavBar />);
-    expect(html).toContain("border-blue-600");
+    expect(html).toContain("border-indigo-500");
   });
 
   it("highlights the active /dashboard link", () => {
     vi.mocked(usePathname).mockReturnValue("/dashboard");
     const html = renderToStaticMarkup(<TopNavBar />);
-    expect(html).toContain("border-blue-600");
+    expect(html).toContain("border-indigo-500");
   });
 
   it("does not highlight links when no route is active", () => {
     vi.mocked(usePathname).mockReturnValue("/");
     const html = renderToStaticMarkup(<TopNavBar />);
-    expect(html).not.toContain("border-blue-600");
+    expect(html).not.toContain("border-indigo-500");
+  });
+
+  it("renders Reset Demo button", () => {
+    vi.mocked(usePathname).mockReturnValue("/");
+    const html = renderToStaticMarkup(<TopNavBar />);
+    expect(html).toContain("Reset Demo");
   });
 });

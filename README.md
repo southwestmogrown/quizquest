@@ -39,6 +39,7 @@ Progress persists in PostgreSQL. Completing a lesson unlocks the next, awards XP
 | UI | React 19 + Tailwind CSS v4 |
 | Language | TypeScript 5 (strict mode) |
 | Database | PostgreSQL via Prisma 7 + `@prisma/adapter-pg` |
+| Code Runner | Go 1.22 HTTP service (subprocess executor, Docker sidecar) |
 | Content | `gray-matter` + `marked` + `js-yaml` |
 | Unit Tests | Vitest |
 | E2E Tests | Playwright |
@@ -58,15 +59,17 @@ Browser
         └─ Dashboard                     /dashboard
 
 Next.js API Routes (/api/*)
-  ├─ POST /api/run          — Execute code (no grading)
-  ├─ POST /api/submit       — Execute + grade + award XP
+  ├─ POST /api/run          — Proxy to code runner (no grading)
+  ├─ POST /api/submit       — Proxy to runner, grade output, award XP
   ├─ POST /api/complete     — Mark reading/quiz complete
   ├─ POST /api/quiz-submit  — Grade quiz + award XP
   └─ POST /api/test-reset   — Reset DB for E2E tests (test env only)
 
-External Service
-  └─ Code Runner — stateless HTTP service; POST /run
-                   returns stdout / stderr / exitCode
+Code Runner  (runner/ — Go 1.22 HTTP service)
+  └─ POST /run   — Write code to temp dir, exec subprocess, return
+                   { stdout, stderr, exitCode, timedOut }
+                   Local: Docker sidecar on :8080
+                   Prod:  Railway service (CODE_RUNNER_URL env var)
 ```
 
 ### Database Models
@@ -111,11 +114,17 @@ A dedicated CI step (`pnpm validate-content`) catches malformed content before i
 ```
 quizquest/
 ├── content/courses/          # Markdown course content
+├── docker-compose.yml        # Code runner sidecar (local dev)
 ├── docs/                     # Architecture docs, wireframes, specs
 ├── e2e/                      # Playwright E2E tests
 ├── prisma/
 │   ├── schema.prisma         # PostgreSQL schema
 │   └── seed.ts               # Demo data seed
+├── runner/                   # Go code runner service
+│   ├── main.go               # HTTP server + subprocess executor
+│   ├── main_test.go          # Unit tests
+│   ├── Dockerfile            # Multi-stage build (golang:1.22-alpine)
+│   └── railway.toml          # Railway deploy config
 ├── scripts/
 │   └── validate-content.ts   # CI content validator
 └── src/
@@ -141,6 +150,7 @@ quizquest/
 - Node.js v20+
 - pnpm v9+ (`npm install -g pnpm`)
 - PostgreSQL v14+
+- Docker (for the code runner sidecar)
 
 ### 1. Clone and Install
 
@@ -154,19 +164,33 @@ pnpm install
 
 ### 2. Configure Environment
 
+Create two files with the same value (Next.js reads `.env.local`; Prisma CLI reads `.env`):
+
 ```env
-# .env.local — only one variable required for local dev
-DATABASE_URL=postgresql://user:password@localhost:5432/quizquest
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/quizquest
 ```
 
 ### 3. Set Up the Database
 
 ```bash
-pnpm prisma:migrate   # Apply migrations
-pnpm prisma:seed      # (Optional) seed with demo data
+# Apply migrations
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/quizquest npx prisma migrate dev --name init
+
+# Seed demo data (demo-user, first lesson unlocked)
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/quizquest npx tsx prisma/seed.ts
 ```
 
-### 4. Start the Dev Server
+> `pnpm prisma:migrate` and `pnpm prisma:seed` have known issues with Prisma 7 — run the commands above directly.
+
+### 4. Start the Code Runner
+
+```bash
+docker compose up --build
+```
+
+This starts the Go code runner on `:8080`. The Next.js app calls it at `http://localhost:8080` by default (`CODE_RUNNER_URL` env var).
+
+### 5. Start the Dev Server
 
 ```bash
 pnpm dev
@@ -288,26 +312,37 @@ pnpm test:e2e
 
 | Variable | Required | Description |
 |---|---|---|
-| `DATABASE_URL` | ✅ | PostgreSQL connection string |
+| `DATABASE_URL` | ✅ | PostgreSQL connection string. Neon: append `?pgbouncer=true&connection_limit=1` |
+| `CODE_RUNNER_URL` | ✅ (prod) | Base URL of the code runner service (e.g. `https://runner.railway.app`) |
 | `ENABLE_TEST_API` | ❌ | Set to `1` in test environments only — never production |
 
 ### Deploy Steps
 
+**Next.js (Vercel + Neon PostgreSQL)**
+
 ```bash
-pnpm install
-pnpm prisma:migrate
-pnpm build
-pnpm start
+# 1. Push to GitHub — Vercel auto-deploys on push
+# 2. Set DATABASE_URL and CODE_RUNNER_URL in Vercel project settings
+# 3. Run migrations against Neon:
+DATABASE_URL=<neon-url> npx prisma migrate deploy
+# 4. Seed demo user:
+DATABASE_URL=<neon-url> npx tsx prisma/seed.ts
 ```
+
+**Code Runner (Railway)**
+
+1. Create a new Railway service pointed at this repo, root directory `runner/`
+2. Railway picks up `runner/railway.toml` automatically
+3. Set `CODE_RUNNER_URL` in Vercel to the Railway public URL
 
 ### Production Checklist
 
 - [ ] `DATABASE_URL` points to a production PostgreSQL instance with TLS
+- [ ] Neon `DATABASE_URL` includes `?pgbouncer=true&connection_limit=1`
+- [ ] `CODE_RUNNER_URL` set to the deployed Railway runner URL
 - [ ] `ENABLE_TEST_API` is unset or `0`
-- [ ] Migrations applied
+- [ ] Migrations applied (`prisma migrate deploy`)
 - [ ] Content validated (`pnpm validate-content`)
-- [ ] Code runner service deployed and reachable
-- [ ] Process manager (PM2) or container orchestration running
 
 ---
 

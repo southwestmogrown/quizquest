@@ -41,7 +41,7 @@ function LockIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="h-12 w-12 text-gray-400"
+      className="h-12 w-12 text-slate-600"
     >
       <path
         fillRule="evenodd"
@@ -123,22 +123,22 @@ export default async function LessonPage({
       <main className="mx-auto max-w-3xl px-6 py-12">
         <Link
           href={courseHref}
-          className="mb-6 inline-flex items-center gap-1 text-sm text-foreground/60 hover:text-foreground"
+          className="mb-6 inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-300 transition-colors"
         >
           ← Back to course
         </Link>
 
         <div className="mt-12 flex flex-col items-center gap-4 text-center">
           <LockIcon />
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-slate-50">
             {lesson.title}
           </h1>
-          <p className="max-w-sm text-gray-500">
+          <p className="max-w-sm text-slate-400">
             This lesson is locked. Complete the previous lessons to unlock it.
           </p>
           <Link
             href={courseHref}
-            className="mt-4 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
+            className="mt-4 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-indigo-400 transition"
           >
             Back to Course
           </Link>
@@ -156,23 +156,23 @@ export default async function LessonPage({
         {/* Back link */}
         <Link
           href={courseHref}
-          className="mb-6 inline-flex items-center gap-1 text-sm text-foreground/60 hover:text-foreground"
+          className="mb-6 inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-300 transition-colors"
         >
           ← Back to course
         </Link>
 
         {/* Lesson header */}
         <div className="mt-4 flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-50">
             {quizLesson.title}
           </h1>
-          <span className="shrink-0 rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+          <span className="shrink-0 rounded-full bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 text-sm font-medium text-indigo-300">
             {quizLesson.xpReward} XP
           </span>
         </div>
 
         {quizLesson.estimatedMinutes && (
-          <p className="mt-2 text-sm text-foreground/50">
+          <p className="mt-2 text-sm text-slate-500">
             ⏱ {quizLesson.estimatedMinutes} min
           </p>
         )}
@@ -213,23 +213,23 @@ export default async function LessonPage({
         {/* Back link */}
         <Link
           href={courseHref}
-          className="mb-4 inline-flex items-center gap-1 text-sm text-foreground/60 hover:text-foreground"
+          className="mb-4 inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-300 transition-colors"
         >
           ← Back to course
         </Link>
 
         {/* Lesson header */}
         <div className="mb-6 flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-50">
             {codeLesson.title}
           </h1>
-          <span className="shrink-0 rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+          <span className="shrink-0 rounded-full bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 text-sm font-medium text-indigo-300">
             {codeLesson.xpReward} XP
           </span>
         </div>
 
         {codeLesson.estimatedMinutes && (
-          <p className="mb-6 text-sm text-foreground/50">
+          <p className="mb-6 text-sm text-slate-500">
             ⏱ {codeLesson.estimatedMinutes} min
           </p>
         )}
@@ -266,23 +266,23 @@ export default async function LessonPage({
       {/* Back link */}
       <Link
         href={courseHref}
-        className="mb-6 inline-flex items-center gap-1 text-sm text-foreground/60 hover:text-foreground"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-300 transition-colors"
       >
         ← Back to course
       </Link>
 
       {/* Lesson header */}
       <div className="mt-4 flex items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-50">
           {readingLesson.title}
         </h1>
-        <span className="shrink-0 rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+        <span className="shrink-0 rounded-full bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 text-sm font-medium text-indigo-300">
           {readingLesson.xpReward} XP
         </span>
       </div>
 
       {readingLesson.estimatedMinutes && (
-        <p className="mt-2 text-sm text-foreground/50">
+        <p className="mt-2 text-sm text-slate-500">
           ⏱ {readingLesson.estimatedMinutes} min read
         </p>
       )}

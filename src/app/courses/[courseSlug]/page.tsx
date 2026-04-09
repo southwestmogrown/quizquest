@@ -50,7 +50,7 @@ function CheckIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="h-4 w-4 shrink-0 text-green-500"
+      className="h-4 w-4 shrink-0 text-green-400"
     >
       <path
         fillRule="evenodd"
@@ -138,20 +138,20 @@ export default async function CourseOutlinePage({
       {/* Back link */}
       <Link
         href="/courses"
-        className="mb-6 inline-flex items-center gap-1 text-sm text-foreground/60 hover:text-foreground"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-slate-500 transition-colors hover:text-slate-300"
       >
         ← All courses
       </Link>
 
       {/* Course header */}
-      <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground">
+      <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-50">
         {course.title}
       </h1>
-      <p className="mt-2 text-foreground/60">{course.description}</p>
+      <p className="mt-2 text-slate-400">{course.description}</p>
 
       {/* Overall progress */}
       <section aria-label="Course progress" className="mt-6">
-        <div className="mb-1 flex items-center justify-between text-sm text-foreground/70">
+        <div className="mb-1 flex items-center justify-between text-sm text-slate-400">
           <span id="progress-label">Progress</span>
           <span>
             {completedCount} / {totalCount} lessons completed
@@ -169,7 +169,7 @@ export default async function CourseOutlinePage({
           <section key={chapter.chapterSlug} aria-labelledby={`chapter-${chapter.chapterSlug}`}>
             <h2
               id={`chapter-${chapter.chapterSlug}`}
-              className="mb-3 text-xs font-semibold uppercase tracking-widest text-foreground/50"
+              className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-500"
             >
               Chapter {chapterIndex + 1} — {chapter.title}
             </h2>
@@ -187,15 +187,15 @@ export default async function CourseOutlinePage({
                       /* Locked — not interactive */
                       <div
                         aria-label={`${lesson.title} — locked`}
-                        className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white px-4 py-3 opacity-50"
+                        className="flex items-center justify-between gap-4 rounded-lg border border-white/5 bg-slate-900/20 px-4 py-3 opacity-50"
                       >
-                        <div className="flex items-center gap-3 text-gray-500">
+                        <div className="flex items-center gap-3 text-slate-500">
                           <LockIcon />
                           <span className="text-sm font-medium">
                             {lesson.title}
                           </span>
                         </div>
-                        <span className="shrink-0 text-xs text-gray-400">
+                        <span className="shrink-0 text-xs text-slate-600">
                           {lesson.xpReward} XP
                         </span>
                       </div>
@@ -203,24 +203,24 @@ export default async function CourseOutlinePage({
                       /* Available / in_progress / completed — clickable */
                       <Link
                         href={lessonHref}
-                        className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white px-4 py-3 transition hover:border-blue-400 hover:shadow-sm"
+                        className="flex items-center justify-between gap-4 rounded-lg border border-white/5 bg-slate-900/40 px-4 py-3 backdrop-blur-sm transition hover:border-indigo-500/30 hover:bg-slate-900/60"
                         aria-label={`${lesson.title} — ${state}`}
                       >
-                        <div className="flex items-center gap-3 text-gray-800">
+                        <div className="flex items-center gap-3 text-slate-100">
                           {state === "completed" ? (
                             <CheckIcon />
                           ) : (
-                            <div className="h-4 w-4 shrink-0 rounded-full border-2 border-blue-500" />
+                            <div className="h-4 w-4 shrink-0 rounded-full border-2 border-indigo-500" />
                           )}
                           <span className="text-sm font-medium">
                             {lesson.title}
                           </span>
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-slate-500">
                             {lesson.xpReward} XP
                           </span>
-                          <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                          <span className="rounded-full border border-indigo-500/30 bg-indigo-500/20 px-2 py-0.5 text-xs font-medium text-indigo-300">
                             {STATE_LABEL[state]}
                           </span>
                         </div>

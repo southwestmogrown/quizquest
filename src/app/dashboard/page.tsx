@@ -12,6 +12,7 @@ import Link from "next/link";
 import { loadAllCourses } from "@/lib/content/loader";
 import { db } from "@/lib/db";
 import ProgressBar from "@/components/ProgressBar";
+import DemoResetButton from "@/components/DemoResetButton";
 import type { Course } from "@/lib/content/types";
 
 // This page reads database state on every request and must not be
@@ -61,7 +62,7 @@ function StarIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="h-5 w-5 text-yellow-500"
+      className="h-5 w-5 text-yellow-400"
     >
       <path
         fillRule="evenodd"
@@ -79,7 +80,7 @@ function FlameIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="h-5 w-5 text-orange-500"
+      className="h-5 w-5 text-orange-400"
     >
       <path
         fillRule="evenodd"
@@ -97,7 +98,7 @@ function CheckCircleIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="h-5 w-5 text-green-500"
+      className="h-5 w-5 text-green-400"
     >
       <path
         fillRule="evenodd"
@@ -115,7 +116,7 @@ function TrophyIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="h-5 w-5 text-purple-500"
+      className="h-5 w-5 text-purple-400"
     >
       <path
         fillRule="evenodd"
@@ -320,7 +321,7 @@ export default async function DashboardPage() {
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
       {/* Welcome */}
-      <h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground">
+      <h1 className="mb-8 text-3xl font-bold tracking-tight text-slate-50">
         Welcome back, Learner!
       </h1>
 
@@ -330,17 +331,17 @@ export default async function DashboardPage() {
         /* ------------------------------------------------------------------ */
         <section
           aria-label="Get started"
-          className="mb-10 rounded-xl border border-blue-200 bg-blue-50 p-8 text-center"
+          className="mb-10 rounded-xl border border-indigo-500/20 bg-indigo-500/10 p-8 text-center"
         >
-          <h2 className="mb-3 text-xl font-semibold text-blue-900">
+          <h2 className="mb-3 text-xl font-semibold text-slate-50">
             Ready to start learning?
           </h2>
-          <p className="mb-6 text-blue-800/70">
+          <p className="mb-6 text-slate-400">
             Pick your first course and start earning XP!
           </p>
           <Link
             href="/courses"
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-5 py-2.5 text-sm font-semibold text-white hover:from-indigo-500 hover:to-indigo-400"
           >
             Browse Courses →
           </Link>
@@ -353,25 +354,25 @@ export default async function DashboardPage() {
           {/* Continue Learning */}
           <section
             aria-label="Continue learning"
-            className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+            className="rounded-xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-xl shadow-indigo-950/20"
           >
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-foreground/50">
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500">
               Continue Learning
             </h2>
 
             {continueLearning ? (
               <>
-                <p className="text-lg font-semibold text-foreground">
+                <p className="text-lg font-semibold text-slate-50">
                   {continueLearning.courseTitle}
                 </p>
-                <p className="mt-0.5 text-sm text-foreground/60">
+                <p className="mt-0.5 text-sm text-slate-400">
                   Ch {continueLearning.chapterIndex},{" "}
                   Lesson {continueLearning.lessonIndexInChapter}:{" "}
                   {continueLearning.lessonTitle}
                 </p>
 
                 <div className="mt-4">
-                  <div className="mb-1 flex items-center justify-between text-xs text-foreground/60">
+                  <div className="mb-1 flex items-center justify-between text-xs text-slate-400">
                     <span id="continue-progress-label">Progress</span>
                     <span>
                       {continueLearning.completedLessons}/
@@ -385,7 +386,7 @@ export default async function DashboardPage() {
                 </div>
 
                 {continueLearning.lastActiveAt && (
-                  <p className="mt-3 text-xs text-foreground/50">
+                  <p className="mt-3 text-xs text-slate-500">
                     Last active:{" "}
                     {relativeTime(continueLearning.lastActiveAt)}
                   </p>
@@ -393,7 +394,7 @@ export default async function DashboardPage() {
 
                 <Link
                   href={continueLearning.href}
-                  className="mt-5 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                  className="mt-5 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:from-indigo-500 hover:to-indigo-400"
                 >
                   Resume Lesson →
                 </Link>
@@ -401,13 +402,13 @@ export default async function DashboardPage() {
             ) : (
               /* All lessons completed in this course */
               <div>
-                <p className="text-sm text-foreground/60">
+                <p className="text-sm text-slate-400">
                   You&apos;ve completed all available lessons. Check back soon
                   for new content!
                 </p>
                 <Link
                   href="/courses"
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:from-indigo-500 hover:to-indigo-400"
                 >
                   Browse More Courses →
                 </Link>
@@ -418,45 +419,45 @@ export default async function DashboardPage() {
           {/* Stats card */}
           <section
             aria-label="Your stats"
-            className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+            className="rounded-xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-xl shadow-indigo-950/20"
           >
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-foreground/50">
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500">
               Your Stats
             </h2>
             <ul className="flex flex-col gap-4" role="list">
               <li className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-2 text-sm text-foreground/70">
+                <span className="flex items-center gap-2 text-sm text-slate-400">
                   <StarIcon />
                   Total XP
                 </span>
-                <span className="font-semibold text-foreground">
+                <span className="font-semibold text-slate-50">
                   {totalXp.toLocaleString()}
                 </span>
               </li>
               <li className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-2 text-sm text-foreground/70">
+                <span className="flex items-center gap-2 text-sm text-slate-400">
                   <FlameIcon />
                   Streak
                 </span>
-                <span className="font-semibold text-foreground">
+                <span className="font-semibold text-slate-50">
                   {currentStreak} {currentStreak === 1 ? "day" : "days"}
                 </span>
               </li>
               <li className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-2 text-sm text-foreground/70">
+                <span className="flex items-center gap-2 text-sm text-slate-400">
                   <CheckCircleIcon />
                   Lessons
                 </span>
-                <span className="font-semibold text-foreground">
+                <span className="font-semibold text-slate-50">
                   {totalCompletedLessons} done
                 </span>
               </li>
               <li className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-2 text-sm text-foreground/70">
+                <span className="flex items-center gap-2 text-sm text-slate-400">
                   <TrophyIcon />
                   Rank
                 </span>
-                <span className="font-semibold text-foreground">{rank}</span>
+                <span className="font-semibold text-slate-50">{rank}</span>
               </li>
             </ul>
           </section>
@@ -470,7 +471,7 @@ export default async function DashboardPage() {
         <section aria-labelledby="my-courses-heading" className="mb-10">
           <h2
             id="my-courses-heading"
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-foreground/50"
+            className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500"
           >
             My Courses
           </h2>
@@ -480,12 +481,12 @@ export default async function DashboardPage() {
                 <Link
                   key={course.courseSlug}
                   href={`/courses/${course.courseSlug}`}
-                  className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:border-blue-400 hover:shadow-md"
+                  className="rounded-xl border border-white/5 bg-slate-900/40 p-5 backdrop-blur-md shadow-xl shadow-indigo-950/20 transition hover:border-indigo-500/30 hover:bg-slate-900/60"
                   aria-label={`${course.title} — ${progressPercent}% complete`}
                 >
-                  <p className="font-semibold text-foreground">{course.title}</p>
+                  <p className="font-semibold text-slate-50">{course.title}</p>
                   <div className="mt-3">
-                    <div className="mb-1 flex items-center justify-between text-xs text-foreground/60">
+                    <div className="mb-1 flex items-center justify-between text-xs text-slate-400">
                       <span>{progressPercent}%</span>
                       <span>
                         {completedLessons}/{totalLessons} lessons
@@ -497,7 +498,7 @@ export default async function DashboardPage() {
                     />
                   </div>
                   {lastActiveAt && (
-                    <p className="mt-2 text-xs text-foreground/50">
+                    <p className="mt-2 text-xs text-slate-500">
                       Last: {relativeTime(lastActiveAt)}
                     </p>
                   )}
@@ -515,11 +516,11 @@ export default async function DashboardPage() {
         <section aria-labelledby="recent-activity-heading" className="mb-10">
           <h2
             id="recent-activity-heading"
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-foreground/50"
+            className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500"
           >
             Recent Activity
           </h2>
-          <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+          <div className="rounded-xl border border-white/5 bg-slate-900/40 backdrop-blur-md shadow-xl shadow-indigo-950/20">
             <ul role="list">
               {recentActivity.map((event, i) => {
                 const lessonTitle =
@@ -529,19 +530,19 @@ export default async function DashboardPage() {
                     key={event.id}
                     className={`flex items-center justify-between gap-4 px-5 py-3 ${
                       i < recentActivity.length - 1
-                        ? "border-b border-gray-100"
+                        ? "border-b border-white/5"
                         : ""
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className="shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">
+                      <span className="shrink-0 rounded-full border border-indigo-500/30 bg-indigo-500/20 px-2 py-0.5 text-xs font-semibold text-indigo-300">
                         +{event.xpDelta} XP
                       </span>
-                      <span className="text-sm text-foreground/80">
+                      <span className="text-sm text-slate-300">
                         Completed &quot;{lessonTitle}&quot;
                       </span>
                     </div>
-                    <span className="shrink-0 text-xs text-foreground/40">
+                    <span className="shrink-0 text-xs text-slate-500">
                       {relativeTime(event.createdAt)}
                     </span>
                   </li>
@@ -559,7 +560,7 @@ export default async function DashboardPage() {
         <section aria-labelledby="explore-heading" className="mb-4">
           <h2
             id="explore-heading"
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-foreground/50"
+            className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500"
           >
             Explore More Courses
           </h2>
@@ -567,18 +568,18 @@ export default async function DashboardPage() {
             {exploreCourses.map(({ course }) => (
               <div
                 key={course.courseSlug}
-                className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+                className="flex flex-col gap-3 rounded-xl border border-white/5 bg-slate-900/40 p-5 backdrop-blur-md shadow-xl shadow-indigo-950/20"
               >
-                <p className="font-semibold text-foreground">{course.title}</p>
-                <p className="text-xs text-foreground/60 capitalize">
+                <p className="font-semibold text-slate-50">{course.title}</p>
+                <p className="text-xs text-slate-400 capitalize">
                   {course.difficulty} · {course.estimatedHours}h
                 </p>
-                <p className="text-xs text-foreground/50">
+                <p className="text-xs text-slate-500">
                   {course.totalXp.toLocaleString()} XP to earn
                 </p>
                 <Link
                   href={`/courses/${course.courseSlug}`}
-                  className="mt-auto inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+                  className="mt-auto inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-3 py-1.5 text-xs font-semibold text-white hover:from-indigo-500 hover:to-indigo-400"
                 >
                   Start →
                 </Link>
@@ -588,7 +589,7 @@ export default async function DashboardPage() {
           <div className="mt-4 text-right">
             <Link
               href="/courses"
-              className="text-sm font-medium text-blue-600 hover:text-blue-700"
+              className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
             >
               Browse All Courses →
             </Link>
@@ -601,7 +602,7 @@ export default async function DashboardPage() {
         <section aria-labelledby="explore-new-heading">
           <h2
             id="explore-new-heading"
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-foreground/50"
+            className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500"
           >
             Explore Courses
           </h2>
@@ -609,18 +610,18 @@ export default async function DashboardPage() {
             {allCourses.slice(0, 6).map((course) => (
               <div
                 key={course.courseSlug}
-                className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+                className="flex flex-col gap-3 rounded-xl border border-white/5 bg-slate-900/40 p-5 backdrop-blur-md shadow-xl shadow-indigo-950/20"
               >
-                <p className="font-semibold text-foreground">{course.title}</p>
-                <p className="text-xs text-foreground/60 capitalize">
+                <p className="font-semibold text-slate-50">{course.title}</p>
+                <p className="text-xs text-slate-400 capitalize">
                   {course.difficulty} · {course.estimatedHours}h
                 </p>
-                <p className="text-xs text-foreground/50">
+                <p className="text-xs text-slate-500">
                   {course.totalXp.toLocaleString()} XP to earn
                 </p>
                 <Link
                   href={`/courses/${course.courseSlug}`}
-                  className="mt-auto inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+                  className="mt-auto inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-3 py-1.5 text-xs font-semibold text-white hover:from-indigo-500 hover:to-indigo-400"
                 >
                   Start →
                 </Link>
@@ -631,7 +632,7 @@ export default async function DashboardPage() {
             <div className="mt-4 text-right">
               <Link
                 href="/courses"
-                className="text-sm font-medium text-blue-600 hover:text-blue-700"
+                className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
               >
                 Browse All Courses →
               </Link>
@@ -639,6 +640,8 @@ export default async function DashboardPage() {
           )}
         </section>
       )}
+
+      <DemoResetButton />
     </main>
   );
 }

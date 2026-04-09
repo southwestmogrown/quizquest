@@ -114,19 +114,19 @@ export default function QuizClient({
 
   function choiceClassName(choiceId: string): string {
     const base =
-      "w-full rounded-lg border-2 px-4 py-3 text-left text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
+      "w-full rounded-lg border-2 px-4 py-3 text-left text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
     const state = getChoiceState(choiceId);
     switch (state) {
       case "selected":
-        return `${base} border-blue-500 bg-blue-50 text-blue-700`;
+        return `${base} border-indigo-500 bg-indigo-500/20 text-indigo-200`;
       case "correct":
-        return `${base} border-green-500 bg-green-50 text-green-800`;
+        return `${base} border-green-500 bg-green-500/20 text-green-300`;
       case "incorrect":
-        return `${base} border-red-500 bg-red-50 text-red-800`;
+        return `${base} border-red-500 bg-red-500/20 text-red-300`;
       case "neutral":
-        return `${base} border-gray-200 bg-white text-gray-500`;
+        return `${base} border-white/5 bg-slate-900/20 text-slate-500`;
       default:
-        return `${base} border-gray-200 bg-white text-gray-700 hover:border-blue-400 hover:bg-blue-50`;
+        return `${base} border-white/10 bg-slate-900/40 text-slate-300 hover:border-indigo-500/40 hover:bg-slate-900/60`;
     }
   }
 
@@ -137,7 +137,7 @@ export default function QuizClient({
   return (
     <>
       {/* Quiz prompt */}
-      <p className="text-lg font-semibold text-foreground">{prompt}</p>
+      <p className="text-lg font-semibold text-slate-50">{prompt}</p>
 
       {/* Choices */}
       <div className="mt-6 space-y-3" role="group" aria-label="Answer choices">
@@ -161,8 +161,8 @@ export default function QuizClient({
         <p
           className={`mt-4 rounded-lg px-4 py-3 text-sm ${
             result.correct
-              ? "bg-green-50 text-green-800"
-              : "bg-red-50 text-red-800"
+              ? "bg-green-500/10 border border-green-500/20 text-green-300"
+              : "bg-red-500/10 border border-red-500/20 text-red-300"
           }`}
           role="status"
         >
@@ -173,7 +173,7 @@ export default function QuizClient({
       {/* Action row */}
       <div className="mt-6 flex items-center justify-end gap-3">
         {error && (
-          <p className="mr-auto text-sm text-red-600" role="alert">
+          <p className="mr-auto text-sm text-red-400" role="alert">
             {error}
           </p>
         )}
@@ -182,7 +182,7 @@ export default function QuizClient({
         {result && !result.correct && (
           <button
             onClick={handleRetry}
-            className="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            className="border border-white/10 text-slate-400 hover:bg-white/5 hover:text-slate-50 rounded-lg px-5 py-2.5 text-sm font-semibold transition"
           >
             Try Again
           </button>
@@ -193,7 +193,7 @@ export default function QuizClient({
           <button
             onClick={handleSubmit}
             disabled={!selectedId || loading}
-            className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white rounded-lg px-6 py-2.5 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Checking…" : "Submit Answer"}
           </button>

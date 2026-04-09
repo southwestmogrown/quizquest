@@ -1,0 +1,26 @@
+# Local development: run the code-runner sidecar alongside `pnpm dev`.
+#
+# Usage:
+#   docker compose up --build
+#
+# Then in a separate terminal:
+#   pnpm dev
+#
+# The Next.js app will call http://localhost:8080/run (CODE_RUNNER_URL default).
+
+services:
+  runner:
+    build:
+      context: ./runner
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+    restart: unless-stopped
+    # Read-only root FS for extra isolation; /tmp is still writable.
+    read_only: true
+    tmpfs:
+      - /tmp:exec,mode=1777
+    # Hard resource limits — mirror the contract §6 values.
+    mem_limit: 256m
+    cpus: "1.0"

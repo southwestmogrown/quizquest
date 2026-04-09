@@ -23,6 +23,10 @@ vi.mock("@/lib/db", () => ({
   db: {
     userProgress: {
       findMany: vi.fn(),
+      upsert: vi.fn(),
+    },
+    user: {
+      upsert: vi.fn(),
     },
   },
 }));
@@ -156,10 +160,10 @@ describe("CourseOutlinePage", () => {
     expect(html).toContain("2 / 2 lessons completed");
   });
 
-  it("locked lessons have aria-label containing 'locked'", async () => {
-    // No progress rows → all locked
+  it("subsequent lessons are locked when only first lesson is auto-enrolled", async () => {
+    // No progress rows → auto-enroll fires: first lesson becomes available, rest locked
     const html = await renderPage();
-    expect(html).toContain("What is Go? — locked");
+    expect(html).toContain("What is Go? — available");
     expect(html).toContain("Hello World — locked");
   });
 

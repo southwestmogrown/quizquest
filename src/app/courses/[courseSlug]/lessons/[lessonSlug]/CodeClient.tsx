@@ -193,9 +193,9 @@ export default function CodeClient({
       {/* Split-panel layout */}
       <div className="flex min-h-[600px] gap-4">
         {/* Left panel — lesson description */}
-        <div className="w-2/5 overflow-y-auto rounded-lg border border-gray-200 bg-white p-6">
+        <div className="w-2/5 overflow-y-auto rounded-xl border border-white/5 bg-slate-900/40 backdrop-blur-md p-6">
           <div
-            className="prose prose-slate max-w-none"
+            className="prose prose-invert prose-slate max-w-none"
             // Content is server-rendered from trusted repository files.
             dangerouslySetInnerHTML={{ __html: htmlContent }}
           />
@@ -210,7 +210,7 @@ export default function CodeClient({
               value={language}
               disabled
               aria-label="Language"
-              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="rounded-md border border-white/10 bg-slate-800 px-3 py-1.5 text-sm text-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             >
               {Object.entries(LANGUAGE_LABELS).map(([val, label]) => (
                 <option
@@ -228,21 +228,21 @@ export default function CodeClient({
               <button
                 onClick={handleReset}
                 disabled={isRunning}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className="border border-white/10 text-slate-400 hover:bg-white/5 hover:text-slate-50 rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Reset
               </button>
               <button
                 onClick={handleRun}
                 disabled={isRunning}
-                className="rounded-lg border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
+                className="border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20 rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading === "running" ? "Running…" : "Run"}
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isRunning}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white rounded-lg px-4 py-2 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading === "submitting" ? "Submitting…" : "Submit"}
               </button>
@@ -256,18 +256,18 @@ export default function CodeClient({
             disabled={isRunning}
             spellCheck={false}
             aria-label="Code editor"
-            className="h-72 w-full resize-none rounded-lg border border-gray-700 bg-gray-900 p-4 font-mono text-sm leading-relaxed text-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-70"
+            className="h-72 w-full resize-none rounded-lg border border-slate-700 bg-slate-900 p-4 font-mono text-sm leading-relaxed text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
           />
 
           {/* Output panel */}
           {showOutputPanel && (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+            <div className="rounded-xl border border-white/5 bg-slate-950/60 p-4">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Output
               </p>
 
               {error && (
-                <p className="text-sm text-red-600" role="alert">
+                <p className="text-sm text-red-400" role="alert">
                   {error}
                 </p>
               )}
@@ -275,19 +275,19 @@ export default function CodeClient({
               {outputToShow && (
                 <div>
                   {outputToShow.stdout && (
-                    <pre className="whitespace-pre-wrap break-words text-sm text-gray-800">
+                    <pre className="whitespace-pre-wrap break-words text-sm text-slate-300">
                       {outputToShow.stdout}
                     </pre>
                   )}
                   {outputToShow.stderr && (
-                    <pre className="whitespace-pre-wrap break-words text-sm text-red-600">
+                    <pre className="whitespace-pre-wrap break-words text-sm text-red-400">
                       {outputToShow.stderr}
                     </pre>
                   )}
                   {!outputToShow.stdout && !outputToShow.stderr && (
-                    <p className="text-sm italic text-gray-500">(no output)</p>
+                    <p className="text-sm italic text-slate-500">(no output)</p>
                   )}
-                  <p className="mt-2 text-xs text-gray-400">
+                  <p className="mt-2 text-xs text-slate-600">
                     Exit code: {outputToShow.exitCode}
                   </p>
                 </div>
@@ -295,16 +295,16 @@ export default function CodeClient({
 
               {/* Score breakdown after submit */}
               {submitResult && (
-                <div className="mt-4 border-t border-gray-200 pt-4">
+                <div className="mt-4 border-t border-white/10 pt-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-gray-700">
+                    <p className="text-sm font-semibold text-slate-300">
                       Score: {Math.round(submitResult.scorePercent)}%
                     </p>
                     <span
-                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold border ${
                         submitResult.passed
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                          ? "bg-green-500/20 text-green-300 border-green-500/30"
+                          : "bg-red-500/20 text-red-300 border-red-500/30"
                       }`}
                     >
                       {submitResult.passed ? "Passed" : "Failed"}
@@ -331,7 +331,7 @@ export default function CodeClient({
                               }`}
                               aria-hidden="true"
                             />
-                            <span className="text-gray-600">
+                            <span className="text-slate-400">
                               {g.visibility === "detailed"
                                 ? `${g.id}: ${g.testsPassed}/${g.testsTotal} tests passed`
                                 : `${g.id}: ${g.testsPassed === g.testsTotal ? "passed" : "failed"}`}
@@ -342,7 +342,7 @@ export default function CodeClient({
                   )}
 
                   {!submitResult.passed && (
-                    <p className="mt-3 text-sm text-gray-600">
+                    <p className="mt-3 text-sm text-slate-400">
                       Fix the errors and try submitting again.
                     </p>
                   )}

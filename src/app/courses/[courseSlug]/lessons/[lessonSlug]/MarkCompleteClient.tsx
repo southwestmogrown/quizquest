@@ -89,7 +89,7 @@ export default function MarkCompleteClient({
     <>
       {/* Lesson markdown content */}
       <div
-        className="prose prose-slate max-w-none"
+        className="prose prose-invert prose-slate max-w-none"
         // Content is server-rendered from trusted repository files.
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />
@@ -97,14 +97,14 @@ export default function MarkCompleteClient({
       {/* Mark Complete button */}
       <div className="mt-10 flex justify-end">
         {error && (
-          <p className="mr-4 self-center text-sm text-red-600" role="alert">
+          <p className="mr-4 self-center text-sm text-red-400" role="alert">
             {error}
           </p>
         )}
         <button
           onClick={handleMarkComplete}
           disabled={loading || result !== null}
-          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-indigo-500 hover:to-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Saving…" : result !== null ? "Completed ✓" : "Mark Complete"}
         </button>
