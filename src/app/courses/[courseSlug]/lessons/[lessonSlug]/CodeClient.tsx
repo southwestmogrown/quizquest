@@ -12,6 +12,9 @@
 // ---------------------------------------------------------------------------
 
 import { useState } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { go } from "@codemirror/lang-go";
+import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import CompletionOverlay from "@/components/CompletionOverlay";
 
 // ---------------------------------------------------------------------------
@@ -250,14 +253,20 @@ export default function CodeClient({
           </div>
 
           {/* Code editor */}
-          <textarea
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            disabled={isRunning}
-            spellCheck={false}
+          <div
+            className={`overflow-hidden rounded-lg border border-slate-700 ${isRunning ? "pointer-events-none opacity-70" : ""}`}
             aria-label="Code editor"
-            className="h-72 w-full resize-none rounded-lg border border-slate-700 bg-slate-900 p-4 font-mono text-sm leading-relaxed text-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-70"
-          />
+          >
+            <CodeMirror
+              value={code}
+              onChange={(val) => setCode(val)}
+              extensions={[go()]}
+              theme={vscodeDark}
+              height="288px"
+              basicSetup={{ lineNumbers: true, foldGutter: false }}
+              editable={!isRunning}
+            />
+          </div>
 
           {/* Output panel */}
           {showOutputPanel && (
