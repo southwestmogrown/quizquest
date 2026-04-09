@@ -31,6 +31,3 @@ services:
     region: oregon
     dockerfilePath: ./runner/Dockerfile
     dockerContext: ./runner
-    envVars:
-      - key: PORT
-        value: "8080"
