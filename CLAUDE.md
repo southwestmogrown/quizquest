@@ -190,7 +190,7 @@ Key implementation files:
 - `runner/Dockerfile` — multi-stage build; pre-warms Go build cache **as the runner user** (`RUNNER_TMPDIR=/home/runner/work`) so files are writable at runtime
 - `runner/main.go` — startup self-test (`verifyEnvironment()`) runs `go run` before accepting traffic; fails fast with a clear log if the environment is broken; per-request logging
 
-**Test count: 57/57 passing (unit). Build clean.**
+**Test count: 214/214 passing (unit). Build clean.**
 
 ### Design system (complete)
 
@@ -262,15 +262,13 @@ There is/was a public web service named `quizquest-runner` (separate from `quizq
 - Design system applied sitewide (landing page, courses, dashboard, lessons)
 
 **P0 — Next up**
-- **M4-3: README for recruiters** — deployment architecture diagram, live demo link, tech decisions; highest-leverage portfolio artifact
+- **README for recruiters** — deployment architecture diagram, live demo link, tech decisions; highest-leverage portfolio artifact
 
 **P1**
 - **Socratic Coach eval** — run `pnpm eval-coach` with Ollama before shipping; wire `ANTHROPIC_API_KEY` on Render
-- **M3-2: Landing page polish** — extend "Engineering Editorial" design system sitewide
 
 **P2**
 - **Responsive audit** — check all pages at mobile breakpoints
-- **README for recruiters** — deployment architecture, live demo link, tech decisions
 
 **P3**
 - M5: Back-fill missing tests (pages, client components, db.ts, validate-content script)
