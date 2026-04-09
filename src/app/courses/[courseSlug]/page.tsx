@@ -105,6 +105,22 @@ export default async function CourseOutlinePage({
     progressRows.map((r) => [r.lessonSlug, r.state])
   );
 
+  // Auto-enroll: if the user has no progress for this course yet, unlock the first lesson.
+  if (progressRows.length === 0 && allLessons.length > 0) {
+    const firstSlug = allLessons[0].lessonSlug;
+    await db.user.upsert({
+      where: { id: DEMO_USER_ID },
+      update: {},
+      create: { id: DEMO_USER_ID, displayName: "Learner" },
+    });
+    await db.userProgress.upsert({
+      where: { userId_lessonSlug: { userId: DEMO_USER_ID, lessonSlug: firstSlug } },
+      update: {},
+      create: { userId: DEMO_USER_ID, lessonSlug: firstSlug, state: "available" },
+    });
+    stateMap.set(firstSlug, "available");
+  }
+
   // Progress counts -----------------------------------------------------------
   const totalCount = allLessons.length;
   const completedCount = [...stateMap.values()].filter(

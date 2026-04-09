@@ -136,7 +136,7 @@ export default async function DashboardPage() {
   // -------------------------------------------------------------------------
   let allCourses: Course[] = [];
   try {
-    allCourses = loadAllCourses();
+    allCourses = loadAllCourses().filter((c) => c.courseSlug !== "test-course");
   } catch (err) {
     console.error("[DashboardPage] Failed to load courses:", err);
   }

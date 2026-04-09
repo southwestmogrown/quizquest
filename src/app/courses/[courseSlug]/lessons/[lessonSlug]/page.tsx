@@ -19,6 +19,7 @@ import { db } from "@/lib/db";
 import MarkCompleteClient from "./MarkCompleteClient";
 import QuizClient from "./QuizClient";
 import CodeClient from "./CodeClient";
+import LessonNav from "@/components/LessonNav";
 import type { LessonState } from "@prisma/client";
 import type { ReadingLesson, QuizLesson, CodeLesson } from "@/lib/content/types";
 
@@ -99,15 +100,19 @@ export default async function LessonPage({
   const completedCount = progressRows.filter((r) => r.state === "completed").length;
   const totalCount = allLessons.length;
 
-  // ----- 5. Determine next lesson href ------------------------------------
+  // ----- 5. Determine prev/next lesson hrefs ------------------------------------
   const allLessonSlugs = allLessons.map((l) => l.lessonSlug);
   const currentIndex = allLessonSlugs.indexOf(lessonSlug);
   const nextSlug =
     currentIndex >= 0 && currentIndex < allLessonSlugs.length - 1
       ? allLessonSlugs[currentIndex + 1]
       : null;
+  const prevSlug = currentIndex > 0 ? allLessonSlugs[currentIndex - 1] : null;
   const nextLessonHref = nextSlug
     ? `/courses/${courseSlug}/lessons/${nextSlug}`
+    : null;
+  const prevLessonHref = prevSlug
+    ? `/courses/${courseSlug}/lessons/${prevSlug}`
     : null;
   const courseHref = `/courses/${courseSlug}`;
 
@@ -190,6 +195,8 @@ export default async function LessonPage({
             courseHref={courseHref}
           />
         </div>
+
+        <LessonNav prevHref={prevLessonHref} nextHref={nextLessonHref} courseHref={courseHref} />
       </main>
     );
   }
@@ -240,6 +247,8 @@ export default async function LessonPage({
           nextLessonHref={nextLessonHref}
           courseHref={courseHref}
         />
+
+        <LessonNav prevHref={prevLessonHref} nextHref={nextLessonHref} courseHref={courseHref} />
       </main>
     );
   }
@@ -291,6 +300,8 @@ export default async function LessonPage({
           courseHref={courseHref}
         />
       </div>
+
+      <LessonNav prevHref={prevLessonHref} nextHref={nextLessonHref} courseHref={courseHref} />
     </main>
   );
 }

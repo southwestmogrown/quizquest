@@ -311,7 +311,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             userId: DEMO_USER_ID,
             lessonSlug: trimmedLessonSlug,
             eventType: "lesson_completed",
-            xpDelta: 0,
+            xpDelta: delta,
           },
         });
       }

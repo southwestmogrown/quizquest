@@ -6,7 +6,9 @@ export default function CoursesPage() {
   let courses: Course[] = [];
   let loadError = false;
   try {
-    courses = loadAllCourses().sort((a, b) => a.title.localeCompare(b.title));
+    courses = loadAllCourses()
+      .filter((c) => c.courseSlug !== "test-course")
+      .sort((a, b) => a.title.localeCompare(b.title));
   } catch (err) {
     console.error("[CoursesPage] Failed to load courses:", err);
     loadError = true;

@@ -21,6 +21,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "7.4.2",
     "@prisma/client": "^7.4.2",
+    "@tailwindcss/typography": "^0.5.19",
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.1.1",
     "marked": "^17.0.4",
