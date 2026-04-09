@@ -1,0 +1,18 @@
+chapterSlug: agentic-development
+title: Agentic Development
+lessons:
+  - lessonSlug: what-is-agentic
+    title: What Is Agentic Development?
+    type: reading
+  - lessonSlug: plan-then-execute
+    title: Plan, Then Execute
+    type: reading
+  - lessonSlug: the-review-loop
+    title: You Are the Tech Lead
+    type: reading
+  - lessonSlug: token-estimator
+    title: Token Estimator
+    type: code
+  - lessonSlug: quiz-agentic
+    title: "Quiz: Agentic Workflows"
+    type: quiz

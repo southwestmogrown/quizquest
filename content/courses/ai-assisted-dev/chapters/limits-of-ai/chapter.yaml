@@ -1,0 +1,15 @@
+chapterSlug: limits-of-ai
+title: The Limits of AI
+lessons:
+  - lessonSlug: where-ai-struggles
+    title: Where AI Struggles
+    type: reading
+  - lessonSlug: security-and-ai
+    title: AI and Security
+    type: reading
+  - lessonSlug: staying-in-control
+    title: Staying in Control
+    type: reading
+  - lessonSlug: quiz-final
+    title: "Final Quiz: AI Development Mastery"
+    type: quiz

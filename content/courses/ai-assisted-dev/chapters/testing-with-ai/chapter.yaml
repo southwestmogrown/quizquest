@@ -1,0 +1,18 @@
+chapterSlug: testing-with-ai
+title: Testing with AI
+lessons:
+  - lessonSlug: tdd-with-ai
+    title: Test-Driven AI Development
+    type: reading
+  - lessonSlug: ai-writes-tests
+    title: "AI Writes Tests, You Write the Assertions"
+    type: reading
+  - lessonSlug: write-the-validator
+    title: Write the Validator
+    type: code
+  - lessonSlug: the-feedback-loop
+    title: The Feedback Loop
+    type: reading
+  - lessonSlug: quiz-testing
+    title: "Quiz: AI-Assisted Testing"
+    type: quiz

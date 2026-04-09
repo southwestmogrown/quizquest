@@ -1,0 +1,15 @@
+chapterSlug: reading-ai-output
+title: Reading and Trusting AI Output
+lessons:
+  - lessonSlug: reading-ai-code
+    title: Reading AI-Generated Code
+    type: reading
+  - lessonSlug: how-ai-makes-mistakes
+    title: How AI Makes Mistakes
+    type: reading
+  - lessonSlug: fix-the-bug
+    title: Fix the Bug
+    type: code
+  - lessonSlug: quiz-trust
+    title: "Quiz: Reading AI Output"
+    type: quiz

@@ -1,0 +1,19 @@
+courseSlug: ai-assisted-dev
+title: "AI-Assisted Development"
+description: "Learn to build software faster and smarter using AI tools. From prompt engineering to agentic workflows — the practical skills that separate vibe coders from AI-powered engineers."
+difficulty: intermediate
+estimatedHours: 4
+totalXp: 550
+chapters:
+  - chapterSlug: the-ai-mindset
+    title: The AI Developer Mindset
+  - chapterSlug: prompting-for-code
+    title: Prompting for Code
+  - chapterSlug: reading-ai-output
+    title: Reading and Trusting AI Output
+  - chapterSlug: agentic-development
+    title: Agentic Development
+  - chapterSlug: testing-with-ai
+    title: Testing with AI
+  - chapterSlug: limits-of-ai
+    title: The Limits of AI

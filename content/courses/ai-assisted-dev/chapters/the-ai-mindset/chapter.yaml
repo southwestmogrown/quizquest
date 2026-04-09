@@ -1,0 +1,12 @@
+chapterSlug: the-ai-mindset
+title: The AI Developer Mindset
+lessons:
+  - lessonSlug: the-ai-shift
+    title: The AI Shift
+    type: reading
+  - lessonSlug: your-ai-toolkit
+    title: Your AI Toolkit
+    type: reading
+  - lessonSlug: quiz-mindset
+    title: "Quiz: The AI Developer Mindset"
+    type: quiz

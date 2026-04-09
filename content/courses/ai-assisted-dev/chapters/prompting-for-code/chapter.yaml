@@ -1,0 +1,18 @@
+chapterSlug: prompting-for-code
+title: Prompting for Code
+lessons:
+  - lessonSlug: anatomy-of-a-prompt
+    title: Anatomy of a Good Prompt
+    type: reading
+  - lessonSlug: context-is-everything
+    title: Context Is Everything
+    type: reading
+  - lessonSlug: prompt-patterns
+    title: Prompt Patterns That Work
+    type: reading
+  - lessonSlug: build-a-prompt
+    title: Build a Structured Prompt
+    type: code
+  - lessonSlug: quiz-prompting
+    title: "Quiz: Prompting Strategies"
+    type: quiz
