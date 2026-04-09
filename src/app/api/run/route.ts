@@ -95,6 +95,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           { status: res.status }
         );
       }
+
+      const upstreamBody = typeof res.text === "function"
+        ? await res.text().catch(() => "")
+        : "";
+      console.error("Runner request failed", {
+        status: res.status,
+        url: `${CODE_RUNNER_URL}/run`,
+        body: upstreamBody.slice(0, 500),
+      });
+
       return NextResponse.json(
         { error: "Runner unavailable" },
         { status: 503 }
@@ -102,7 +112,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     runnerResponse = (await res.json()) as CodeRunnerResponse;
-  } catch {
+  } catch (error) {
+    console.error("Runner request threw", {
+      url: `${CODE_RUNNER_URL}/run`,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Runner unavailable" },
       { status: 503 }

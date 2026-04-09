@@ -14,5 +14,7 @@ export function getCodeRunnerBaseUrl(rawUrl = process.env.CODE_RUNNER_URL): stri
     ? trimmedUrl
     : `http://${trimmedUrl}`;
 
-  return withProtocol.replace(/\/+$/, "");
+  // Accept either a base URL (recommended) or a URL that mistakenly includes
+  // the /run endpoint, and normalize to a base URL.
+  return withProtocol.replace(/\/run\/?$/i, "").replace(/\/+$/, "");
 }

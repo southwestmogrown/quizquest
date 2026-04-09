@@ -17,4 +17,10 @@ describe("getCodeRunnerBaseUrl", () => {
       "http://quizquest-runner:8080"
     );
   });
+
+  it("strips a trailing /run endpoint if present", () => {
+    expect(getCodeRunnerBaseUrl("https://runner.example.com/run")).toBe(
+      "https://runner.example.com"
+    );
+  });
 });
