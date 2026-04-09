@@ -18,6 +18,9 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "QuizQuest",
   description: "A gamified Learning Management System",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({

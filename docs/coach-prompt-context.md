@@ -10,7 +10,7 @@ QuizQuest has an AI **Coach** sidebar available on every lesson type:
 | Quiz | Socratic — same rules, auto-opens after 2 wrong answers | "I'm stuck" button |
 | Reading | Q&A — answers questions about lesson content directly | "Ask the Coach" button |
 
-Production runs Claude (`claude-opus-4-6`). Local eval uses Ollama (`phi4-mini` by default).
+Production runs Claude (`claude-opus-4-6`). Local eval uses Ollama (`gemma3:4b` by default).
 
 ---
 
@@ -40,7 +40,7 @@ Rules:
 REMINDER: You must end your response with a question mark. Check before you finish.
 ```
 
-The question-mark rule appears at both the top and the bottom — small models (phi4-mini, qwen) respond to repetition and recency.
+The question-mark rule appears at both the top and the bottom — small models (gemma3:4b, qwen) respond to repetition and recency.
 
 ---
 
@@ -114,9 +114,9 @@ Be direct and helpful.
 
 Source: `scripts/eval-coach.ts` — 5 adversarial cases for Socratic mode (code + quiz).
 
-**Run locally (phi4-mini):**
+**Run locally (gemma3:4b):**
 ```bash
-ollama pull phi4-mini   # one-time
+ollama pull gemma3:4b   # one-time
 pnpm eval-coach
 ```
 
@@ -158,6 +158,6 @@ All 5 require `?` in the response.
 ## Tuning Notes
 
 - The key lever for small models is **tail instructions** — the last line the model reads before generating. Each builder ends with an explicit `MUST … ending with '?'` directive.
-- The `CORE_RULES` question-mark enforcement is doubled (top + bottom) because phi4-mini and qwen ignore middle-of-prompt rules under adversarial pressure.
+- The `CORE_RULES` question-mark enforcement is doubled (top + bottom) because gemma3:4b and qwen ignore middle-of-prompt rules under adversarial pressure.
 - The give-up / frustration rule was tightened from "gently refuse" to "your only response is one Socratic question. Never console, never explain, never suggest alternatives." — the original wording left room for the model to interpret "help" as giving advice without a question.
 - Reading coach deliberately omits CORE_RULES — it's a Q&A assistant, not a Socratic guide, and imposing question-only constraints would break its purpose.

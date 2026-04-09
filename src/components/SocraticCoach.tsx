@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 
 // ---------------------------------------------------------------------------
 // SocraticCoach — slide-in chat drawer for Socratic hint coaching.
@@ -196,7 +197,24 @@ export default function SocraticCoach({
                   : "bg-slate-800/60 text-slate-300 border border-white/5"
               }`}
             >
-              {msg.content || (
+              {msg.content ? (
+                msg.role === "assistant" ? (
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                      ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
+                      ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
+                      li: ({ children }) => <li>{children}</li>,
+                      strong: ({ children }) => <strong className="font-semibold text-slate-100">{children}</strong>,
+                      code: ({ children }) => <code className="rounded bg-slate-700 px-1 py-0.5 font-mono text-xs text-indigo-300">{children}</code>,
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                ) : (
+                  msg.content
+                )
+              ) : (
                 <span className="animate-pulse text-slate-500">▍</span>
               )}
             </div>

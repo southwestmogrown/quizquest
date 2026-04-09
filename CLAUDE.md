@@ -37,7 +37,7 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/quizquest
 ANTHROPIC_API_KEY=sk-ant-...          # required for Socratic Coach in production
 COACH_PROVIDER=anthropic              # "anthropic" (default) | "ollama" (local eval)
 OLLAMA_BASE_URL=http://localhost:11434  # optional, default shown
-OLLAMA_MODEL=phi4-mini                  # optional, default shown
+OLLAMA_MODEL=gemma3:4b                  # optional, default shown
 ```
 
 - `.env.local` — loaded by Next.js at runtime
@@ -261,14 +261,14 @@ There is/was a public web service named `quizquest-runner` (separate from `quizq
 - Socratic Coach — available on all lesson types:
   - Code + quiz: Socratic mode ("I'm stuck" button → guided questioning)
   - Reading: Q&A mode ("Ask the Coach" button → answers questions about lesson content)
-  - `ANTHROPIC_API_KEY` wired on Render; phi4-mini as local eval model
+  - `ANTHROPIC_API_KEY` wired on Render; gemma3:4b as local eval model
 - Design system applied sitewide (landing page, courses, dashboard, lessons)
 
 **P0 — Next up**
 - **README for recruiters** — deployment architecture diagram, live demo link, tech decisions; highest-leverage portfolio artifact
 
 **P1**
-- **Socratic Coach eval** — pull phi4-mini locally (`ollama pull phi4-mini`) and run `pnpm eval-coach` to validate prompt quality before demoing
+- **Socratic Coach eval** — pull gemma3:4b locally (`ollama pull gemma3:4b`) and run `pnpm eval-coach` to validate prompt quality before demoing
 
 **P2**
 - **Responsive audit** — check all pages at mobile breakpoints

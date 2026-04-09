@@ -26,7 +26,16 @@ export default function TopNavBar() {
 
   return (
     <nav className="sticky top-0 z-40 flex items-center justify-between px-6 py-3 bg-slate-950/80 backdrop-blur-md border-b border-white/5">
-      <span className="text-xl font-bold text-indigo-400">QuizQuest</span>
+      <Link href="/" className="flex items-center gap-2.5">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="32" height="32" rx="7" fill="#4f46e5"/>
+          <circle cx="14" cy="15" r="6.5" stroke="white" strokeWidth="2.8" fill="none"/>
+          <line x1="18.6" y1="20.6" x2="24" y2="26" stroke="white" strokeWidth="2.8" strokeLinecap="round"/>
+        </svg>
+        <span className="text-xl font-bold">
+          <span className="text-slate-100">Quiz</span><span className="text-indigo-400">Quest</span>
+        </span>
+      </Link>
       <ul className="flex gap-6 items-center">
         {NAV_LINKS.map(({ href, label }) => {
           const isActive = pathname === href;
