@@ -37,7 +37,7 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/quizquest
 ANTHROPIC_API_KEY=sk-ant-...          # required for Socratic Coach in production
 COACH_PROVIDER=anthropic              # "anthropic" (default) | "ollama" (local eval)
 OLLAMA_BASE_URL=http://localhost:11434  # optional, default shown
-OLLAMA_MODEL=llama3.2                   # optional, default shown
+OLLAMA_MODEL=qwen2.5:3b                 # optional, default shown
 ```
 
 - `.env.local` — loaded by Next.js at runtime
