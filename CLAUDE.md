@@ -132,7 +132,7 @@ Validate content: `pnpm validate-content`
 - **Anti-farming**: XP delta = `max(0, xpForScore - bestXpAwarded)` — re-submitting same score awards 0 XP.
 - **Demo user**: app is hardcoded to `demo-user` — no auth system.
 
-## Current State (as of 2026-04-09, updated M2)
+## Current State (as of 2026-04-09, updated M4)
 
 ### Completed backlog (21 original issues)
 
@@ -172,27 +172,96 @@ Validate content: `pnpm validate-content`
 | M1-4: Fix activity feed — `lesson_completed` events now store actual xpDelta | Done |
 | M1-5: `@tailwindcss/typography` installed and wired via `@plugin` in globals.css | Done |
 
-**Test count: 67/67 passing (unit). Build clean.**
+### M4 — Deployment (completed 2026-04-09)
+
+Deployed to Render via Blueprint (`render.yaml`). All three resources are managed as IaC.
+
+| Resource | Render type | Notes |
+|---|---|---|
+| `quizquest` | web service (Node) | Next.js app at https://quizquest-5g96.onrender.com |
+| `quizquest-runner-internal` | private service (Docker) | Go code runner, port 8080, not publicly reachable |
+| `quizquest-db` | PostgreSQL | Managed Render Postgres |
+
+Key implementation files:
+- `render.yaml` — full Blueprint spec; `CODE_RUNNER_URL` wired via `fromService.property: hostport`
+- `src/lib/code-runner/client.ts` — URL normalization (`host:port` → `http://host:port`), shared timeout constants
+- `runner/Dockerfile` — multi-stage build; pre-warms Go build cache **as the runner user** (`RUNNER_TMPDIR=/home/runner/work`) so files are writable at runtime
+- `runner/main.go` — startup self-test (`verifyEnvironment()`) runs `go run` before accepting traffic; fails fast with a clear log if the environment is broken; per-request logging
+
+**Test count: 57/57 passing (unit). Build clean.**
 
 ### Design system (in progress)
 
-Stitch (Google frontend design AI) generated a design system brief. Output is at `docs/Stitch-design-system.md`. Design direction: **"Engineering Editorial"** — dark theme (`#020617` slate-950 bg), deep indigo accent (`#4f46e5`), glass panels (`backdrop-blur`, `bg-slate-900/60`), Plus Jakarta Sans + JetBrains Mono fonts, glow effects. This is a significant departure from the current light/blue-600 design — implementation is the next major UI milestone.
+Stitch (Google frontend design AI) generated a design system brief at `docs/Stitch-design-system.md`. Direction: **"Engineering Editorial"** — dark theme (`#020617` slate-950 bg), deep indigo accent (`#4f46e5`), glass panels (`backdrop-blur`, `bg-slate-900/60`), Plus Jakarta Sans + JetBrains Mono fonts, glow effects. This design is **already applied** to the lesson and course pages — it is the next major UI milestone to extend sitewide.
+
+## Deployment (Render)
+
+The entire stack deploys from `render.yaml` via Render Blueprint. Push to `main` → Render auto-deploys.
+
+### Services
+
+| Service | Type | Region |
+|---|---|---|
+| `quizquest` | Web (Node) | Oregon |
+| `quizquest-runner-internal` | Private (Docker) | Oregon |
+| `quizquest-db` | PostgreSQL | Oregon |
+
+All three must be in the same Render workspace and region for the private network to work.
+
+### How the runner is wired
+
+`CODE_RUNNER_URL` on the web service is set by Blueprint using:
+```yaml
+- key: CODE_RUNNER_URL
+  fromService:
+    name: quizquest-runner-internal
+    type: pserv
+    property: hostport
+```
+Render injects this as `quizquest-runner-internal:8080`. `client.ts` prefixes `http://` automatically.
+
+### Why runner uses a dedicated tmp dir
+
+The runner container pre-warms the Go build cache at image build time. The pre-warm runs as `USER runner` and writes to `RUNNER_TMPDIR=/home/runner/work`. On Render, `/tmp` may be root-owned or have a `noexec` mount — using a home-dir subdirectory avoids both problems.
+
+### Startup self-test
+
+`verifyEnvironment()` in `main.go` runs a `go run` smoke test before the HTTP server binds. If it fails, the container exits immediately with:
+```
+STARTUP CHECK FAILED: ...
+```
+This makes silent execution failures impossible — if the container is "live" in Render's eyes, the Go toolchain is confirmed working.
+
+### Debugging on Render
+
+From the **quizquest** web shell:
+```bash
+echo "$CODE_RUNNER_URL"                             # should be quizquest-runner-internal:8080
+curl -sv "http://$CODE_RUNNER_URL/healthz"          # should return 200 "ok"
+```
+
+From **quizquest-runner-internal** logs, look for:
+- `verify: startup self-test passed` — environment is healthy
+- `STARTUP CHECK FAILED` — something is broken; the message tells you what
+- `POST /run infra error: ...` — execution-time failure (perms, disk, etc.)
+- `POST /run completed: exitCode=...` — successful execution
+
+### Old runner service
+
+There is/was a public web service named `quizquest-runner` (separate from `quizquest-runner-internal`). It can be suspended or deleted — the app no longer references it.
 
 ## Remaining / Next Steps (priority order)
 
-**P0 — Done**
-- Navigation, landing page, clickable course cards (M0 complete)
+**P0–M4 — Done**
+- Full Render deployment (web + private runner + managed Postgres)
 
-**P1 — Done / Next up**
-- **M1: Core UX** — complete ✓
-- **M2: Code runner** — complete ✓ (`runner/` Go service, `docker-compose.yml` sidecar, `runner/railway.toml`)
-- **M3-2: Landing page polish** — upgrade to Stitch "Engineering Editorial" design system
-- **M4: Deployment** — Vercel (Next.js) + Neon (PostgreSQL, use `?pgbouncer=true&connection_limit=1` on DATABASE_URL) + Railway (runner)
+**P1 — Next up**
+- **M3-2: Landing page polish** — extend Stitch "Engineering Editorial" design system sitewide (landing page hero, courses page, dashboard)
+- **M4-3: README for recruiters** — deployment architecture, live demo link, tech decisions
 
 **P2**
 - M1-3: CodeMirror editor (replace textarea)
 - M3: Full design system implementation, second course, responsive audit
-- M4-3: README for recruiters
 
 **P3**
 - M5: Back-fill missing tests (pages, client components, db.ts, validate-content script)
