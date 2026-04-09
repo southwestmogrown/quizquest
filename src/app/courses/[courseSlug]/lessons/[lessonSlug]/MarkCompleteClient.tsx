@@ -9,6 +9,7 @@
 
 import { useState } from "react";
 import CompletionOverlay from "@/components/CompletionOverlay";
+import SocraticCoach from "@/components/SocraticCoach";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -54,6 +55,7 @@ export default function MarkCompleteClient({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CompleteApiResponse | null>(null);
+  const [showCoach, setShowCoach] = useState(false);
 
   async function handleMarkComplete() {
     setLoading(true);
@@ -94,13 +96,20 @@ export default function MarkCompleteClient({
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />
 
-      {/* Mark Complete button */}
-      <div className="mt-10 flex justify-end">
+      {/* Mark Complete + Coach button row */}
+      <div className="mt-10 flex items-center justify-end gap-3">
         {error && (
-          <p className="mr-4 self-center text-sm text-red-400" role="alert">
+          <p className="mr-auto text-sm text-red-400" role="alert">
             {error}
           </p>
         )}
+        <button
+          onClick={() => setShowCoach((v) => !v)}
+          className="border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
+          aria-label="Open coach"
+        >
+          Ask the Coach
+        </button>
         <button
           onClick={handleMarkComplete}
           disabled={loading || result !== null}
@@ -109,6 +118,16 @@ export default function MarkCompleteClient({
           {loading ? "Saving…" : result !== null ? "Completed ✓" : "Mark Complete"}
         </button>
       </div>
+
+      {/* Coach panel */}
+      {showCoach && (
+        <SocraticCoach
+          courseSlug={courseSlug}
+          lessonSlug={lessonSlug}
+          lessonType="reading"
+          onClose={() => setShowCoach(false)}
+        />
+      )}
 
       {/* Completion overlay */}
       {result !== null && (

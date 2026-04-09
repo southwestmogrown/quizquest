@@ -12,7 +12,7 @@ import { useState, useRef, useEffect } from "react";
 export interface SocraticCoachProps {
   courseSlug: string;
   lessonSlug: string;
-  lessonType: "code" | "quiz";
+  lessonType: "code" | "quiz" | "reading";
   // Code lessons
   learnerCode?: string;
   // Quiz lessons
@@ -45,9 +45,9 @@ export default function SocraticCoach({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Fire initial coach question on mount.
+  // Fire initial coach question on mount (Socratic mode only).
   useEffect(() => {
-    if (!initialized) {
+    if (!initialized && lessonType !== "reading") {
       setInitialized(true);
       void sendToCoach([], "I'm stuck and need a hint.");
     }
@@ -163,7 +163,7 @@ export default function SocraticCoach({
           <span className="text-base" aria-hidden="true">🤔</span>
           <p className="text-sm font-semibold text-slate-200">Coach</p>
           <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-xs text-indigo-300 border border-indigo-500/30">
-            Socratic
+            {lessonType === "reading" ? "Q&A" : "Socratic"}
           </span>
         </div>
         <button
@@ -179,7 +179,9 @@ export default function SocraticCoach({
       <div className="max-h-72 overflow-y-auto px-4 py-3 space-y-3">
         {messages.length === 0 && (
           <p className="text-sm italic text-slate-500">
-            Thinking of a question for you…
+            {lessonType === "reading"
+              ? "Ask anything about this lesson…"
+              : "Thinking of a question for you…"}
           </p>
         )}
         {messages.map((msg, i) => (
@@ -211,7 +213,7 @@ export default function SocraticCoach({
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={streaming}
-          placeholder="Reply to the coach… (Enter to send)"
+          placeholder={lessonType === "reading" ? "Ask a question… (Enter to send)" : "Reply to the coach… (Enter to send)"}
           rows={2}
           className="flex-1 resize-none rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:opacity-50"
         />

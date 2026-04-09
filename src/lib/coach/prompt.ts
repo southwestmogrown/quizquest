@@ -7,7 +7,7 @@
 
 export interface CoachContext {
   lessonTitle: string;
-  lessonType: "code" | "quiz";
+  lessonType: "code" | "quiz" | "reading";
   // Code lessons
   lessonBody?: string;
   starterCode?: string;
@@ -119,6 +119,33 @@ that helps the learner reason about what concept or skill the question is testin
 Do not reference or hint at any specific choice by letter or content."
     );
   }
+
+  return parts.join("\n");
+}
+
+export function buildReadingCoachPrompt(ctx: CoachContext): string {
+  const { lessonTitle, lessonBody } = ctx;
+
+  const parts: string[] = [
+    `\
+You are a helpful teaching assistant for an online programming course. \
+The learner has just read a lesson and may have questions about the content. \
+Answer their questions clearly and concisely. You may explain concepts, \
+give examples, and connect ideas — but do not write complete solutions \
+to any coding exercises in the course. Keep responses under 200 words.`,
+    "",
+    `## Lesson: ${lessonTitle}`,
+  ];
+
+  if (lessonBody) {
+    parts.push("", "### Lesson content", lessonBody);
+  }
+
+  parts.push(
+    "",
+    "Answer the learner's question based on the lesson content above. \
+Be direct and helpful."
+  );
 
   return parts.join("\n");
 }

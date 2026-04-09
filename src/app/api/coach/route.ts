@@ -4,6 +4,7 @@ import { loadCourse } from "@/lib/content/loader";
 import {
   buildCodeCoachPrompt,
   buildQuizCoachPrompt,
+  buildReadingCoachPrompt,
   type CoachContext,
 } from "@/lib/coach/prompt";
 
@@ -165,7 +166,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
     const ctx: CoachContext = {
       lessonTitle: lesson.title,
-      lessonType: lesson.type === "code" ? "code" : "quiz",
+      lessonType: lesson.type,
     };
 
     if (lesson.type === "code") {
@@ -182,10 +183,8 @@ export async function POST(req: NextRequest): Promise<Response> {
       ctx.learnerChoiceId = learnerChoiceId;
       systemPrompt = buildQuizCoachPrompt(ctx);
     } else {
-      return new Response(
-        JSON.stringify({ error: "Coach is not available for reading lessons" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      ctx.lessonBody = lesson.body;
+      systemPrompt = buildReadingCoachPrompt(ctx);
     }
   } catch (err) {
     console.error("[coach] content load error", err);
