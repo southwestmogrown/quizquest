@@ -14,11 +14,22 @@ QuizQuest lets instructors author courses as plain Markdown files with YAML fron
 
 | Lesson Type | Experience |
 |---|---|
-| 📖 **Reading** | Rendered Markdown; learner marks complete |
-| ❓ **Quiz** | Single-question multiple choice; auto-graded in the browser |
-| 💻 **Code** | In-browser editor; executed against test cases; XP awarded on pass |
+| 📖 **Reading** | Rendered Markdown; learner marks complete; "Ask the Coach" opens a Q&A sidebar |
+| ❓ **Quiz** | Single-question multiple choice; auto-graded; Socratic Coach auto-opens after 2 wrong answers |
+| 💻 **Code** | Split-panel CodeMirror editor; executed against test cases; XP awarded on pass; "I'm stuck" opens Socratic Coach |
 
 Progress persists in PostgreSQL. Completing a lesson unlocks the next, awards XP, and advances a daily streak. An anti-farming rule ensures XP is only awarded when a learner improves their best score.
+
+### AI Socratic Coach
+
+Every lesson has a coach sidebar powered by Claude (`claude-opus-4-6`). The coach never gives answers — it asks questions to expose gaps in the learner's reasoning. Responses stream token-by-token via SSE. Every exchange is logged to a `CoachLog` table with thumbs up/down rating UI per message bubble.
+
+```
+Code / Quiz → Socratic mode: "What do you think this line does?"
+Reading     → Q&A mode: answers questions about the lesson content directly
+```
+
+Local eval uses Ollama (`gemma3:4b` by default via `COACH_PROVIDER=ollama`).
 
 ### Rank System
 
@@ -61,18 +72,25 @@ Browser
         └─ Dashboard                     /dashboard
 
 Next.js API Routes (/api/*)
-  ├─ POST /api/run          — Proxy to code runner (no grading)
-  ├─ POST /api/submit       — Proxy to runner, grade output, award XP
-  ├─ POST /api/complete     — Mark reading/quiz complete
-  ├─ POST /api/quiz-submit  — Grade quiz + award XP
-  └─ POST /api/test-reset   — Reset DB for E2E tests (test env only)
+  ├─ POST /api/run               — Proxy to code runner (no grading)
+  ├─ POST /api/submit            — Proxy to runner, grade output, award XP
+  ├─ POST /api/complete          — Mark reading/quiz complete
+  ├─ POST /api/quiz-submit       — Grade quiz + award XP
+  ├─ GET  /api/coach             — SSE stream: Claude response token-by-token
+  ├─ PATCH /api/coach/[logId]/rate — Thumbs up/down on a coach message
+  └─ POST /api/test-reset        — Reset DB for E2E tests (test env only)
 
-Code Runner  (runner/ — Go 1.22 HTTP service)
+Code Runner  (runner/ — Go HTTP service)            ← private network, not publicly reachable
   └─ POST /run   — Write code to temp dir, exec subprocess, return
                    { stdout, stderr, exitCode, timedOut }
                    Local: Docker sidecar on :8080
-                   Prod:  Render service (CODE_RUNNER_URL env var)
+                   Prod:  Render private service (CODE_RUNNER_URL auto-wired by Blueprint)
+
+Anthropic API  (external)
+  └─ claude-opus-4-6 ← streamed via /api/coach SSE endpoint
 ```
+
+All three production services (`quizquest` web, `quizquest-runner-internal` private, `quizquest-db` Postgres) are declared in [`render.yaml`](render.yaml) as a Render Blueprint. Push to `main` → full stack auto-deploys. `CODE_RUNNER_URL` is injected at deploy time via `fromService.property: hostport` — never hardcoded. `render.yaml` build command runs `npx prisma migrate deploy` before `pnpm build`, so schema migrations apply automatically on every push.
 
 ### Database Models
 
@@ -103,11 +121,17 @@ A dedicated CI step (`pnpm validate-content`) catches malformed content before i
 
 **File-based content store** — Markdown in the repo means content is version-controlled, diff-friendly, and deployable without a CMS.
 
-**Lazy Prisma proxy** — `src/lib/db.ts` wraps `PrismaClient` in a `Proxy`. The underlying client is only instantiated on first access, allowing `pnpm build` to succeed without a live `DATABASE_URL`.
+**Lazy Prisma proxy** — `src/lib/db.ts` wraps `PrismaClient` in a `Proxy`. The underlying client is only instantiated on first access, allowing `pnpm build` to succeed without a live `DATABASE_URL`. Required because Prisma 7 removed datasource URL from `schema.prisma`; every instantiation needs an explicit driver adapter (`PrismaPg` + `pg.Pool`).
 
 **`force-dynamic` on all DB routes** — Opts every database-backed route out of static rendering, ensuring `DATABASE_URL` is always available at request time.
 
-**Grading lives in the app layer** — The code runner is a dumb executor. It runs code and returns output. All grading logic stays in the application, keeping the runner stateless and replaceable.
+**Grading lives in the app layer** — The code runner is a dumb executor (returns `{stdout, stderr, exitCode}`). All grading, XP, and progression logic stays in the application, keeping the runner stateless and replaceable.
+
+**Private network code runner** — The Go runner is a Render private service, not publicly reachable. The web app calls it over the internal network (`quizquest-runner-internal:8080`). A `verifyEnvironment()` startup self-test runs a `go run` smoke test before the HTTP server binds — if the container is "live," the toolchain is confirmed working.
+
+**SSE streaming coach** — `/api/coach` uses the Anthropic SDK's streaming API and Web Streams `ReadableStream` to push tokens as they arrive. Every exchange is fire-and-forget logged to `CoachLog` — DB write errors are swallowed so a logging failure never breaks the stream.
+
+**Anti-farming XP** — `xpDelta = max(0, xpForScore - bestXpEverAwarded)`. Re-submitting the same solution awards zero XP.
 
 ---
 
@@ -136,6 +160,7 @@ quizquest/
     │   └── globals.css       # Tailwind v4 theme
     ├── components/           # Shared React components
     └── lib/
+        ├── coach/            # System prompts, provider abstraction (Anthropic / Ollama)
         ├── code-runner/      # Grading, XP, rank utilities
         ├── content/          # Content types and loader
         ├── db.ts             # Lazy Prisma proxy
@@ -165,9 +190,17 @@ pnpm install
 
 ### 2. Configure Environment
 
-Create two files with the same value (Next.js reads `.env.local`; Prisma CLI reads `.env`):
+Create `.env.local` (read by Next.js) and `.env` (read by Prisma CLI) — both need `DATABASE_URL`:
 
 ```env
+# .env.local
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/quizquest
+ANTHROPIC_API_KEY=sk-ant-...        # required for the Socratic Coach
+COACH_PROVIDER=anthropic            # "anthropic" | "ollama" (local eval)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=gemma3:4b
+
+# .env  (Prisma CLI only needs this)
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/quizquest
 ```
 
@@ -215,6 +248,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | `pnpm prisma:migrate` | Apply migrations |
 | `pnpm prisma:seed` | Seed demo data |
 | `pnpm validate-content` | Validate all course content |
+| `pnpm eval-coach` | Run Socratic Coach eval harness (Ollama by default) |
 
 ---
 
@@ -317,28 +351,28 @@ Deployed on [Render](https://render.com) using a single Blueprint (`render.yaml`
 |---|---|---|
 | `DATABASE_URL` | ✅ | Set automatically by Render from the managed database |
 | `CODE_RUNNER_URL` | ✅ | Set automatically by Blueprint via `fromService.property: hostport` |
+| `ANTHROPIC_API_KEY` | ✅ | Claude API key for the Socratic Coach |
+| `COACH_PROVIDER` | ❌ | `anthropic` (default) or `ollama` |
 | `ENABLE_TEST_API` | ❌ | Set to `1` in test environments only — never production |
 
 ### Deploy Steps
 
 1. Push to GitHub
 2. In the Render dashboard, create a new **Blueprint** and point it at this repo — Render reads `render.yaml` automatically
-3. `CODE_RUNNER_URL` is wired automatically by the Blueprint via `fromService.property: hostport` — no manual step needed
-4. Run migrations against the Render database:
+3. Add `ANTHROPIC_API_KEY` to the `quizquest` web service environment in Render dashboard
+4. `CODE_RUNNER_URL` is wired automatically by the Blueprint — no manual step needed
+5. Migrations run automatically — `render.yaml` build command is `npx prisma migrate deploy && pnpm build`
+6. Seed the demo user (first deploy only):
    ```bash
-   DATABASE_URL=<render-db-url> npx prisma migrate deploy
-   ```
-5. Seed the demo user:
-   ```bash
-   DATABASE_URL=<render-db-url> npx tsx prisma/seed.ts
+   # From the Render web service Shell tab:
+   DATABASE_URL=$DATABASE_URL npx tsx prisma/seed.ts
    ```
 
 ### Production Checklist
 
 - [ ] Blueprint deployed (`render.yaml`) — all three services running
-- [ ] `CODE_RUNNER_URL` set to the deployed Render runner URL
+- [ ] `ANTHROPIC_API_KEY` set on the web service
 - [ ] `ENABLE_TEST_API` is unset or `0`
-- [ ] Migrations applied (`prisma migrate deploy`)
 - [ ] Demo user seeded (`npx tsx prisma/seed.ts`)
 - [ ] Content validated (`pnpm validate-content`)
 

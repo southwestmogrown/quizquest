@@ -213,10 +213,10 @@ export default function CodeClient({
 
   return (
     <>
-      {/* Split-panel layout */}
-      <div className="flex min-h-[600px] gap-4">
+      {/* Split-panel layout — stacked on mobile, side-by-side on md+ */}
+      <div className="flex flex-col gap-4 md:flex-row md:min-h-[600px]">
         {/* Left panel — lesson description */}
-        <div className="w-2/5 overflow-y-auto rounded-xl border border-white/5 bg-slate-900/40 backdrop-blur-md p-6">
+        <div className="md:w-2/5 overflow-y-auto rounded-xl border border-white/5 bg-slate-900/40 backdrop-blur-md p-6">
           <div
             className="prose prose-invert prose-slate max-w-none"
             // Content is server-rendered from trusted repository files.
@@ -225,9 +225,9 @@ export default function CodeClient({
         </div>
 
         {/* Right panel — editor + output */}
-        <div className="flex w-3/5 flex-col gap-3">
+        <div className="flex flex-col gap-3 md:w-3/5">
           {/* Toolbar */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             {/* Language selector — only the lesson language is enabled for MVP */}
             <select
               value={language}
@@ -258,21 +258,21 @@ export default function CodeClient({
               <button
                 onClick={handleReset}
                 disabled={isRunning}
-                className="border border-white/10 text-slate-400 hover:bg-white/5 hover:text-slate-50 rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
+                className="border border-white/10 text-slate-400 hover:bg-white/5 hover:text-slate-50 rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Reset
               </button>
               <button
                 onClick={handleRun}
                 disabled={isRunning}
-                className="border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20 rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
+                className="border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20 rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading === "running" ? "Running…" : "Run"}
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isRunning}
-                className="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white rounded-lg px-4 py-2 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
+                className="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white rounded-lg px-3 py-2 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading === "submitting" ? "Submitting…" : "Submit"}
               </button>

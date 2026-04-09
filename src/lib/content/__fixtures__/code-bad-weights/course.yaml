@@ -1,0 +1,9 @@
+courseSlug: code-bad-weights
+title: Code Bad Weights
+description: Code lesson where group weights do not sum to 100.
+difficulty: beginner
+estimatedHours: 1
+totalXp: 20
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One

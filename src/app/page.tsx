@@ -95,13 +95,13 @@ export default function Home() {
   return (
     <main className="flex flex-col">
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center gap-8 px-6 py-24 text-center">
+      <section className="flex flex-col items-center justify-center gap-8 px-6 py-14 text-center sm:py-24">
         <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-4 py-1.5 text-sm font-medium text-indigo-300">
           <span className="inline-block h-2 w-2 rounded-full bg-indigo-400 shadow-[0_0_6px_rgba(99,102,241,0.8)]" />
           Open-source portfolio project
         </div>
 
-        <h1 className="max-w-3xl text-5xl font-black tracking-tight text-slate-50 sm:text-6xl">
+        <h1 className="max-w-3xl text-4xl font-black tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">
           Learn by doing,{" "}
           <span className="bg-gradient-to-r from-indigo-400 to-indigo-300 bg-clip-text text-transparent">
             not just reading
@@ -133,7 +133,7 @@ export default function Home() {
       <div className="mx-auto w-full max-w-5xl border-t border-white/5" />
 
       {/* Features */}
-      <section className="px-6 py-20">
+      <section className="px-6 py-12 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-3 text-center text-3xl font-bold tracking-tight text-slate-50">
             Everything you need to level up
@@ -167,8 +167,8 @@ export default function Home() {
       </section>
 
       {/* CTA footer strip */}
-      <section className="px-6 pb-24">
-        <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-600/20 to-slate-900/60 px-8 py-14 text-center backdrop-blur-md">
+      <section className="px-6 pb-14 sm:pb-24">
+        <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-600/20 to-slate-900/60 px-6 py-10 text-center backdrop-blur-md sm:px-8 sm:py-14">
           <h2 className="text-3xl font-bold text-slate-50">
             Ready to start learning?
           </h2>

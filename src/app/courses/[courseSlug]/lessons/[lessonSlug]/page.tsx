@@ -189,8 +189,8 @@ export default async function LessonPage({
         />
 
         {/* Lesson header */}
-        <div className="mt-4 flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-50">
+        <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">
             {quizLesson.title}
           </h1>
           <span className="shrink-0 rounded-full bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 text-sm font-medium text-indigo-300">
@@ -253,8 +253,8 @@ export default async function LessonPage({
         />
 
         {/* Lesson header */}
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-50">
+        <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">
             {codeLesson.title}
           </h1>
           <span className="shrink-0 rounded-full bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 text-sm font-medium text-indigo-300">
@@ -313,8 +313,8 @@ export default async function LessonPage({
       />
 
       {/* Lesson header */}
-      <div className="mt-4 flex items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-50">
+      <div className="mt-4 flex flex-wrap items-start justify-between gap-3">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-50 sm:text-3xl">
           {readingLesson.title}
         </h1>
         <span className="shrink-0 rounded-full bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 text-sm font-medium text-indigo-300">

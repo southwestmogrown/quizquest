@@ -97,12 +97,7 @@ export default function MarkCompleteClient({
       />
 
       {/* Mark Complete + Coach button row */}
-      <div className="mt-10 flex items-center justify-end gap-3">
-        {error && (
-          <p className="mr-auto text-sm text-red-400" role="alert">
-            {error}
-          </p>
-        )}
+      <div className="mt-10 flex flex-wrap items-center justify-between gap-3">
         <button
           onClick={() => setShowCoach((v) => !v)}
           className="border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
@@ -110,13 +105,20 @@ export default function MarkCompleteClient({
         >
           Ask the Coach
         </button>
-        <button
-          onClick={handleMarkComplete}
-          disabled={loading || result !== null}
-          className="rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-indigo-500 hover:to-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {loading ? "Saving…" : result !== null ? "Completed ✓" : "Mark Complete"}
-        </button>
+        <div className="flex items-center gap-3">
+          {error && (
+            <p className="text-sm text-red-400" role="alert">
+              {error}
+            </p>
+          )}
+          <button
+            onClick={handleMarkComplete}
+            disabled={loading || result !== null}
+            className="rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-indigo-500 hover:to-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading ? "Saving…" : result !== null ? "Completed ✓" : "Mark Complete"}
+          </button>
+        </div>
       </div>
 
       {/* Coach panel */}

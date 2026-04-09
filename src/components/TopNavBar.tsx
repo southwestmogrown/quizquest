@@ -25,7 +25,7 @@ export default function TopNavBar() {
   }
 
   return (
-    <nav className="sticky top-0 z-40 flex items-center justify-between px-6 py-3 bg-slate-950/80 backdrop-blur-md border-b border-white/5">
+    <nav className="sticky top-0 z-40 flex items-center justify-between px-4 py-3 sm:px-6 bg-slate-950/80 backdrop-blur-md border-b border-white/5">
       <Link href="/" className="flex items-center gap-2.5">
         <svg width="28" height="28" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <rect width="100" height="100" rx="15" fill="#0f172a"/>
@@ -36,7 +36,7 @@ export default function TopNavBar() {
           <span className="text-slate-100">Quiz</span><span className="text-indigo-400">Quest</span>
         </span>
       </Link>
-      <ul className="flex gap-6 items-center">
+      <ul className="flex gap-4 items-center sm:gap-6">
         {NAV_LINKS.map(({ href, label }) => {
           const isActive = pathname === href;
           return (
@@ -45,8 +45,8 @@ export default function TopNavBar() {
                 href={href}
                 className={
                   isActive
-                    ? "font-semibold text-indigo-400 border-b-2 border-indigo-500 pb-1"
-                    : "text-slate-400 hover:text-slate-50 transition-colors"
+                    ? "font-semibold text-indigo-400 border-b-2 border-indigo-500 pb-1 text-sm sm:text-base"
+                    : "text-slate-400 hover:text-slate-50 transition-colors text-sm sm:text-base"
                 }
               >
                 {label}
@@ -58,7 +58,7 @@ export default function TopNavBar() {
           <button
             onClick={handleReset}
             disabled={resetting}
-            className="text-xs text-slate-600 hover:text-slate-400 transition-colors ml-6"
+            className="text-xs text-slate-600 hover:text-slate-400 transition-colors ml-2 sm:ml-6"
           >
             {resetting ? "Resetting…" : "Reset Demo"}
           </button>

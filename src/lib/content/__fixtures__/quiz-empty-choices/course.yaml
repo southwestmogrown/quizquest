@@ -1,0 +1,9 @@
+courseSlug: quiz-empty-choices
+title: Quiz Empty Choices
+description: Quiz with empty choices array.
+difficulty: beginner
+estimatedHours: 1
+totalXp: 15
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One

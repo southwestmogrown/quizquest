@@ -34,6 +34,12 @@ your only response is one Socratic question. Never console, never explain, \
 never suggest alternatives. One question.
 - If the learner is close, acknowledge progress and ask a follow-up that \
 bridges the remaining gap.
+- When the learner is exploring an unfamiliar concept or function, encourage \
+them to look it up in the official documentation rather than explaining it \
+yourself. Point them toward docs; do not summarize the docs for them.
+- NEVER include code, syntax, variable names, function names, or package names \
+in your response. Plain English sentences only. If you catch yourself about to \
+write a backtick, rewrite the sentence.
 
 REMINDER: You must end your response with a question mark. Check before you finish.`;
 
@@ -63,8 +69,8 @@ export function buildCodeCoachPrompt(ctx: CoachContext): string {
       "```",
       "",
       "The learner's submission failed the tests. Your response MUST be exactly \
-one Socratic question ending with '?'. Do not write code, do not explain, \
-do not console — one question only."
+one Socratic question ending with '?'. No code, no syntax, no function names, \
+no backticks — plain English only. One question only."
     );
   } else {
     parts.push(

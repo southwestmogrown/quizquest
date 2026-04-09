@@ -274,23 +274,23 @@ There is/was a public web service named `quizquest-runner` (separate from `quizq
 - Design system applied sitewide (landing page, courses, dashboard, lessons)
 - Coach interaction logging (`CoachLog` table) — every response persisted with sessionId, systemPrompt, userMessage, coachResponse, model, provider; thumbs up/down rating UI on each message bubble; `PATCH /api/coach/[logId]/rate` endpoint
 - `render.yaml` build command runs `prisma migrate deploy` before `pnpm build` — schema migrations apply automatically on every deploy
-- SVG logo/favicon (`src/app/icon.svg`) — indigo Q-mark icon; TopNavBar updated with icon mark + split wordmark
+- SVG logo/favicon (`src/app/icon.svg`) — hexagon mark (outer hex + inner hex + center node + diagonal); matches `docs/icon.html` spec; TopNavBar uses simplified bold variant
 - Coach responses rendered as Markdown (react-markdown) — bold, lists, inline code styled to match dark theme
+- README for recruiters — live demo link, architecture diagram, all key tech decisions documented
+- Socratic Coach eval — red-teamed live app; Claude held firm across 5 escalating attempts; one near-miss snippet; Gemma (gemma3:4b) could not follow the Socratic rules reliably
+- Coach prompt hardened: docs-first rule added ("point to docs, don't summarize them"); no-snippet rule made explicit ("plain English only, no backticks")
 
 **P0 — Next up**
-- **README for recruiters** — deployment architecture diagram, live demo link, tech decisions; highest-leverage portfolio artifact
+- **Responsive audit** — check all pages at mobile breakpoints (375px)
 
 **P1**
-- **Socratic Coach eval** — pull gemma3:4b locally (`ollama pull gemma3:4b`) and run `pnpm eval-coach` to validate prompt quality before demoing
+- **Back-fill tests** — pages, client components, db.ts, validate-content script
 
 **P2**
-- **Responsive audit** — check all pages at mobile breakpoints
+- Back-fill missing tests (pages, client components, db.ts, validate-content script)
 
-**P3**
-- M5: Back-fill missing tests (pages, client components, db.ts, validate-content script)
-
-**P4 (stretch)**
-- M6: Auth (NextAuth.js v5 + GitHub OAuth)
+**P3 (stretch)**
+- Auth (NextAuth.js v5 + GitHub OAuth)
 
 ## Commands Reference
 

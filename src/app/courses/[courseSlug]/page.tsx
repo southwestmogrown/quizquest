@@ -187,11 +187,11 @@ export default async function CourseOutlinePage({
                       /* Locked — not interactive */
                       <div
                         aria-label={`${lesson.title} — locked`}
-                        className="flex items-center justify-between gap-4 rounded-lg border border-white/5 bg-slate-900/20 px-4 py-3 opacity-50"
+                        className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-slate-900/20 px-4 py-3 opacity-50"
                       >
-                        <div className="flex items-center gap-3 text-slate-500">
+                        <div className="flex min-w-0 items-center gap-3 text-slate-500">
                           <LockIcon />
-                          <span className="text-sm font-medium">
+                          <span className="truncate text-sm font-medium">
                             {lesson.title}
                           </span>
                         </div>
@@ -203,21 +203,21 @@ export default async function CourseOutlinePage({
                       /* Available / in_progress / completed — clickable */
                       <Link
                         href={lessonHref}
-                        className="flex items-center justify-between gap-4 rounded-lg border border-white/5 bg-slate-900/40 px-4 py-3 backdrop-blur-sm transition hover:border-indigo-500/30 hover:bg-slate-900/60"
+                        className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-slate-900/40 px-4 py-3 backdrop-blur-sm transition hover:border-indigo-500/30 hover:bg-slate-900/60"
                         aria-label={`${lesson.title} — ${state}`}
                       >
-                        <div className="flex items-center gap-3 text-slate-100">
+                        <div className="flex min-w-0 items-center gap-3 text-slate-100">
                           {state === "completed" ? (
                             <CheckIcon />
                           ) : (
                             <div className="h-4 w-4 shrink-0 rounded-full border-2 border-indigo-500" />
                           )}
-                          <span className="text-sm font-medium">
+                          <span className="truncate text-sm font-medium">
                             {lesson.title}
                           </span>
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
-                          <span className="text-xs text-slate-500">
+                          <span className="hidden text-xs text-slate-500 sm:inline">
                             {lesson.xpReward} XP
                           </span>
                           <span className="rounded-full border border-indigo-500/30 bg-indigo-500/20 px-2 py-0.5 text-xs font-medium text-indigo-300">

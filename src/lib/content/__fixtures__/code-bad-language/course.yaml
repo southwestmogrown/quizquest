@@ -1,0 +1,9 @@
+courseSlug: code-bad-language
+title: Code Bad Language
+description: Code lesson with unsupported language.
+difficulty: beginner
+estimatedHours: 1
+totalXp: 20
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One

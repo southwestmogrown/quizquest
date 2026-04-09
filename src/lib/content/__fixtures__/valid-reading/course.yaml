@@ -1,0 +1,9 @@
+courseSlug: valid-reading
+title: Valid Reading
+description: A valid reading course.
+difficulty: beginner
+estimatedHours: 1
+totalXp: 10
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One

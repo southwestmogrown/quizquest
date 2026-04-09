@@ -1,0 +1,9 @@
+courseSlug: invalid-difficulty
+title: Invalid Difficulty
+description: Bad difficulty value.
+difficulty: expert
+estimatedHours: 1
+totalXp: 10
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One

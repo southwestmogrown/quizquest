@@ -1,0 +1,9 @@
+courseSlug: code-no-grading
+title: Code No Grading
+description: Code lesson missing grading config.
+difficulty: beginner
+estimatedHours: 1
+totalXp: 20
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One

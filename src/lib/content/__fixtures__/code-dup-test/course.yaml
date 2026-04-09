@@ -1,0 +1,9 @@
+courseSlug: code-dup-test
+title: Code Dup Test
+description: Code lesson with duplicate test id in a group.
+difficulty: beginner
+estimatedHours: 1
+totalXp: 20
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One

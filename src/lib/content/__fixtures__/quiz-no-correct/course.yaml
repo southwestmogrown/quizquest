@@ -1,0 +1,9 @@
+courseSlug: quiz-no-correct
+title: Quiz No Correct
+description: Quiz with no correct choice.
+difficulty: beginner
+estimatedHours: 1
+totalXp: 15
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One

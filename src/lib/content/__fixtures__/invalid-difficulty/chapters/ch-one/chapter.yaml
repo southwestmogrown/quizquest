@@ -1,0 +1,6 @@
+chapterSlug: ch-one
+title: Chapter One
+lessons:
+  - lessonSlug: lesson
+    title: Lesson
+    type: reading

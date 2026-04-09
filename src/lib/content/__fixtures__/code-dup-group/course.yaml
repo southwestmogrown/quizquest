@@ -1,0 +1,9 @@
+courseSlug: code-dup-group
+title: Code Dup Group
+description: Code lesson with duplicate group id.
+difficulty: beginner
+estimatedHours: 1
+totalXp: 20
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One

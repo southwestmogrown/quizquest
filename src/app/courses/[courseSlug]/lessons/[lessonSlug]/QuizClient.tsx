@@ -181,41 +181,43 @@ export default function QuizClient({
       )}
 
       {/* Action row */}
-      <div className="mt-6 flex items-center justify-end gap-3">
-        {error && (
-          <p className="mr-auto text-sm text-red-400" role="alert">
-            {error}
-          </p>
-        )}
-
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <button
           onClick={() => setShowCoach(true)}
-          className="mr-auto border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
+          className="border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
           aria-label="Open Socratic coach"
         >
           I&apos;m stuck
         </button>
 
-        {/* Retry button — shown after an incorrect answer */}
-        {result && !result.correct && (
-          <button
-            onClick={handleRetry}
-            className="border border-white/10 text-slate-400 hover:bg-white/5 hover:text-slate-50 rounded-lg px-5 py-2.5 text-sm font-semibold transition"
-          >
-            Try Again
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {error && (
+            <p className="text-sm text-red-400" role="alert">
+              {error}
+            </p>
+          )}
 
-        {/* Submit button — shown before a result */}
-        {!result && (
-          <button
-            onClick={handleSubmit}
-            disabled={!selectedId || loading}
-            className="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white rounded-lg px-6 py-2.5 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading ? "Checking…" : "Submit Answer"}
-          </button>
-        )}
+          {/* Retry button — shown after an incorrect answer */}
+          {result && !result.correct && (
+            <button
+              onClick={handleRetry}
+              className="border border-white/10 text-slate-400 hover:bg-white/5 hover:text-slate-50 rounded-lg px-5 py-2.5 text-sm font-semibold transition"
+            >
+              Try Again
+            </button>
+          )}
+
+          {/* Submit button — shown before a result */}
+          {!result && (
+            <button
+              onClick={handleSubmit}
+              disabled={!selectedId || loading}
+              className="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white rounded-lg px-6 py-2.5 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? "Checking…" : "Submit Answer"}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Socratic coach panel */}

@@ -29,7 +29,8 @@ describe("TopNavBar", () => {
   it("renders the app name", () => {
     vi.mocked(usePathname).mockReturnValue("/");
     const html = renderToStaticMarkup(<TopNavBar />);
-    expect(html).toContain("QuizQuest");
+    expect(html).toContain("Quiz");
+    expect(html).toContain("Quest");
   });
 
   it("renders a link to /courses labeled Courses", () => {

@@ -294,7 +294,7 @@ export default function SocraticCoach({
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={streaming}
-          placeholder={lessonType === "reading" ? "Ask a question… (Enter to send)" : "Reply to the coach… (Enter to send)"}
+          placeholder={lessonType === "reading" ? "Ask a question…" : "Reply to the coach…"}
           rows={2}
           className="flex-1 resize-none rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:opacity-50"
         />

@@ -528,17 +528,17 @@ export default async function DashboardPage() {
                 return (
                   <li
                     key={event.id}
-                    className={`flex items-center justify-between gap-4 px-5 py-3 ${
+                    className={`flex items-center justify-between gap-3 px-4 py-3 sm:px-5 sm:gap-4 ${
                       i < recentActivity.length - 1
                         ? "border-b border-white/5"
                         : ""
                     }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                       <span className="shrink-0 rounded-full border border-indigo-500/30 bg-indigo-500/20 px-2 py-0.5 text-xs font-semibold text-indigo-300">
                         +{event.xpDelta} XP
                       </span>
-                      <span className="text-sm text-slate-300">
+                      <span className="truncate text-sm text-slate-300">
                         Completed &quot;{lessonTitle}&quot;
                       </span>
                     </div>
