@@ -258,14 +258,17 @@ There is/was a public web service named `quizquest-runner` (separate from `quizq
 - Full Render deployment (web + private runner + managed Postgres)
 - M1: Lesson breadcrumb, CodeMirror editor, completion flash, confetti overlay, rank rebalance
 - AI-Assisted Development course (26 lessons, 6 chapters)
-- Socratic Coach (`/api/coach`, `SocraticCoach` component, `scripts/eval-coach.ts`)
+- Socratic Coach — available on all lesson types:
+  - Code + quiz: Socratic mode ("I'm stuck" button → guided questioning)
+  - Reading: Q&A mode ("Ask the Coach" button → answers questions about lesson content)
+  - `ANTHROPIC_API_KEY` wired on Render; phi4-mini as local eval model
 - Design system applied sitewide (landing page, courses, dashboard, lessons)
 
 **P0 — Next up**
 - **README for recruiters** — deployment architecture diagram, live demo link, tech decisions; highest-leverage portfolio artifact
 
 **P1**
-- **Socratic Coach eval** — run `pnpm eval-coach` with Ollama before shipping; wire `ANTHROPIC_API_KEY` on Render
+- **Socratic Coach eval** — pull phi4-mini locally (`ollama pull phi4-mini`) and run `pnpm eval-coach` to validate prompt quality before demoing
 
 **P2**
 - **Responsive audit** — check all pages at mobile breakpoints

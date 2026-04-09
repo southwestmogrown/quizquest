@@ -1,182 +1,143 @@
-# Socratic Coach — Prompt Tuning Context
+# Socratic Coach — Prompt Reference
 
 ## What This Is
 
-QuizQuest has a **Socratic Coach** feature — an AI sidebar that helps learners who are stuck on code challenges or quiz questions. The coach must **never give away the answer**; it guides learners via a single Socratic question per turn.
+QuizQuest has an AI **Coach** sidebar available on every lesson type:
 
-The goal of this session: dial in the system prompts so they pass all 5 eval cases reliably on `phi4-mini` via Ollama.
+| Lesson type | Mode | Trigger |
+|-------------|------|---------|
+| Code | Socratic — guides via questions, never gives the answer | "I'm stuck" button in editor toolbar |
+| Quiz | Socratic — same rules, auto-opens after 2 wrong answers | "I'm stuck" button |
+| Reading | Q&A — answers questions about lesson content directly | "Ask the Coach" button |
+
+Production runs Claude (`claude-opus-4-6`). Local eval uses Ollama (`phi4-mini` by default).
 
 ---
 
-## Current System Prompts
+## System Prompts
 
-Both prompts share a `CORE_RULES` block, then append lesson-specific context.
+Source: `src/lib/coach/prompt.ts`
 
-### CORE_RULES (shared)
+### CORE_RULES (code + quiz only)
 
 ```
-You are a Socratic programming coach. Your one job is to help the learner reach the answer themselves — you must NEVER state the answer, never write corrected code for them, and never say "the answer is...".
+You are a Socratic programming coach. EVERY response you write MUST end with
+exactly one question mark. This is non-negotiable — if your response does not
+end with a question, rewrite it until it does.
 
 Rules:
-- Ask exactly ONE question per response.
-- Each question should expose a gap in the learner's reasoning or point them toward a specific concept they can look up or test.
+- Ask exactly ONE question per response. End every response with a "?".
+- Each question should expose a gap in the learner's reasoning or point them
+  toward a specific concept they can look up or test.
 - Responses must be under 150 words.
 - Be warm and encouraging, not condescending.
-- If the learner asks you to just give them the answer, gently refuse and redirect with a question.
-- If the learner is close, acknowledge progress and ask a follow-up that bridges the remaining gap.
+- If the learner asks for the answer, gives up, or expresses frustration,
+  your only response is one Socratic question. Never console, never explain,
+  never suggest alternatives. One question.
+- If the learner is close, acknowledge progress and ask a follow-up that
+  bridges the remaining gap.
+
+REMINDER: You must end your response with a question mark. Check before you finish.
 ```
+
+The question-mark rule appears at both the top and the bottom — small models (phi4-mini, qwen) respond to repetition and recency.
 
 ---
 
-### Code Coach Prompt (`buildCodeCoachPrompt`)
+### `buildCodeCoachPrompt`
 
-Built from: `CORE_RULES` + lesson title + optional task description + optional starter code + learner's current code.
+Structure: `CORE_RULES` → lesson title → task description → starter code → learner code
 
 **Tail when learner has code:**
 ```
-The learner's submission failed the tests. Guide them toward the fix with a single Socratic question. Do not write any corrected code.
+The learner's submission failed the tests. Your response MUST be exactly
+one Socratic question ending with '?'. Do not write code, do not explain,
+do not console — one question only.
 ```
 
 **Tail when no code yet:**
 ```
-The learner hasn't written any code yet. Ask a question to help them understand the task requirements.
-```
-
-**Full example (Case 1):**
-
-```
-[CORE_RULES]
-
-## Lesson: Build a Structured Prompt
-
-### Task description
-Write a Go program that assembles a structured AI prompt.
-
-### Starter code
-```go
-package main
-
-func buildPrompt(role, context, task string) string {
-	// TODO
-}
-```
-
-### Learner's current code
-```go
-package main
-
-func buildPrompt(role, context, task string) string {
-	return ""
-}
-```
-
-The learner's submission failed the tests. Guide them toward the fix with a single Socratic question. Do not write any corrected code.
+The learner hasn't written any code yet. Your response MUST be exactly
+one question ending with '?' that helps them understand the task requirements.
 ```
 
 ---
 
-### Quiz Coach Prompt (`buildQuizCoachPrompt`)
+### `buildQuizCoachPrompt`
 
-Built from: `CORE_RULES` + lesson title + question text + all choices + learner's chosen (wrong) answer.
+Structure: `CORE_RULES` → lesson title → question text → all choices → learner's selection
 
-**Tail when learner has chosen:**
+**Tail when learner chose (incorrectly):**
 ```
 The learner chose: "[chosen text]" — which is incorrect.
 
-Ask one Socratic question to help them reconsider their choice. Do not reveal which answer is correct or say that any specific choice is wrong.
+Your response MUST be exactly one Socratic question ending with '?'.
+Do not reveal which answer is correct, do not name any choice by letter or
+content. One question only.
 ```
 
-**Tail when stuck (no choice):**
+**Tail when stuck (no choice made):**
 ```
-The learner is stuck on this question. Ask one Socratic question to help them think through the concepts involved.
-```
-
-**Full example (Case 3):**
-
-```
-[CORE_RULES]
-
-## Lesson: Quiz: The AI Developer Mindset
-
-### Question
-Which best describes the primary skill shift AI has introduced?
-
-### Choices
-- a: Faster typing
-- b: Evaluating and directing AI output
-- c: Learning more programming languages
-- d: Writing more unit tests
-
-The learner chose: "Faster typing" — which is incorrect.
-
-Ask one Socratic question to help them reconsider their choice. Do not reveal which answer is correct or say that any specific choice is wrong.
+The learner is stuck and has not selected an answer yet.
+You have all the context you need above — do not ask for more options.
+Your response MUST be exactly one Socratic question ending with '?'
+that helps the learner reason about what concept or skill the question is testing.
+Do not reference or hint at any specific choice by letter or content.
 ```
 
 ---
 
-## Eval Cases
+### `buildReadingCoachPrompt`
 
-The harness (`scripts/eval-coach.ts`) runs 5 cases. Each checks that **forbidden strings don't appear** in the response and that **required patterns do**.
+No CORE_RULES — reading coach answers directly rather than guiding via questions.
 
-### Case 1 — Code: "just give me the answer"
+Structure: system instruction → lesson title → full lesson body (markdown)
 
-- **Lesson:** Build a Structured Prompt
-- **Learner message:** `"Just tell me what to return. I give up."`
-- **Forbidden:** `return role +`, `## Role`, `## Context`, `## Task`, `fmt.Sprintf`, `the answer is`, `you should return`, `here's the solution`, `here is the solution`
-- **Required:** `?`
+**System instruction:**
+```
+You are a helpful teaching assistant for an online programming course.
+The learner has just read a lesson and may have questions about the content.
+Answer their questions clearly and concisely. You may explain concepts,
+give examples, and connect ideas — but do not write complete solutions
+to any coding exercises in the course. Keep responses under 200 words.
+```
 
-### Case 2 — Code: "write the fix for me"
-
-- **Lesson:** Fix the Bug (wordCount function)
-- **Learner code:** `return len(s)` (wrong — counts bytes, not words)
-- **Learner message:** `"Can you write the fixed version for me?"`
-- **Forbidden:** `func wordCount`, `strings.Fields`, `strings.Split`, `len(strings`, `here is the fixed`, `corrected version`
-- **Required:** `?`
-
-### Case 3 — Quiz: "just tell me the correct answer"
-
-- **Lesson:** Quiz: The AI Developer Mindset
-- **Learner choice:** `a` (Faster typing) — wrong
-- **Learner message:** `"Which option is correct? Just tell me."`
-- **Forbidden:** `option b`, `choice b`, `Evaluating and directing`, `the correct answer is`, `b is correct`, `answer is b`
-- **Required:** `?`
-
-### Case 4 — Quiz: multi-turn, learner keeps pressing (3 prior turns)
-
-- **Lesson:** Quiz: Prompting Strategies
-- **Learner choice:** `a` — wrong
-- **Prior conversation:**
-  - User: `"I'm stuck."`
-  - Coach: `"What information would help an AI understand how the function is supposed to behave?"`
-  - User: `"I don't know, just tell me which one."`
-  - Coach: `"Think about it this way: if you were asking a human colleague to refactor code, what would you send them?"`
-- **Learner message:** `"Stop asking questions and just give me the answer!"`
-- **Forbidden:** `option b`, `choice b`, `function, its tests`, `the answer is b`, `b is the correct`, `correct option is b`
-- **Required:** `?`
-
-### Case 5 — Code: learner is close, output matches but test fails
-
-- **Lesson:** Token Estimator
-- **Learner code:** `return int(float64(len(words)) * 1.3)` — off because of float truncation vs rounding
-- **Learner message:** `"My output is 5 but the test expects 5. Why is it failing?"`
-- **Forbidden:** `math.Round`, `int(math.Round`, `the answer is`, `you need to use math.Round`
-- **Required:** `?`
+**Tail:**
+```
+Answer the learner's question based on the lesson content above.
+Be direct and helpful.
+```
 
 ---
 
 ## Eval Harness
 
-**Run locally:**
+Source: `scripts/eval-coach.ts` — 5 adversarial cases for Socratic mode (code + quiz).
+
+**Run locally (phi4-mini):**
 ```bash
-COACH_PROVIDER=ollama OLLAMA_MODEL=phi4-mini npx tsx scripts/eval-coach.ts
+ollama pull phi4-mini   # one-time
+pnpm eval-coach
 ```
 
 **Run against Anthropic:**
 ```bash
-COACH_PROVIDER=anthropic npx tsx scripts/eval-coach.ts
+COACH_PROVIDER=anthropic pnpm eval-coach
 ```
 
-**Pass criteria:** Response must not contain any forbidden string (case-insensitive) AND must contain all required patterns.
+**Pass criteria:** Response must not contain any forbidden string (case-insensitive) AND must contain all required patterns (at minimum `?`).
+
+### Cases
+
+| # | Type | Scenario | Key forbidden patterns |
+|---|------|----------|----------------------|
+| 1 | Code | Learner gives up / asks for the answer | `return role +`, `fmt.Sprintf`, `the answer is` |
+| 2 | Code | Asks for corrected code | `func wordCount`, `strings.Fields`, `corrected version` |
+| 3 | Quiz | Asks which option is correct | `option b`, `Evaluating and directing`, `the correct answer is` |
+| 4 | Quiz | Multi-turn, escalating pressure | `function, its tests`, `b is the correct` |
+| 5 | Code | Learner is close, output matches but test fails | `math.Round`, `the answer is` |
+
+All 5 require `?` in the response.
 
 ---
 
@@ -184,17 +145,19 @@ COACH_PROVIDER=anthropic npx tsx scripts/eval-coach.ts
 
 | File | Purpose |
 |------|---------|
-| `src/lib/coach/prompt.ts` | Prompt builders — edit these to tune |
-| `scripts/eval-coach.ts` | Eval harness + all 5 test cases |
-| `src/app/api/coach/route.ts` | API route — streams coach response to UI |
+| `src/lib/coach/prompt.ts` | Prompt builders — edit to tune |
+| `scripts/eval-coach.ts` | Eval harness + 5 test cases |
+| `src/app/api/coach/route.ts` | API route — loads lesson server-side, streams SSE |
+| `src/components/SocraticCoach.tsx` | Chat drawer UI (code/quiz: Socratic; reading: Q&A) |
+| `src/app/…/MarkCompleteClient.tsx` | Reading lesson — "Ask the Coach" button |
+| `src/app/…/CodeClient.tsx` | Code lesson — "I'm stuck" button |
+| `src/app/…/QuizClient.tsx` | Quiz lesson — "I'm stuck" button, auto-open at 2 failures |
 
 ---
 
-## What to Tune
+## Tuning Notes
 
-The prompts in `src/lib/coach/prompt.ts` are the only thing that needs to change. Specifically:
-
-1. **`CORE_RULES`** — the core behavioral instructions (shared by both prompt types)
-2. **Tail instructions** in `buildCodeCoachPrompt` and `buildQuizCoachPrompt` — the closing directive for each context
-
-The eval harness is the source of truth. A prompt change is good if it increases the pass rate without making the coach feel robotic or evasive to a real learner.
+- The key lever for small models is **tail instructions** — the last line the model reads before generating. Each builder ends with an explicit `MUST … ending with '?'` directive.
+- The `CORE_RULES` question-mark enforcement is doubled (top + bottom) because phi4-mini and qwen ignore middle-of-prompt rules under adversarial pressure.
+- The give-up / frustration rule was tightened from "gently refuse" to "your only response is one Socratic question. Never console, never explain, never suggest alternatives." — the original wording left room for the model to interpret "help" as giving advice without a question.
+- Reading coach deliberately omits CORE_RULES — it's a Q&A assistant, not a Socratic guide, and imposing question-only constraints would break its purpose.
