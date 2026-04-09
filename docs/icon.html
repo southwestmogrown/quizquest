@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizQuest SVG Logo Assets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #020617;
+            color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .grid-bg {
+            background-image: radial-gradient(circle at 2px 2px, rgba(99, 102, 241, 0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        .glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+        code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-8 grid-bg">
+    <div class="max-w-4xl mx-auto space-y-12">
+        <header class="space-y-4">
+            <h1 class="text-4xl font-black tracking-tighter uppercase">Logo Asset Export</h1>
+            <p class="text-slate-400 max-w-2xl">Recreated as clean, scalable SVGs for the "Engineering Editorial" identity. Copy the code blocks below to save as <code>.svg</code> files.</p>
+        </header>
+
+        <!-- Version 1: The Icon Mark -->
+        <section class="space-y-6">
+            <h2 class="text-xl font-bold border-l-4 border-indigo-500 pl-4">01. The Icon Mark (Favicon)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <div class="glass p-12 rounded-2xl flex items-center justify-center">
+                    <!-- SVG START -->
+                    <svg width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 10L85 30V70L50 90L15 70V30L50 10Z" stroke="#6366F1" stroke-width="4" stroke-linejoin="round"/>
+                        <path d="M50 25L72 37.5V62.5L50 75L28 62.5V37.5L50 25Z" fill="#6366F1" fill-opacity="0.1" stroke="#6366F1" stroke-width="2"/>
+                        <circle cx="50" cy="50" r="8" fill="#6366F1">
+                            <animate attributeName="opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite" />
+                        </circle>
+                        <path d="M70 70L85 85" stroke="#6366F1" stroke-width="6" stroke-linecap="round"/>
+                        <path d="M35 30H45" stroke="#6366F1" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M55 30H65" stroke="#6366F1" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <!-- SVG END -->
+                </div>
+                <div class="space-y-4">
+                    <p class="text-sm text-slate-400">Use this code for a <code>favicon.svg</code> or small UI icons.</p>
+                    <pre class="bg-slate-950 p-4 rounded-lg text-xs overflow-x-auto border border-white/5"><code>&lt;svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;path d="M50 10L85 30V70L50 90L15 70V30L50 10Z" stroke="#6366F1" stroke-width="4" stroke-linejoin="round"/&gt;
+  &lt;path d="M50 25L72 37.5V62.5L50 75L28 62.5V37.5L50 25Z" fill="#6366F1" fill-opacity="0.1" stroke="#6366F1" stroke-width="2"/&gt;
+  &lt;circle cx="50" cy="50" r="8" fill="#6366F1"/&gt;
+  &lt;path d="M70 70L85 85" stroke="#6366F1" stroke-width="6" stroke-linecap="round"/&gt;
+&lt;/svg&gt;</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Version 2: Full Wordmark -->
+        <section class="space-y-6">
+            <h2 class="text-xl font-bold border-l-4 border-indigo-500 pl-4">02. Full Wordmark (Header)</h2>
+            <div class="glass p-12 rounded-2xl">
+                <div class="flex items-center gap-6 mb-8">
+                    <svg width="48" height="48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 10L85 30V70L50 90L15 70V30L50 10Z" stroke="#6366F1" stroke-width="6" stroke-linejoin="round"/>
+                        <path d="M70 70L85 85" stroke="#6366F1" stroke-width="8" stroke-linecap="round"/>
+                    </svg>
+                    <span class="text-4xl font-black tracking-tighter uppercase text-white">QuizQuest</span>
+                </div>
+                <p class="text-sm text-slate-400 mb-4">Note: The wordmark should use <strong>Plus Jakarta Sans ExtraBold</strong>. For a pure SVG version including text:</p>
+                <pre class="bg-slate-950 p-4 rounded-lg text-xs overflow-x-auto border border-white/5"><code>&lt;svg width="280" height="60" viewBox="0 0 280 60" fill="none" xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;!-- Icon --&gt;
+  &lt;path d="M10 10L35 24V52L10 66L-15 52V24L10 10Z" transform="translate(20, -5) scale(0.6)" stroke="#6366F1" stroke-width="6" stroke-linejoin="round"/&gt;
+  &lt;path d="M70 70L85 85" transform="translate(20, -5) scale(0.6)" stroke="#6366F1" stroke-width="8" stroke-linecap="round"/&gt;
+  &lt;!-- Text --&gt;
+  &lt;text x="70" y="42" fill="white" font-family="Plus Jakarta Sans, sans-serif" font-weight="900" font-size="32" letter-spacing="-0.05em"&gt;QUIZQUEST&lt;/text&gt;
+&lt;/svg&gt;</code></pre>
+            </div>
+        </section>
+
+        <footer class="pt-12 border-t border-white/5 text-center text-slate-500 text-xs">
+            &copy; 2026 QuizQuest // Engineering Editorial Identity System
+        </footer>
+    </div>
+</body>
+</html>
