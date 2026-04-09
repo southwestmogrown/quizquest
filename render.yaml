@@ -20,10 +20,7 @@ services:
           name: quizquest-db
           property: connectionString
       - key: CODE_RUNNER_URL
-        fromService:
-          name: quizquest-runner
-          type: web
-          property: url
+        sync: false
       - key: NODE_ENV
         value: production
 
