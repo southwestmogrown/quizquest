@@ -8,6 +8,7 @@
 // ---------------------------------------------------------------------------
 
 import { useState } from "react";
+import { Check } from "lucide-react";
 import CompletionOverlay from "@/components/CompletionOverlay";
 import SocraticCoach from "@/components/SocraticCoach";
 
@@ -116,7 +117,7 @@ export default function MarkCompleteClient({
             disabled={loading || result !== null}
             className="rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-indigo-500 hover:to-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading ? "Saving…" : result !== null ? "Completed ✓" : "Mark Complete"}
+            {loading ? "Saving…" : result !== null ? <><Check size={14} className="inline-block mr-1" aria-hidden="true" />Completed</> : "Mark Complete"}
           </button>
         </div>
       </div>

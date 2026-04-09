@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { ThumbsUp, ThumbsDown, MessageCircle } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 // ---------------------------------------------------------------------------
@@ -154,17 +155,19 @@ export default function SocraticCoach({
   }
 
   async function handleRate(logId: string, msgIndex: number, rating: 1 | -1) {
-    // Optimistically update UI.
+    // Toggle: clicking the active rating clears it.
+    const current = messages[msgIndex]?.rating;
+    const next = current === rating ? undefined : rating;
     setMessages((prev) => {
-      const next = [...prev];
-      next[msgIndex] = { ...next[msgIndex], rating };
-      return next;
+      const updated = [...prev];
+      updated[msgIndex] = { ...updated[msgIndex], rating: next };
+      return updated;
     });
     try {
       await fetch(`/api/coach/${logId}/rate`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rating }),
+        body: JSON.stringify({ rating: next ?? null }),
       });
     } catch {
       // Silent — rating is best-effort
@@ -194,7 +197,7 @@ export default function SocraticCoach({
       {/* Header */}
       <div className="flex items-center justify-between border-b border-white/5 px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="text-base" aria-hidden="true">🤔</span>
+          <MessageCircle size={15} className="text-indigo-400" aria-hidden="true" />
           <p className="text-sm font-semibold text-slate-200">Coach</p>
           <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-xs text-indigo-300 border border-indigo-500/30">
             {lessonType === "reading" ? "Q&A" : "Socratic"}
@@ -259,25 +262,27 @@ export default function SocraticCoach({
                   onClick={() => void handleRate(msg.logId!, i, 1)}
                   aria-label="Helpful"
                   title="Helpful"
-                  className={`rounded px-1.5 py-0.5 text-xs transition ${
+                  aria-pressed={msg.rating === 1}
+                  className={`rounded p-1 transition-all ${
                     msg.rating === 1
-                      ? "text-emerald-400"
-                      : "text-slate-600 hover:text-slate-400"
+                      ? "text-emerald-400 bg-emerald-500/15"
+                      : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
                   }`}
                 >
-                  👍
+                  <ThumbsUp size={13} />
                 </button>
                 <button
                   onClick={() => void handleRate(msg.logId!, i, -1)}
                   aria-label="Not helpful"
                   title="Not helpful"
-                  className={`rounded px-1.5 py-0.5 text-xs transition ${
+                  aria-pressed={msg.rating === -1}
+                  className={`rounded p-1 transition-all ${
                     msg.rating === -1
-                      ? "text-rose-400"
-                      : "text-slate-600 hover:text-slate-400"
+                      ? "text-rose-400 bg-rose-500/15"
+                      : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
                   }`}
                 >
-                  👎
+                  <ThumbsDown size={13} />
                 </button>
               </div>
             )}

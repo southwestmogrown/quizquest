@@ -279,18 +279,12 @@ There is/was a public web service named `quizquest-runner` (separate from `quizq
 - README for recruiters — live demo link, architecture diagram, all key tech decisions documented
 - Socratic Coach eval — red-teamed live app; Claude held firm across 5 escalating attempts; one near-miss snippet; Gemma (gemma3:4b) could not follow the Socratic rules reliably
 - Coach prompt hardened: docs-first rule added ("point to docs, don't summarize them"); no-snippet rule made explicit ("plain English only, no backticks")
+- Responsive audit — all pages mobile-friendly at 375px: code lesson split-panel stacks vertically on mobile, lesson headers wrap, nav scales, activity feed truncates; desktop layouts unchanged
+- Test backfill — 50 new tests: `src/lib/db.test.ts` (lazy proxy), `src/lib/content/validate-content.test.ts` (all validation error paths + fixtures), `src/lib/coach/prompt.test.ts` (all three builders); **264/264 passing**
+- `POST /api/demo-reset` — always-on endpoint that wipes demo-user progress/XP/streak; powers the "Reset Demo" button in the navbar so recruiters can restart the experience. Distinct from `POST /api/test-reset` (gated by `ENABLE_TEST_API=1`, used by Playwright E2E)
 
-**P0 — Next up**
-- **Responsive audit** — check all pages at mobile breakpoints (375px)
-
-**P1**
-- **Back-fill tests** — pages, client components, db.ts, validate-content script
-
-**P2**
-- Back-fill missing tests (pages, client components, db.ts, validate-content script)
-
-**P3 (stretch)**
-- Auth (NextAuth.js v5 + GitHub OAuth)
+**Next up (stretch)**
+- Auth — NextAuth.js v5 + GitHub OAuth (replaces hardcoded `demo-user`)
 
 ## Commands Reference
 

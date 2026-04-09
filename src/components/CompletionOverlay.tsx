@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { Trophy, Flame, Sparkles } from "lucide-react";
 import Link from "next/link";
 import ProgressBar from "@/components/ProgressBar";
 import { computeRank } from "@/lib/code-runner/xp";
@@ -83,7 +84,7 @@ export default function CompletionOverlay({
           /* ── Course complete header ── */
           <>
             <div className="flex flex-col items-center gap-3">
-              <span className="text-5xl">🏆</span>
+              <Trophy size={48} className="text-indigo-400" aria-hidden="true" />
               <h2 className="text-center text-2xl font-bold text-slate-50">
                 Course Complete!
               </h2>
@@ -117,7 +118,8 @@ export default function CompletionOverlay({
 
             {/* Streak */}
             <p className="mt-3 text-center text-sm text-slate-400">
-              🔥 {newStreak} {newStreak === 1 ? "day" : "days"} streak
+              <Flame size={14} className="inline-block text-orange-400 mr-1" aria-hidden="true" />
+              {newStreak} {newStreak === 1 ? "day" : "days"} streak
             </p>
 
             {/* Actions */}
@@ -129,7 +131,7 @@ export default function CompletionOverlay({
                 Browse All Courses →
               </Link>
               <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Just completed a course on QuizQuest! 🏆 ${newTotalXp.toLocaleString()} XP and counting.`)}`}
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`Just completed a course on QuizQuest! ${newTotalXp.toLocaleString()} XP and counting.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block rounded-lg border border-white/10 px-4 py-2.5 text-center text-sm font-semibold text-slate-400 transition hover:bg-white/5 hover:text-slate-50"
@@ -148,7 +150,8 @@ export default function CompletionOverlay({
           /* ── Mid-course lesson complete ── */
           <>
             <h2 className="text-center text-2xl font-bold text-slate-50">
-              🎉 Lesson Complete!
+              <Sparkles size={20} className="inline-block text-indigo-400 mr-1.5" aria-hidden="true" />
+              Lesson Complete!
             </h2>
             <p className="mt-1 text-center text-sm text-slate-400">{lessonTitle}</p>
 
@@ -185,7 +188,8 @@ export default function CompletionOverlay({
 
             {/* Streak */}
             <p className="mt-4 text-center text-sm text-slate-300">
-              🔥 Streak: {newStreak} {newStreak === 1 ? "day" : "days"}
+              <Flame size={14} className="inline-block text-orange-400 mr-1" aria-hidden="true" />
+              Streak: {newStreak} {newStreak === 1 ? "day" : "days"}
             </p>
 
             {/* Actions */}

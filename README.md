@@ -54,7 +54,7 @@ Local eval uses Ollama (`gemma3:4b` by default via `COACH_PROVIDER=ollama`).
 | Database | PostgreSQL via Prisma 7 + `@prisma/adapter-pg` |
 | Code Runner | Go 1.22 HTTP service (subprocess executor, Docker sidecar) |
 | Content | `gray-matter` + `marked` + `js-yaml` |
-| Unit Tests | Vitest |
+| Unit Tests | Vitest — 264 passing |
 | E2E Tests | Playwright |
 | Package Manager | pnpm |
 
@@ -78,7 +78,8 @@ Next.js API Routes (/api/*)
   ├─ POST /api/quiz-submit       — Grade quiz + award XP
   ├─ GET  /api/coach             — SSE stream: Claude response token-by-token
   ├─ PATCH /api/coach/[logId]/rate — Thumbs up/down on a coach message
-  └─ POST /api/test-reset        — Reset DB for E2E tests (test env only)
+  ├─ POST /api/demo-reset        — Wipe demo-user XP/progress (always-on; powers "Reset Demo" nav button)
+  └─ POST /api/test-reset        — Reset DB + seed lessons for E2E tests (ENABLE_TEST_API=1 only)
 
 Code Runner  (runner/ — Go HTTP service)            ← private network, not publicly reachable
   └─ POST /run   — Write code to temp dir, exec subprocess, return
@@ -133,6 +134,8 @@ A dedicated CI step (`pnpm validate-content`) catches malformed content before i
 
 **Anti-farming XP** — `xpDelta = max(0, xpForScore - bestXpEverAwarded)`. Re-submitting the same solution awards zero XP.
 
+**Recruiter-friendly reset** — `POST /api/demo-reset` is always-on (no env gate) and wipes the demo user's XP, streak, and lesson progress in a single transaction. The "Reset Demo" button in the navbar calls it so anyone demoing the app can restart the experience without touching a database.
+
 ---
 
 ## 📁 Project Structure
@@ -160,10 +163,13 @@ quizquest/
     │   └── globals.css       # Tailwind v4 theme
     ├── components/           # Shared React components
     └── lib/
-        ├── coach/            # System prompts, provider abstraction (Anthropic / Ollama)
-        ├── code-runner/      # Grading, XP, rank utilities
-        ├── content/          # Content types and loader
+        ├── coach/
+        │   ├── prompt.ts     # System prompt builders (Socratic / Q&A modes)
+        │   └── prompt.test.ts
+        ├── code-runner/      # Grading, XP, rank utilities + tests
+        ├── content/          # Content types, loader, validate-content.test.ts
         ├── db.ts             # Lazy Prisma proxy
+        ├── db.test.ts
         └── progression.ts    # Lesson unlock logic
 ```
 
@@ -353,7 +359,7 @@ Deployed on [Render](https://render.com) using a single Blueprint (`render.yaml`
 | `CODE_RUNNER_URL` | ✅ | Set automatically by Blueprint via `fromService.property: hostport` |
 | `ANTHROPIC_API_KEY` | ✅ | Claude API key for the Socratic Coach |
 | `COACH_PROVIDER` | ❌ | `anthropic` (default) or `ollama` |
-| `ENABLE_TEST_API` | ❌ | Set to `1` in test environments only — never production |
+| `ENABLE_TEST_API` | ❌ | Set to `1` in test environments only — never production (`/api/test-reset` returns 403 without it) |
 
 ### Deploy Steps
 
