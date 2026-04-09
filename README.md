@@ -2,6 +2,8 @@
 
 > *A gamified LMS that turns Markdown files into interactive web lessons — built with AI agents, shipped with a real CI pipeline.*
 
+**[Live demo → https://quizquest-5g96.onrender.com](https://quizquest-5g96.onrender.com)**
+
 QuizQuest lets instructors author courses as plain Markdown files with YAML frontmatter. Learners work through structured chapters with reading lessons, multiple-choice quizzes, and in-browser code challenges — earning XP, maintaining streaks, and unlocking the next lesson as they go.
 
 **Built entirely through an agentic development workflow** — GitHub issues assigned to AI coding agents, reviewed by AI code review agents, validated by a full CI/CD pipeline. E2E tests pass. The build is green.
@@ -69,7 +71,7 @@ Code Runner  (runner/ — Go 1.22 HTTP service)
   └─ POST /run   — Write code to temp dir, exec subprocess, return
                    { stdout, stderr, exitCode, timedOut }
                    Local: Docker sidecar on :8080
-                   Prod:  Railway service (CODE_RUNNER_URL env var)
+                   Prod:  Render service (CODE_RUNNER_URL env var)
 ```
 
 ### Database Models
@@ -308,40 +310,37 @@ pnpm test:e2e
 
 ## 🚢 Production Deployment
 
+Deployed on [Render](https://render.com) using a single Blueprint (`render.yaml`) that provisions all three services together: the Next.js web app, the Go code runner, and a managed PostgreSQL database.
+
 ### Environment Variables
 
 | Variable | Required | Description |
 |---|---|---|
-| `DATABASE_URL` | ✅ | PostgreSQL connection string. Neon: append `?pgbouncer=true&connection_limit=1` |
-| `CODE_RUNNER_URL` | ✅ (prod) | Base URL of the code runner service (e.g. `https://runner.railway.app`) |
+| `DATABASE_URL` | ✅ | Set automatically by Render from the managed database |
+| `CODE_RUNNER_URL` | ✅ | Base URL of the Render code runner service — set manually after runner deploys |
 | `ENABLE_TEST_API` | ❌ | Set to `1` in test environments only — never production |
 
 ### Deploy Steps
 
-**Next.js (Vercel + Neon PostgreSQL)**
-
-```bash
-# 1. Push to GitHub — Vercel auto-deploys on push
-# 2. Set DATABASE_URL and CODE_RUNNER_URL in Vercel project settings
-# 3. Run migrations against Neon:
-DATABASE_URL=<neon-url> npx prisma migrate deploy
-# 4. Seed demo user:
-DATABASE_URL=<neon-url> npx tsx prisma/seed.ts
-```
-
-**Code Runner (Railway)**
-
-1. Create a new Railway service pointed at this repo, root directory `runner/`
-2. Railway picks up `runner/railway.toml` automatically
-3. Set `CODE_RUNNER_URL` in Vercel to the Railway public URL
+1. Push to GitHub
+2. In the Render dashboard, create a new **Blueprint** and point it at this repo — Render reads `render.yaml` automatically
+3. After the runner service is live, copy its public URL and set `CODE_RUNNER_URL` in the `quizquest` web service environment variables
+4. Run migrations against the Render database:
+   ```bash
+   DATABASE_URL=<render-db-url> npx prisma migrate deploy
+   ```
+5. Seed the demo user:
+   ```bash
+   DATABASE_URL=<render-db-url> npx tsx prisma/seed.ts
+   ```
 
 ### Production Checklist
 
-- [ ] `DATABASE_URL` points to a production PostgreSQL instance with TLS
-- [ ] Neon `DATABASE_URL` includes `?pgbouncer=true&connection_limit=1`
-- [ ] `CODE_RUNNER_URL` set to the deployed Railway runner URL
+- [ ] Blueprint deployed (`render.yaml`) — all three services running
+- [ ] `CODE_RUNNER_URL` set to the deployed Render runner URL
 - [ ] `ENABLE_TEST_API` is unset or `0`
 - [ ] Migrations applied (`prisma migrate deploy`)
+- [ ] Demo user seeded (`npx tsx prisma/seed.ts`)
 - [ ] Content validated (`pnpm validate-content`)
 
 ---

@@ -14,6 +14,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import type { CodeRunnerRequest, CodeRunnerResponse } from "@/lib/code-runner/types";
+import {
+  DEFAULT_TIMEOUT_SECONDS,
+  FETCH_TIMEOUT_MS,
+  getCodeRunnerBaseUrl,
+} from "@/lib/code-runner/client";
 import { gradeSubmission } from "@/lib/code-runner/grading";
 import { computeXpDelta, computeStreak, computeRank } from "@/lib/code-runner/xp";
 import { loadCourse } from "@/lib/content/loader";
@@ -38,22 +43,11 @@ const DEMO_USER_ID = "demo-user";
 /** Languages supported by the MVP runner (contract §5). */
 const SUPPORTED_LANGUAGES = new Set(["go"]);
 
-/** Default timeout forwarded to the runner (contract §6). */
-const DEFAULT_TIMEOUT_SECONDS = 10;
-
 /** Base URL of the code-runner service (trailing slashes normalised). */
-const _RAW_RUNNER_URL = process.env.CODE_RUNNER_URL;
-const CODE_RUNNER_URL = (
-  _RAW_RUNNER_URL && _RAW_RUNNER_URL.trim() !== ""
-    ? _RAW_RUNNER_URL.trim()
-    : "http://localhost:8080"
-).replace(/\/+$/, "");
+const CODE_RUNNER_URL = getCodeRunnerBaseUrl();
 
 /** Maximum allowed code size in bytes (contract §6). */
 const MAX_CODE_BYTES = 64 * 1024; // 64 KB
-
-/** Client-side fetch deadline: runner timeout + 5 s grace period (ms). */
-const FETCH_TIMEOUT_MS = (DEFAULT_TIMEOUT_SECONDS + 5) * 1_000;
 
 /** Allowed slug pattern: lowercase letters, digits, hyphens only. */
 const SLUG_REGEX = /^[a-z0-9-]+$/;

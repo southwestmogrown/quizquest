@@ -2,15 +2,13 @@
 
 databases:
   - name: quizquest-db
-    plan: free
     databaseName: quizquest
     user: quizquest
 
 services:
   - type: web
     name: quizquest
-    env: node
-    plan: free
+    runtime: node
     region: oregon
     buildCommand: npm install -g pnpm@10 && pnpm install --frozen-lockfile && pnpm build
     startCommand: pnpm start
@@ -20,14 +18,19 @@ services:
           name: quizquest-db
           property: connectionString
       - key: CODE_RUNNER_URL
-        sync: false
+        fromService:
+          name: quizquest-runner-internal
+          type: pserv
+          property: hostport
       - key: NODE_ENV
         value: production
 
-  - type: web
-    name: quizquest-runner
-    env: docker
-    plan: free
+  - type: pserv
+    name: quizquest-runner-internal
+    runtime: docker
     region: oregon
     dockerfilePath: ./runner/Dockerfile
     dockerContext: ./runner
+    envVars:
+      - key: PORT
+        value: "8080"
