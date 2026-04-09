@@ -132,7 +132,7 @@ Validate content: `pnpm validate-content`
 - **Anti-farming**: XP delta = `max(0, xpForScore - bestXpAwarded)` — re-submitting same score awards 0 XP.
 - **Demo user**: app is hardcoded to `demo-user` — no auth system.
 
-## Current State (as of 2026-04-09, updated M4)
+## Current State (as of 2026-04-09, updated post-M4)
 
 ### Completed backlog (21 original issues)
 
@@ -190,9 +190,9 @@ Key implementation files:
 
 **Test count: 57/57 passing (unit). Build clean.**
 
-### Design system (in progress)
+### Design system (complete)
 
-Stitch (Google frontend design AI) generated a design system brief at `docs/Stitch-design-system.md`. Direction: **"Engineering Editorial"** — dark theme (`#020617` slate-950 bg), deep indigo accent (`#4f46e5`), glass panels (`backdrop-blur`, `bg-slate-900/60`), Plus Jakarta Sans + JetBrains Mono fonts, glow effects. This design is **already applied** to the lesson and course pages — it is the next major UI milestone to extend sitewide.
+Stitch (Google frontend design AI) generated a design system brief at `docs/Stitch-design-system.md`. Direction: **"Engineering Editorial"** — dark theme (`#020617` slate-950 bg), deep indigo accent (`#4f46e5`), glass panels (`backdrop-blur`, `bg-slate-900/60`), Plus Jakarta Sans + JetBrains Mono fonts, glow effects. This design is **applied sitewide** — landing page, courses catalog, dashboard, lesson pages, and all components use the design system consistently.
 
 ## Deployment (Render)
 
@@ -252,16 +252,19 @@ There is/was a public web service named `quizquest-runner` (separate from `quizq
 
 ## Remaining / Next Steps (priority order)
 
-**P0–M4 — Done**
+**Done**
 - Full Render deployment (web + private runner + managed Postgres)
+- Design system applied sitewide (landing page, courses, dashboard, lessons)
 
-**P1 — Next up**
-- **M3-2: Landing page polish** — extend Stitch "Engineering Editorial" design system sitewide (landing page hero, courses page, dashboard)
-- **M4-3: README for recruiters** — deployment architecture, live demo link, tech decisions
+**P0 — Next up**
+- **M4-3: README for recruiters** — deployment architecture diagram, live demo link, tech decisions; highest-leverage portfolio artifact
+
+**P1**
+- **M1-3: CodeMirror editor** — replace `<textarea>` in code lessons; visible UX improvement for anyone demoing
 
 **P2**
-- M1-3: CodeMirror editor (replace textarea)
-- M3: Full design system implementation, second course, responsive audit
+- **Second course** — demonstrates content extensibility (Python intro, SQL basics, etc.)
+- **Responsive audit** — check all pages at mobile breakpoints; breakpoints are in place, just needs a pass
 
 **P3**
 - M5: Back-fill missing tests (pages, client components, db.ts, validate-content script)

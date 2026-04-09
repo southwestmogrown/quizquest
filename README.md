@@ -125,8 +125,7 @@ quizquest/
 ├── runner/                   # Go code runner service
 │   ├── main.go               # HTTP server + subprocess executor
 │   ├── main_test.go          # Unit tests
-│   ├── Dockerfile            # Multi-stage build (golang:1.22-alpine)
-│   └── railway.toml          # Railway deploy config
+│   └── Dockerfile            # Multi-stage build (golang:1.22-alpine)
 ├── scripts/
 │   └── validate-content.ts   # CI content validator
 └── src/
@@ -317,14 +316,14 @@ Deployed on [Render](https://render.com) using a single Blueprint (`render.yaml`
 | Variable | Required | Description |
 |---|---|---|
 | `DATABASE_URL` | ✅ | Set automatically by Render from the managed database |
-| `CODE_RUNNER_URL` | ✅ | Base URL of the Render code runner service — set manually after runner deploys |
+| `CODE_RUNNER_URL` | ✅ | Set automatically by Blueprint via `fromService.property: hostport` |
 | `ENABLE_TEST_API` | ❌ | Set to `1` in test environments only — never production |
 
 ### Deploy Steps
 
 1. Push to GitHub
 2. In the Render dashboard, create a new **Blueprint** and point it at this repo — Render reads `render.yaml` automatically
-3. After the runner service is live, copy its public URL and set `CODE_RUNNER_URL` in the `quizquest` web service environment variables
+3. `CODE_RUNNER_URL` is wired automatically by the Blueprint via `fromService.property: hostport` — no manual step needed
 4. Run migrations against the Render database:
    ```bash
    DATABASE_URL=<render-db-url> npx prisma migrate deploy
