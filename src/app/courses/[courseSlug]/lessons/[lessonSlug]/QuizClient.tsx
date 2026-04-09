@@ -10,6 +10,7 @@
 
 import { useState } from "react";
 import CompletionOverlay from "@/components/CompletionOverlay";
+import SocraticCoach from "@/components/SocraticCoach";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -66,6 +67,8 @@ export default function QuizClient({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<QuizSubmitResponse | null>(null);
+  const [failCount, setFailCount] = useState(0);
+  const [showCoach, setShowCoach] = useState(false);
 
   // Reset state so the user can try again after an incorrect answer.
   function handleRetry() {
@@ -93,6 +96,13 @@ export default function QuizClient({
       }
       const data = (await res.json()) as QuizSubmitResponse;
       setResult(data);
+      if (!data.correct) {
+        setFailCount((n) => {
+          const next = n + 1;
+          if (next >= 2) setShowCoach(true);
+          return next;
+        });
+      }
     } catch {
       setError("Network error. Please check your connection and try again.");
     } finally {
@@ -178,6 +188,14 @@ export default function QuizClient({
           </p>
         )}
 
+        <button
+          onClick={() => setShowCoach(true)}
+          className="mr-auto border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
+          aria-label="Open Socratic coach"
+        >
+          I&apos;m stuck
+        </button>
+
         {/* Retry button — shown after an incorrect answer */}
         {result && !result.correct && (
           <button
@@ -199,6 +217,17 @@ export default function QuizClient({
           </button>
         )}
       </div>
+
+      {/* Socratic coach panel */}
+      {showCoach && (
+        <SocraticCoach
+          courseSlug={courseSlug}
+          lessonSlug={lessonSlug}
+          lessonType="quiz"
+          learnerChoiceId={selectedId ?? undefined}
+          onClose={() => setShowCoach(false)}
+        />
+      )}
 
       {/* Completion overlay — shown on a correct answer */}
       {result?.correct && (

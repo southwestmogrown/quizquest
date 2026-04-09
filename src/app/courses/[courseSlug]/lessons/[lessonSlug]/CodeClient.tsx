@@ -16,6 +16,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { go } from "@codemirror/lang-go";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import CompletionOverlay from "@/components/CompletionOverlay";
+import SocraticCoach from "@/components/SocraticCoach";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -108,6 +109,8 @@ export default function CodeClient({
   const [runOutput, setRunOutput] = useState<RunOutput | null>(null);
   const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null);
   const [showFlash, setShowFlash] = useState(false);
+  const [failCount, setFailCount] = useState(0);
+  const [showCoach, setShowCoach] = useState(false);
 
   const isRunning = loading !== "idle";
 
@@ -162,6 +165,12 @@ export default function CodeClient({
       setSubmitResult(data);
       if (data.passed && data.lessonCompleted) {
         setShowFlash(true);
+      } else if (!data.passed) {
+        setFailCount((n) => {
+          const next = n + 1;
+          if (next >= 2) setShowCoach(true);
+          return next;
+        });
       }
     } catch {
       setError("Network error. Please check your connection and try again.");
@@ -240,6 +249,13 @@ export default function CodeClient({
 
             <div className="ml-auto flex items-center gap-2">
               <button
+                onClick={() => setShowCoach(true)}
+                className="border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
+                aria-label="Open Socratic coach"
+              >
+                I&apos;m stuck
+              </button>
+              <button
                 onClick={handleReset}
                 disabled={isRunning}
                 className="border border-white/10 text-slate-400 hover:bg-white/5 hover:text-slate-50 rounded-lg px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
@@ -278,6 +294,17 @@ export default function CodeClient({
               editable={!isRunning}
             />
           </div>
+
+          {/* Socratic coach panel */}
+          {showCoach && (
+            <SocraticCoach
+              courseSlug={courseSlug}
+              lessonSlug={lessonSlug}
+              lessonType="code"
+              learnerCode={code}
+              onClose={() => setShowCoach(false)}
+            />
+          )}
 
           {/* Output panel */}
           {showOutputPanel && (

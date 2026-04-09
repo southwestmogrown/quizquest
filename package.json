@@ -14,12 +14,14 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "prisma db seed",
-    "validate-content": "tsx scripts/validate-content.ts"
+    "validate-content": "tsx scripts/validate-content.ts",
+    "eval-coach": "tsx scripts/eval-coach.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.87.0",
     "@codemirror/lang-go": "^6.0.1",
     "@prisma/adapter-pg": "7.4.2",
     "@prisma/client": "^7.4.2",

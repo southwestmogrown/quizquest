@@ -32,16 +32,18 @@ See `src/lib/db.ts` for the production singleton (lazy proxy pattern). The lazy 
 
 ## Environment Variables
 
-Only one variable is required:
-
 ```
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/quizquest
+ANTHROPIC_API_KEY=sk-ant-...          # required for Socratic Coach in production
+COACH_PROVIDER=anthropic              # "anthropic" (default) | "ollama" (local eval)
+OLLAMA_BASE_URL=http://localhost:11434  # optional, default shown
+OLLAMA_MODEL=llama3.2                   # optional, default shown
 ```
 
 - `.env.local` — loaded by Next.js at runtime
 - `.env` — loaded by Prisma CLI (Prisma does NOT read `.env.local`)
 
-Both files must exist with the same value.
+`DATABASE_URL` must exist in both files. `ANTHROPIC_API_KEY` only needs to be in `.env.local`.
 
 ## Local Dev Setup (WSL2)
 
@@ -254,17 +256,21 @@ There is/was a public web service named `quizquest-runner` (separate from `quizq
 
 **Done**
 - Full Render deployment (web + private runner + managed Postgres)
+- M1: Lesson breadcrumb, CodeMirror editor, completion flash, confetti overlay, rank rebalance
+- AI-Assisted Development course (26 lessons, 6 chapters)
+- Socratic Coach (`/api/coach`, `SocraticCoach` component, `scripts/eval-coach.ts`)
 - Design system applied sitewide (landing page, courses, dashboard, lessons)
 
 **P0 — Next up**
 - **M4-3: README for recruiters** — deployment architecture diagram, live demo link, tech decisions; highest-leverage portfolio artifact
 
 **P1**
-- **M1-3: CodeMirror editor** — replace `<textarea>` in code lessons; visible UX improvement for anyone demoing
+- **Socratic Coach eval** — run `pnpm eval-coach` with Ollama before shipping; wire `ANTHROPIC_API_KEY` on Render
+- **M3-2: Landing page polish** — extend "Engineering Editorial" design system sitewide
 
 **P2**
-- **Second course** — demonstrates content extensibility (Python intro, SQL basics, etc.)
-- **Responsive audit** — check all pages at mobile breakpoints; breakpoints are in place, just needs a pass
+- **Responsive audit** — check all pages at mobile breakpoints
+- **README for recruiters** — deployment architecture, live demo link, tech decisions
 
 **P3**
 - M5: Back-fill missing tests (pages, client components, db.ts, validate-content script)
@@ -282,4 +288,5 @@ There is/was a public web service named `quizquest-runner` (separate from `quizq
 | `pnpm test:e2e` | Playwright E2E (requires `ENABLE_TEST_API=1 pnpm dev` in another terminal) |
 | `pnpm lint` | ESLint |
 | `pnpm validate-content` | Validate all course Markdown |
+| `pnpm eval-coach` | Run Socratic Coach eval harness (Ollama by default) |
 | `pnpm prisma:generate` | Regenerate Prisma client after schema changes |
