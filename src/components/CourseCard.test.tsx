@@ -15,46 +15,51 @@ const baseCourse: Course = {
 
 describe("CourseCard", () => {
   it("renders the course title", () => {
-    const html = renderToStaticMarkup(<CourseCard course={baseCourse} />);
+    const html = renderToStaticMarkup(<CourseCard course={baseCourse} href="/courses/intro-to-go" />);
     expect(html).toContain("Introduction to Go");
   });
 
   it("renders the course description", () => {
-    const html = renderToStaticMarkup(<CourseCard course={baseCourse} />);
+    const html = renderToStaticMarkup(<CourseCard course={baseCourse} href="/courses/intro-to-go" />);
     expect(html).toContain("Learn the fundamentals of the Go programming language.");
   });
 
   it("renders the difficulty badge", () => {
-    const html = renderToStaticMarkup(<CourseCard course={baseCourse} />);
+    const html = renderToStaticMarkup(<CourseCard course={baseCourse} href="/courses/intro-to-go" />);
     expect(html).toContain("beginner");
   });
 
   it("renders the estimated hours", () => {
-    const html = renderToStaticMarkup(<CourseCard course={baseCourse} />);
+    const html = renderToStaticMarkup(<CourseCard course={baseCourse} href="/courses/intro-to-go" />);
     expect(html).toContain("4");
     expect(html).toContain("hours estimated");
   });
 
   it("renders singular 'hour' when estimatedHours is 1", () => {
     const course = { ...baseCourse, estimatedHours: 1 };
-    const html = renderToStaticMarkup(<CourseCard course={course} />);
+    const html = renderToStaticMarkup(<CourseCard course={course} href="/courses/intro-to-go" />);
     expect(html).toContain("1 hour estimated");
   });
 
   it("applies beginner difficulty styling", () => {
-    const html = renderToStaticMarkup(<CourseCard course={baseCourse} />);
+    const html = renderToStaticMarkup(<CourseCard course={baseCourse} href="/courses/intro-to-go" />);
     expect(html).toContain("bg-green-100");
   });
 
   it("applies intermediate difficulty styling", () => {
     const course = { ...baseCourse, difficulty: "intermediate" as const };
-    const html = renderToStaticMarkup(<CourseCard course={course} />);
+    const html = renderToStaticMarkup(<CourseCard course={course} href="/courses/intro-to-go" />);
     expect(html).toContain("bg-yellow-100");
   });
 
   it("applies advanced difficulty styling", () => {
     const course = { ...baseCourse, difficulty: "advanced" as const };
-    const html = renderToStaticMarkup(<CourseCard course={course} />);
+    const html = renderToStaticMarkup(<CourseCard course={course} href="/courses/intro-to-go" />);
     expect(html).toContain("bg-red-100");
+  });
+
+  it("renders an anchor tag with the correct href", () => {
+    const html = renderToStaticMarkup(<CourseCard course={baseCourse} href="/courses/intro-to-go" />);
+    expect(html).toContain('href="/courses/intro-to-go"');
   });
 });

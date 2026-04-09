@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import TopNavBar from "@/components/TopNavBar";
 
 export const metadata: Metadata = {
   title: "QuizQuest",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased flex flex-col min-h-screen">
+        <TopNavBar />
+        <div className="flex-1">{children}</div>
+      </body>
     </html>
   );
 }

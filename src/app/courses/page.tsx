@@ -32,7 +32,11 @@ export default function CoursesPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course) => (
-            <CourseCard key={course.courseSlug} course={course} />
+            <CourseCard
+              key={course.courseSlug}
+              course={course}
+              href={`/courses/${course.courseSlug}`}
+            />
           ))}
         </div>
       )}
