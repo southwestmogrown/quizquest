@@ -236,6 +236,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // Infrastructure failures — do not grade or update DB (runner contract §7.2, spec §9).
   // Both an `error` field and a `timedOut` flag indicate infra failures.
   if (runnerResponse.error || runnerResponse.timedOut) {
+    console.error("Runner infra error", {
+      url: `${CODE_RUNNER_URL}/run`,
+      runnerError: runnerResponse.error ?? null,
+      timedOut: runnerResponse.timedOut,
+    });
     return NextResponse.json(
       { error: "Runner unavailable" },
       { status: 503 }

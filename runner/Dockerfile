@@ -14,17 +14,20 @@ RUN go build -o runner .
 # -----------------------------------------------------------------------
 FROM golang:1.22-alpine
 
-# Pre-warm the Go module cache / build cache so the first user execution
-# doesn't pay the full cold-start cost of downloading the standard library.
-# (The stdlib is already compiled into the toolchain image, so this is
-# mainly about verifying the toolchain works and creating cache dirs.)
-RUN mkdir -p /tmp/gocache && GOCACHE=/tmp/gocache go build -v std 2>/dev/null || true
-
 COPY --from=builder /build/runner /usr/local/bin/runner
 
 # Non-root user for defence-in-depth.
 RUN adduser -D -u 1001 runner
+
+# Create a dedicated writable workspace for the runner user.
+# /tmp may have root-owned artifacts or restrictive mounts on some platforms.
+RUN mkdir -p /home/runner/work && chown runner:runner /home/runner/work
+
+# Pre-warm the Go build cache as the runner user so the cache files are
+# owned by the correct UID and the first user request is faster.
 USER runner
+ENV RUNNER_TMPDIR=/home/runner/work
+RUN GOCACHE=/home/runner/work/gocache go build -v std 2>/dev/null || true
 
 ENV PORT=8080
 EXPOSE 8080

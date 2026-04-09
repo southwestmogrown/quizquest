@@ -127,6 +127,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // An `error` field in the runner response means execution could not be
   // attempted — return 503 (contract §7.2).
   if (runnerResponse.error) {
+    console.error("Runner infra error", {
+      url: `${CODE_RUNNER_URL}/run`,
+      runnerError: runnerResponse.error,
+    });
     return NextResponse.json(
       { error: "Runner unavailable" },
       { status: 503 }

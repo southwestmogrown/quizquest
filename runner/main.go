@@ -56,6 +56,10 @@ func main() {
 		port = "8080"
 	}
 
+	// Verify execution environment on startup — fail fast if the runner
+	// cannot create temp dirs or invoke the Go toolchain.
+	verifyEnvironment()
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /run", handleRun)
 	mux.HandleFunc("GET /healthz", handleHealth)
@@ -74,6 +78,8 @@ func handleHealth(w http.ResponseWriter, _ *http.Request) {
 
 func handleRun(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
+	log.Printf("POST /run received")
 
 	// --- 1. Decode and validate request -----------------------------------
 
@@ -129,29 +135,45 @@ func handleRun(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if resp.Error != "" {
+		log.Printf("POST /run infra error: %s", resp.Error)
+	} else {
+		log.Printf("POST /run completed: exitCode=%d timedOut=%v stdout=%d stderr=%d",
+			resp.ExitCode, resp.TimedOut, len(resp.Stdout), len(resp.Stderr))
+	}
+
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(resp)
 }
 
 // executeGo writes code to a temp dir, runs "go run main.go", and returns the result.
 func executeGo(code, stdin string, timeoutSeconds int) runResponse {
+	// Use RUNNER_TMPDIR if set (dedicated writable dir), else fall back to os.TempDir().
+	tmpBase := os.Getenv("RUNNER_TMPDIR")
+	if tmpBase == "" {
+		tmpBase = os.TempDir()
+	}
+
 	// Create isolated temp directory for this request.
-	dir, err := os.MkdirTemp("", "quizquest-runner-*")
+	dir, err := os.MkdirTemp(tmpBase, "quizquest-runner-*")
 	if err != nil {
-		return infraError("failed to create temp dir")
+		log.Printf("executeGo: MkdirTemp(%q) failed: %v", tmpBase, err)
+		return infraError(fmt.Sprintf("failed to create temp dir: %v", err))
 	}
 	defer os.RemoveAll(dir)
 
 	// Write go.mod so the code runs in module-aware mode without a module cache lookup.
 	goMod := "module usercode\n\ngo 1.22\n"
 	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte(goMod), 0600); err != nil {
-		return infraError("failed to write go.mod")
+		log.Printf("executeGo: write go.mod failed: %v", err)
+		return infraError(fmt.Sprintf("failed to write go.mod: %v", err))
 	}
 
 	// Write source file.
 	srcPath := filepath.Join(dir, "main.go")
 	if err := os.WriteFile(srcPath, []byte(code), 0600); err != nil {
-		return infraError("failed to write source file")
+		log.Printf("executeGo: write source file failed: %v", err)
+		return infraError(fmt.Sprintf("failed to write source file: %v", err))
 	}
 
 	// Build execution context with timeout.
@@ -180,7 +202,13 @@ func executeGo(code, stdin string, timeoutSeconds int) runResponse {
 		} else if timedOut {
 			exitCode = -1
 		} else {
+			// Command couldn't start (e.g. binary not found, permission denied).
+			log.Printf("executeGo: cmd.Run non-exit error: %v", runErr)
 			exitCode = -1
+			// Include the error in stderr so the caller can diagnose.
+			if stderrBuf.String() == "" {
+				stderrBuf.Write([]byte(runErr.Error()))
+			}
 		}
 	}
 	if timedOut {
@@ -203,15 +231,67 @@ func goEnv(dir string) []string {
 		goroot = "/usr/local/go"
 	}
 	path := goroot + "/bin:/usr/local/bin:/usr/bin:/bin"
+
+	// Use the pre-warmed build cache if it exists (avoids recompiling std
+	// on every request). Falls back to per-request cache dir otherwise.
+	gocache := filepath.Join(dir, "gocache")
+	if warmCache := os.Getenv("RUNNER_TMPDIR"); warmCache != "" {
+		candidate := filepath.Join(warmCache, "gocache")
+		if info, err := os.Stat(candidate); err == nil && info.IsDir() {
+			gocache = candidate
+		}
+	}
+
 	return []string{
-		"HOME=/tmp",
+		"HOME=" + dir,
 		"GOROOT=" + goroot,
 		"GOPATH=" + filepath.Join(dir, "gopath"),
-		"GOCACHE=" + filepath.Join(dir, "gocache"),
+		"GOCACHE=" + gocache,
 		"GONOSUMDB=*",
 		"GOFLAGS=",
 		"PATH=" + path,
 	}
+}
+
+// verifyEnvironment runs a quick self-check on startup to confirm the runner
+// can create temp dirs and invoke the Go toolchain. Fails fast with logs if
+// something is wrong.
+func verifyEnvironment() {
+	tmpBase := os.Getenv("RUNNER_TMPDIR")
+	if tmpBase == "" {
+		tmpBase = os.TempDir()
+	}
+	log.Printf("verify: RUNNER_TMPDIR=%q (resolved tmpBase=%q)", os.Getenv("RUNNER_TMPDIR"), tmpBase)
+
+	dir, err := os.MkdirTemp(tmpBase, "verify-*")
+	if err != nil {
+		log.Fatalf("STARTUP CHECK FAILED: cannot create temp dir in %q: %v", tmpBase, err)
+	}
+	defer os.RemoveAll(dir)
+
+	srcPath := filepath.Join(dir, "main.go")
+	if err := os.WriteFile(srcPath, []byte("package main\nimport \"fmt\"\nfunc main(){fmt.Print(\"ok\")}\n"), 0600); err != nil {
+		log.Fatalf("STARTUP CHECK FAILED: cannot write source file: %v", err)
+	}
+	goModPath := filepath.Join(dir, "go.mod")
+	if err := os.WriteFile(goModPath, []byte("module verify\n\ngo 1.22\n"), 0600); err != nil {
+		log.Fatalf("STARTUP CHECK FAILED: cannot write go.mod: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, "go", "run", srcPath)
+	cmd.Env = goEnv(dir)
+	cmd.Dir = dir
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("STARTUP CHECK FAILED: 'go run' returned error: %v\noutput: %s", err, string(out))
+	}
+	if string(out) != "ok" {
+		log.Fatalf("STARTUP CHECK FAILED: expected 'ok', got %q", string(out))
+	}
+
+	log.Printf("verify: startup self-test passed (go run works, temp dirs writable)")
 }
 
 // infraError returns a runResponse representing an infrastructure-level failure.
