@@ -117,7 +117,7 @@ export default function QuizClient({
     if (!result) {
       return choiceId === selectedId ? "selected" : "default";
     }
-    if (choiceId === result.correctChoiceId) return "correct";
+    if (result.correct && choiceId === result.correctChoiceId) return "correct";
     if (choiceId === selectedId && !result.correct) return "incorrect";
     return "neutral";
   }
@@ -185,7 +185,6 @@ export default function QuizClient({
         <button
           onClick={() => setShowCoach(true)}
           className="border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
-          aria-label="Open Socratic coach"
         >
           I&apos;m stuck
         </button>
