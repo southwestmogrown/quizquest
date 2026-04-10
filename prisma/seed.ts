@@ -32,10 +32,10 @@ async function main() {
   // automatically by the submit API when the previous lesson is completed.
   await prisma.userProgress.upsert({
     where: {
-      userId_lessonSlug: { userId: user.id, lessonSlug: "what-is-go" },
+      userId_lessonSlug: { userId: user.id, lessonSlug: "welcome-to-quizquest" },
     },
     update: {},
-    create: { userId: user.id, lessonSlug: "what-is-go", state: "available" },
+    create: { userId: user.id, lessonSlug: "welcome-to-quizquest", state: "available" },
   });
 
   console.log(`✅ Seeded demo user: ${user.id} (${user.displayName})`);

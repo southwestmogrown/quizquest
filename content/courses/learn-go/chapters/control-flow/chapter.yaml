@@ -1,9 +1,9 @@
 chapterSlug: control-flow
-title: Control Flow
+title: Your Learning Tools
 lessons:
-  - lessonSlug: if-and-loops
-    title: If Statements and Loops
+  - lessonSlug: meet-the-ai-coach
+    title: Meet the AI Coach
     type: reading
   - lessonSlug: quiz-control-flow
-    title: "Quiz: Control Flow"
+    title: "Quiz: How QuizQuest Works"
     type: quiz

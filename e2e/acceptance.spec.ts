@@ -156,7 +156,7 @@ test("AC 11.3 – locked lesson shows locked state and hides content", async ({
   request,
 }) => {
   // Only the first lesson is available; hello-world has no progress row → locked.
-  await resetDemoUser(request, ["what-is-go"]);
+  await resetDemoUser(request, ["welcome-to-quizquest"]);
 
   await page.goto("/courses/learn-go/lessons/hello-world");
 
@@ -221,7 +221,7 @@ test("AC 11.5 – completion overlay shows XP, streak, progress, and next-lesson
   page,
   request,
 }) => {
-  await resetDemoUser(request, ["what-is-go"]);
+  await resetDemoUser(request, ["welcome-to-quizquest"]);
 
   // Mock /api/complete: 10 XP awarded, streak = 1.
   await page.route("**/api/complete", (route) =>
@@ -237,7 +237,7 @@ test("AC 11.5 – completion overlay shows XP, streak, progress, and next-lesson
     })
   );
 
-  await page.goto("/courses/learn-go/lessons/what-is-go");
+  await page.goto("/courses/learn-go/lessons/welcome-to-quizquest");
 
   await page.getByRole("button", { name: "Mark Complete" }).click();
 

@@ -11,7 +11,7 @@
 //   Reset   — restores the editor to starter code and clears the output panel.
 // ---------------------------------------------------------------------------
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { go } from "@codemirror/lang-go";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
@@ -111,6 +111,7 @@ export default function CodeClient({
   const [showFlash, setShowFlash] = useState(false);
   const [failCount, setFailCount] = useState(0);
   const [showCoach, setShowCoach] = useState(false);
+  const outputRef = useRef<HTMLDivElement>(null);
 
   const isRunning = loading !== "idle";
 
@@ -206,6 +207,13 @@ export default function CodeClient({
 
   const showOutputPanel = !!(outputToShow || error || submitResult);
 
+  // Scroll output into view whenever it appears.
+  useEffect(() => {
+    if (showOutputPanel) {
+      outputRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }, [showOutputPanel]);
+
   // Overlay progress data.
   const updatedCompleted = submitResult?.lessonCompleted
     ? completedLessons + 1
@@ -235,23 +243,21 @@ export default function CodeClient({
               aria-label="Language"
               className="rounded-md border border-white/10 bg-slate-800 px-3 py-1.5 text-sm text-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             >
-              {Object.entries(LANGUAGE_LABELS).map(([val, label]) => (
-                <option
-                  key={val}
-                  value={val}
-                  disabled={!MVP_LANGUAGES.has(val)}
-                >
-                  {label}
-                  {!MVP_LANGUAGES.has(val) ? " (coming soon)" : ""}
-                </option>
-              ))}
+              {Object.entries(LANGUAGE_LABELS).map(([val, label]) => {
+                const available = MVP_LANGUAGES.has(val);
+                return (
+                  <option key={val} value={val} disabled={!available}>
+                    {label}
+                    {!available ? " (coming soon)" : ""}
+                  </option>
+                );
+              })}
             </select>
 
             <div className="ml-auto flex items-center gap-2">
               <button
                 onClick={() => setShowCoach(true)}
                 className="border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
-                aria-label="Open Socratic coach"
               >
                 I&apos;m stuck
               </button>
@@ -283,6 +289,7 @@ export default function CodeClient({
           <div
             className={`overflow-hidden rounded-lg border border-slate-700 ${isRunning ? "pointer-events-none opacity-70" : ""}`}
             aria-label="Code editor"
+            data-testid="code-editor"
           >
             <CodeMirror
               value={code}
@@ -308,7 +315,7 @@ export default function CodeClient({
 
           {/* Output panel */}
           {showOutputPanel && (
-            <div className="rounded-xl border border-white/10 bg-slate-800/60 p-4">
+            <div ref={outputRef} className="rounded-xl border border-white/10 bg-slate-800/60 p-4">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Output
               </p>
