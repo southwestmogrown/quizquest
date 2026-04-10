@@ -308,7 +308,7 @@ export default function CodeClient({
 
           {/* Output panel */}
           {showOutputPanel && (
-            <div className="rounded-xl border border-white/5 bg-slate-950/60 p-4">
+            <div className="rounded-xl border border-white/10 bg-slate-800/60 p-4">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Output
               </p>

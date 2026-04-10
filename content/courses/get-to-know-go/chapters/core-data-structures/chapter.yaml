@@ -1,0 +1,21 @@
+chapterSlug: core-data-structures
+title: "Go's Core Data Structures"
+lessons:
+  - lessonSlug: arrays-and-slices
+    title: Arrays and Slices
+    type: reading
+  - lessonSlug: maps
+    title: Maps
+    type: reading
+  - lessonSlug: word-frequency-counter
+    title: Word Frequency Counter
+    type: code
+  - lessonSlug: structs-and-methods
+    title: Structs and Methods
+    type: reading
+  - lessonSlug: inventory-capstone
+    title: "Capstone: Inventory System"
+    type: code
+  - lessonSlug: quiz-data-structures
+    title: "Quiz: Data Structures"
+    type: quiz

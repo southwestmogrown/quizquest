@@ -1,0 +1,21 @@
+chapterSlug: control-flow-and-functions
+title: Control Flow and Functions
+lessons:
+  - lessonSlug: if-else-and-conditions
+    title: If, Else, and Conditions
+    type: reading
+  - lessonSlug: the-one-loop
+    title: The One Loop
+    type: reading
+  - lessonSlug: fizzbuzz
+    title: FizzBuzz
+    type: code
+  - lessonSlug: declaring-and-calling-functions
+    title: Declaring and Calling Functions
+    type: reading
+  - lessonSlug: two-return-values
+    title: Two Return Values
+    type: code
+  - lessonSlug: quiz-control-flow-and-functions
+    title: "Quiz: Control Flow and Functions"
+    type: quiz

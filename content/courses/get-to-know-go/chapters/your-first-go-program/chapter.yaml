@@ -1,0 +1,18 @@
+chapterSlug: your-first-go-program
+title: Your First Go Program
+lessons:
+  - lessonSlug: hello-world-line-by-line
+    title: Hello, World — Line by Line
+    type: reading
+  - lessonSlug: variables-and-types
+    title: Variables and Types
+    type: reading
+  - lessonSlug: declare-and-print-variables
+    title: Declare and Print Variables
+    type: code
+  - lessonSlug: quiz-types-and-declarations
+    title: "Quiz: Types and Declarations"
+    type: quiz
+  - lessonSlug: build-a-greeting-program
+    title: Build a Greeting Program
+    type: code

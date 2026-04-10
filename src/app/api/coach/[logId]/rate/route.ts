@@ -19,9 +19,9 @@ export async function PATCH(
     );
   }
 
-  if (rating !== 1 && rating !== -1) {
+  if (rating !== 1 && rating !== -1 && rating !== null) {
     return new Response(
-      JSON.stringify({ error: "rating must be 1 or -1" }),
+      JSON.stringify({ error: "rating must be 1, -1, or null" }),
       { status: 400, headers: { "Content-Type": "application/json" } }
     );
   }
@@ -29,7 +29,7 @@ export async function PATCH(
   try {
     await db.coachLog.update({
       where: { id: logId },
-      data: { rating: rating as number },
+      data: { rating: rating as number | null },
     });
   } catch {
     return new Response(

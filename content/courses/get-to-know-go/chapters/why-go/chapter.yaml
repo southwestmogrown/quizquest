@@ -1,0 +1,12 @@
+chapterSlug: why-go
+title: Why Go?
+lessons:
+  - lessonSlug: what-is-go-and-who-uses-it
+    title: What Is Go and Who Uses It?
+    type: reading
+  - lessonSlug: how-go-thinks-about-simplicity
+    title: How Go Thinks About Simplicity
+    type: reading
+  - lessonSlug: quiz-go-fundamentals
+    title: "Quiz: Go Fundamentals"
+    type: quiz

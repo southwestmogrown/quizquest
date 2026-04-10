@@ -1,0 +1,15 @@
+courseSlug: get-to-know-go
+title: Get to Know Go
+description: A beginner-friendly introduction to Go — no prior programming experience needed.
+difficulty: beginner
+estimatedHours: 4
+totalXp: 290
+chapters:
+  - chapterSlug: why-go
+    title: Why Go?
+  - chapterSlug: your-first-go-program
+    title: Your First Go Program
+  - chapterSlug: control-flow-and-functions
+    title: Control Flow and Functions
+  - chapterSlug: core-data-structures
+    title: "Go's Core Data Structures"
