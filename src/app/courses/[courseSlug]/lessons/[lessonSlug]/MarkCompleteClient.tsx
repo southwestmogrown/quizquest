@@ -102,7 +102,6 @@ export default function MarkCompleteClient({
         <button
           onClick={() => setShowCoach((v) => !v)}
           className="border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
-          aria-label="Open coach"
         >
           Ask the Coach
         </button>
@@ -115,6 +114,7 @@ export default function MarkCompleteClient({
           <button
             onClick={handleMarkComplete}
             disabled={loading || result !== null}
+            data-testid="mark-complete-btn"
             className="rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-indigo-500 hover:to-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Saving…" : result !== null ? <><Check size={14} className="inline-block mr-1" aria-hidden="true" />Completed</> : "Mark Complete"}

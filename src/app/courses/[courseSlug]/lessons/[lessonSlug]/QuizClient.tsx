@@ -154,6 +154,7 @@ export default function QuizClient({
         {choices.map((choice) => (
           <button
             key={choice.id}
+            data-testid={`choice-${choice.id}`}
             onClick={() => {
               if (!result) setSelectedId(choice.id);
             }}
@@ -230,8 +231,8 @@ export default function QuizClient({
         />
       )}
 
-      {/* Completion overlay — shown on a correct answer */}
-      {result?.correct && (
+      {/* Completion overlay — shown only when the lesson is newly completed */}
+      {result?.correct && result?.lessonCompleted && (
         <CompletionOverlay
           lessonTitle={lessonTitle}
           xpDelta={result.xpDelta ?? 0}
