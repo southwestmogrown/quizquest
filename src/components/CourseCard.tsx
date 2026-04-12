@@ -13,7 +13,8 @@ interface CourseCardProps {
 }
 
 export default function CourseCard({ course, href }: CourseCardProps) {
-  const { title, description, difficulty } = course;
+  const { title, description, difficulty, estimatedHours } = course;
+  const hoursLabel = estimatedHours === 1 ? "hour" : "hours";
 
   return (
     <Link href={href} className="group block">
@@ -27,7 +28,11 @@ export default function CourseCard({ course, href }: CourseCardProps) {
           </span>
         </div>
         <p className="text-sm text-slate-400 line-clamp-3">{description}</p>
-
+        {estimatedHours != null && (
+          <p className="text-xs text-slate-500">
+            {estimatedHours} {hoursLabel} estimated
+          </p>
+        )}
       </div>
     </Link>
   );

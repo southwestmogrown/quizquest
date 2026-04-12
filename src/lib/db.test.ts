@@ -112,12 +112,12 @@ describe("db — lazy Prisma proxy", () => {
   });
 
   it("accessing a property on the proxy triggers PrismaClient instantiation", () => {
-    const _user = db.user;
+    void db.user;
     expect(prismaClientSpy).toHaveBeenCalledTimes(1);
   });
 
   it("constructs Pool → PrismaPg → PrismaClient in the correct dependency order", () => {
-    const _user = db.user;
+    void db.user;
 
     expect(poolSpy).toHaveBeenCalledTimes(1);
     expect(prismaPgSpy).toHaveBeenCalledTimes(1);
@@ -134,9 +134,9 @@ describe("db — lazy Prisma proxy", () => {
   });
 
   it("reuses the same PrismaClient instance on subsequent property accesses (singleton)", () => {
-    const _a = db.user;
-    const _b = db.user;
-    const _c = db.$connect;
+    void db.user;
+    void db.user;
+    void db.$connect;
 
     // Constructor should be called exactly once, not once per access
     expect(prismaClientSpy).toHaveBeenCalledTimes(1);
@@ -152,7 +152,7 @@ describe("db — lazy Prisma proxy", () => {
     process.env.DATABASE_URL = "postgresql://test:pass@localhost:5432/mydb";
 
     try {
-      const _user = db.user;
+      void db.user;
       expect(poolSpy).toHaveBeenCalledWith({
         connectionString: "postgresql://test:pass@localhost:5432/mydb",
       });
