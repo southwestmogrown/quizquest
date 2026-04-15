@@ -201,7 +201,7 @@ export default function QuizClient({
           {result && !result.correct && (
             <button
               onClick={handleRetry}
-              className="border border-stone-700 text-stone-400 hover:bg-white/5 hover:text-stone-50 rounded-lg px-5 py-2.5 text-sm font-semibold transition"
+              className="border border-stone-700 text-stone-400 hover:bg-stone-800 hover:text-stone-50 rounded-lg px-5 py-2.5 text-sm font-semibold transition"
             >
               Try Again
             </button>

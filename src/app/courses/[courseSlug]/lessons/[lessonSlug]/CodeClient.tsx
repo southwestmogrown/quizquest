@@ -380,8 +380,8 @@ export default function CodeClient({
                             <span
                               className={`h-2 w-2 shrink-0 rounded-full ${
                                 g.testsPassed === g.testsTotal
-                                  ? "bg-green-500"
-                                  : "bg-red-400"
+                                  ? "bg-emerald-500"
+                                  : "bg-rose-400"
                               }`}
                               aria-hidden="true"
                             />

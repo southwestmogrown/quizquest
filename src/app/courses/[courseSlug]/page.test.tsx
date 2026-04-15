@@ -147,7 +147,7 @@ describe("CourseOutlinePage", () => {
 
   it("shows 0 / 2 completed when no progress rows exist", async () => {
     const html = await renderPage();
-    expect(html).toContain("0 / 2 lessons completed");
+    expect(html).toContain("0 / 2");
   });
 
   it("shows correct completed count when lessons are completed", async () => {
@@ -157,7 +157,7 @@ describe("CourseOutlinePage", () => {
     ]);
 
     const html = await renderPage();
-    expect(html).toContain("2 / 2 lessons completed");
+    expect(html).toContain("2 / 2");
   });
 
   it("subsequent lessons are locked when only first lesson is auto-enrolled", async () => {

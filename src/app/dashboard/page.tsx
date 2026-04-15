@@ -514,36 +514,47 @@ export default async function DashboardPage() {
           >
             Recent Activity
           </h2>
-          <div className="rounded-xl border border-stone-800 bg-stone-900/80">
-            <ul role="list">
-              {recentActivity.map((event, i) => {
-                const lessonTitle =
-                  lessonTitleMap.get(event.lessonSlug) ?? event.lessonSlug;
-                return (
-                  <li
-                    key={event.id}
-                    className={`flex items-center justify-between gap-3 px-4 py-3 sm:px-5 sm:gap-4 ${
-                      i < recentActivity.length - 1
-                        ? "border-b border-stone-800"
-                        : ""
-                    }`}
+          {/* Timeline list */}
+          <ul role="list" className="relative flex flex-col gap-0">
+            {recentActivity.map((event, i) => {
+              const lessonTitle =
+                lessonTitleMap.get(event.lessonSlug) ?? event.lessonSlug;
+              const isLast = i === recentActivity.length - 1;
+              return (
+                <li key={event.id} className="relative flex items-start gap-4 pl-6">
+                  {/* Vertical connector line */}
+                  {!isLast && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-[10px] top-5 h-full w-px bg-stone-800"
+                    />
+                  )}
+                  {/* Timeline dot */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-0 top-2 flex h-5 w-5 items-center justify-center"
                   >
-                    <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                      <span className="shrink-0 rounded-full border border-amber-500/30 bg-amber-500/15 px-2 py-0.5 text-xs font-semibold font-mono text-amber-400">
-                        +{event.xpDelta} XP
+                    <span className="h-2.5 w-2.5 rounded-full bg-teal-500 ring-4 ring-teal-500/10" />
+                  </span>
+
+                  {/* Content */}
+                  <div className="mb-4 flex min-w-0 flex-1 items-center justify-between gap-3">
+                    <div className="flex min-w-0 flex-col gap-0.5">
+                      <span className="truncate text-sm text-stone-200">
+                        {lessonTitle}
                       </span>
-                      <span className="truncate text-sm text-stone-300">
-                        Completed &quot;{lessonTitle}&quot;
+                      <span className="text-xs text-stone-500">
+                        {relativeTime(event.createdAt)}
                       </span>
                     </div>
-                    <span className="shrink-0 text-xs text-stone-500">
-                      {relativeTime(event.createdAt)}
+                    <span className="shrink-0 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-semibold font-mono text-amber-400">
+                      +{event.xpDelta} XP
                     </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </section>
       )}
 
