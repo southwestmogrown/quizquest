@@ -20,7 +20,7 @@ describe("loadCourse", () => {
     const course = loadCourse("learn-go");
 
     expect(course.courseSlug).toBe("learn-go");
-    expect(course.title).toBe("Learn Go");
+    expect(course.title).toBe("QuizQuest: Platform Tour");
     expect(course.difficulty).toBe("beginner");
     expect(course.chapters.length).toBeGreaterThanOrEqual(2);
 
