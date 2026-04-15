@@ -134,26 +134,26 @@ export default async function CourseOutlinePage({
   // ---------------------------------------------------------------------------
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
+    <main className="mx-auto max-w-5xl px-6 py-12">
       {/* Back link */}
       <Link
         href="/courses"
-        className="mb-6 inline-flex items-center gap-1 text-sm text-slate-500 transition-colors hover:text-slate-300"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-stone-500 transition-colors hover:text-stone-300"
       >
         ← All courses
       </Link>
 
       {/* Course header */}
-      <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-50">
+      <h1 className="mt-4 text-3xl font-bold tracking-tight text-stone-50" style={{ letterSpacing: "-0.02em" }}>
         {course.title}
       </h1>
-      <p className="mt-2 text-slate-400">{course.description}</p>
+      <p className="mt-2 text-stone-400">{course.description}</p>
 
       {/* Overall progress */}
       <section aria-label="Course progress" className="mt-6">
-        <div className="mb-1 flex items-center justify-between text-sm text-slate-400">
+        <div className="mb-1 flex items-center justify-between text-sm text-stone-400">
           <span id="progress-label">Progress</span>
-          <span>
+          <span className="font-mono">
             {completedCount} / {totalCount} lessons completed
           </span>
         </div>
@@ -169,7 +169,7 @@ export default async function CourseOutlinePage({
           <section key={chapter.chapterSlug} aria-labelledby={`chapter-${chapter.chapterSlug}`}>
             <h2
               id={`chapter-${chapter.chapterSlug}`}
-              className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-500"
+              className="mb-3 text-sm font-bold text-stone-400 border-l-2 border-teal-500 pl-3"
             >
               Chapter {chapterIndex + 1} — {chapter.title}
             </h2>
@@ -187,15 +187,15 @@ export default async function CourseOutlinePage({
                       /* Locked — not interactive */
                       <div
                         aria-label={`${lesson.title} — locked`}
-                        className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-slate-900/20 px-4 py-3 opacity-50"
+                        className="flex items-center justify-between gap-3 rounded-lg border border-stone-800/50 bg-stone-900/30 px-4 py-3 opacity-50"
                       >
-                        <div className="flex min-w-0 items-center gap-3 text-slate-500">
+                        <div className="flex min-w-0 items-center gap-3 text-stone-500">
                           <LockIcon />
                           <span className="truncate text-sm font-medium">
                             {lesson.title}
                           </span>
                         </div>
-                        <span className="shrink-0 text-xs text-slate-600">
+                        <span className="shrink-0 text-xs font-mono text-stone-600">
                           {lesson.xpReward} XP
                         </span>
                       </div>
@@ -203,24 +203,24 @@ export default async function CourseOutlinePage({
                       /* Available / in_progress / completed — clickable */
                       <Link
                         href={lessonHref}
-                        className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-slate-900/40 px-4 py-3 backdrop-blur-sm transition hover:border-indigo-500/30 hover:bg-slate-900/60"
+                        className="flex items-center justify-between gap-3 rounded-lg border border-stone-800 bg-stone-900/80 px-4 py-3 transition hover:border-teal-500/30 hover:bg-stone-900"
                         aria-label={`${lesson.title} — ${state}`}
                       >
-                        <div className="flex min-w-0 items-center gap-3 text-slate-100">
+                        <div className="flex min-w-0 items-center gap-3 text-stone-100">
                           {state === "completed" ? (
                             <CheckIcon />
                           ) : (
-                            <div className="h-4 w-4 shrink-0 rounded-full border-2 border-indigo-500" />
+                            <div className="h-4 w-4 shrink-0 rounded-full border-2 border-teal-500" />
                           )}
                           <span className="truncate text-sm font-medium">
                             {lesson.title}
                           </span>
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
-                          <span className="hidden text-xs text-slate-500 sm:inline">
+                          <span className="hidden text-xs font-mono text-stone-500 sm:inline">
                             {lesson.xpReward} XP
                           </span>
-                          <span className="rounded-full border border-indigo-500/30 bg-indigo-500/20 px-2 py-0.5 text-xs font-medium text-indigo-300">
+                          <span className="rounded-full border border-teal-500/30 bg-teal-500/15 px-2 py-0.5 text-xs font-medium text-teal-300">
                             {STATE_LABEL[state]}
                           </span>
                         </div>
