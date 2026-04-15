@@ -224,7 +224,7 @@ export default function CodeClient({
       {/* Split-panel layout — stacked on mobile, side-by-side on md+ */}
       <div className="flex flex-col gap-4 md:flex-row md:min-h-[600px]">
         {/* Left panel — lesson description */}
-        <div className="md:w-2/5 overflow-y-auto rounded-xl border border-white/5 bg-slate-900/40 backdrop-blur-md p-6">
+        <div className="md:w-2/5 overflow-y-auto rounded-xl border border-stone-800 bg-stone-900/80 p-6">
           <div
             className="prose prose-invert prose-slate max-w-none"
             // Content is server-rendered from trusted repository files.
@@ -241,7 +241,7 @@ export default function CodeClient({
               value={language}
               disabled
               aria-label="Language"
-              className="rounded-md border border-white/10 bg-slate-800 px-3 py-1.5 text-sm text-slate-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="rounded-md border border-stone-700 bg-stone-800 px-3 py-1.5 text-sm text-stone-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
             >
               {Object.entries(LANGUAGE_LABELS).map(([val, label]) => {
                 const available = MVP_LANGUAGES.has(val);
@@ -257,28 +257,28 @@ export default function CodeClient({
             <div className="ml-auto flex items-center gap-2">
               <button
                 onClick={() => setShowCoach(true)}
-                className="border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
+                className="border border-teal-500/20 text-teal-400 hover:bg-teal-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
               >
                 I&apos;m stuck
               </button>
               <button
                 onClick={handleReset}
                 disabled={isRunning}
-                className="border border-white/10 text-slate-400 hover:bg-white/5 hover:text-slate-50 rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
+                className="border border-stone-700 text-stone-400 hover:bg-white/5 hover:text-stone-50 rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Reset
               </button>
               <button
                 onClick={handleRun}
                 disabled={isRunning}
-                className="border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20 rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
+                className="border border-teal-500/30 bg-teal-500/10 text-teal-300 hover:bg-teal-500/15 rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading === "running" ? "Running…" : "Run"}
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isRunning}
-                className="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white rounded-lg px-3 py-2 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
+                className="bg-teal-500 hover:bg-teal-400 text-stone-950 rounded-lg px-3 py-2 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading === "submitting" ? "Submitting…" : "Submit"}
               </button>
@@ -287,7 +287,7 @@ export default function CodeClient({
 
           {/* Code editor */}
           <div
-            className={`overflow-hidden rounded-lg border border-slate-700 ${isRunning ? "pointer-events-none opacity-70" : ""}`}
+            className={`overflow-hidden rounded-lg border border-stone-700 ${isRunning ? "pointer-events-none opacity-70" : ""}`}
             aria-label="Code editor"
             data-testid="code-editor"
           >
@@ -296,7 +296,7 @@ export default function CodeClient({
               onChange={(val) => setCode(val)}
               extensions={[go()]}
               theme={vscodeDark}
-              height="288px"
+              height="400px"
               basicSetup={{ lineNumbers: true, foldGutter: false }}
               editable={!isRunning}
             />
@@ -315,13 +315,13 @@ export default function CodeClient({
 
           {/* Output panel */}
           {showOutputPanel && (
-            <div ref={outputRef} className="rounded-xl border border-white/10 bg-slate-800/60 p-4">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <div ref={outputRef} className="rounded-xl border border-stone-700 bg-stone-800/60 p-4">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-stone-500">
                 Output
               </p>
 
               {error && (
-                <p className="text-sm text-red-400" role="alert">
+                <p className="text-sm text-rose-400" role="alert">
                   {error}
                 </p>
               )}
@@ -329,19 +329,19 @@ export default function CodeClient({
               {outputToShow && (
                 <div>
                   {outputToShow.stdout && (
-                    <pre className="whitespace-pre-wrap break-words text-sm text-slate-300">
+                    <pre className="whitespace-pre-wrap break-words text-sm text-stone-300">
                       {outputToShow.stdout}
                     </pre>
                   )}
                   {outputToShow.stderr && (
-                    <pre className="whitespace-pre-wrap break-words text-sm text-red-400">
+                    <pre className="whitespace-pre-wrap break-words text-sm text-rose-400">
                       {outputToShow.stderr}
                     </pre>
                   )}
                   {!outputToShow.stdout && !outputToShow.stderr && (
-                    <p className="text-sm italic text-slate-500">(no output)</p>
+                    <p className="text-sm italic text-stone-500">(no output)</p>
                   )}
-                  <p className="mt-2 text-xs text-slate-600">
+                  <p className="mt-2 text-xs text-stone-600">
                     Exit code: {outputToShow.exitCode}
                   </p>
                 </div>
@@ -349,16 +349,16 @@ export default function CodeClient({
 
               {/* Score breakdown after submit */}
               {submitResult && (
-                <div className="mt-4 border-t border-white/10 pt-4">
+                <div className="mt-4 border-t border-stone-700 pt-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-slate-300">
+                    <p className="text-sm font-semibold text-stone-300">
                       Score: {Math.round(submitResult.scorePercent)}%
                     </p>
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-xs font-semibold border ${
                         submitResult.passed
-                          ? "bg-green-500/20 text-green-300 border-green-500/30"
-                          : "bg-red-500/20 text-red-300 border-red-500/30"
+                          ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                          : "bg-rose-500/15 text-rose-300 border-rose-500/30"
                       }`}
                     >
                       {submitResult.passed ? "Passed" : "Failed"}
@@ -385,7 +385,7 @@ export default function CodeClient({
                               }`}
                               aria-hidden="true"
                             />
-                            <span className="text-slate-400">
+                            <span className="text-stone-400">
                               {g.visibility === "detailed"
                                 ? `${g.id}: ${g.testsPassed}/${g.testsTotal} tests passed`
                                 : `${g.id}: ${g.testsPassed === g.testsTotal ? "passed" : "failed"}`}
@@ -396,7 +396,7 @@ export default function CodeClient({
                   )}
 
                   {!submitResult.passed && (
-                    <p className="mt-3 text-sm text-slate-400">
+                    <p className="mt-3 text-sm text-stone-400">
                       Fix the errors and try submitting again.
                     </p>
                   )}
@@ -415,12 +415,12 @@ export default function CodeClient({
           className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-sm"
         >
           <div className="animate-flash-in text-center">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-500/20 ring-4 ring-green-500/40">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/15 ring-4 ring-emerald-500/40">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="h-10 w-10 text-green-400"
+                className="h-10 w-10 text-emerald-400"
                 aria-hidden="true"
               >
                 <path
@@ -433,7 +433,7 @@ export default function CodeClient({
             <h2 className="mt-5 text-3xl font-bold text-white">
               Challenge Complete!
             </h2>
-            <p className="mt-2 text-xl font-semibold text-indigo-300">
+            <p className="mt-2 text-xl font-semibold text-teal-300">
               +{submitResult.xpDelta} XP
             </p>
           </div>

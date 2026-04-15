@@ -124,19 +124,19 @@ export default function QuizClient({
 
   function choiceClassName(choiceId: string): string {
     const base =
-      "w-full rounded-lg border-2 px-4 py-3 text-left text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
+      "w-full rounded-lg border-2 px-4 py-3 text-left text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500";
     const state = getChoiceState(choiceId);
     switch (state) {
       case "selected":
-        return `${base} border-indigo-500 bg-indigo-500/20 text-indigo-200`;
+        return `${base} border-indigo-500 bg-teal-500/15 text-indigo-200`;
       case "correct":
-        return `${base} border-green-500 bg-green-500/20 text-green-300`;
+        return `${base} border-green-500 bg-emerald-500/15 text-emerald-300`;
       case "incorrect":
-        return `${base} border-red-500 bg-red-500/20 text-red-300`;
+        return `${base} border-red-500 bg-rose-500/15 text-rose-300`;
       case "neutral":
-        return `${base} border-white/5 bg-slate-900/20 text-slate-500`;
+        return `${base} border-stone-800 bg-stone-900/30 text-stone-500`;
       default:
-        return `${base} border-white/10 bg-slate-900/40 text-slate-300 hover:border-indigo-500/40 hover:bg-slate-900/60`;
+        return `${base} border-stone-700 bg-stone-900/80 text-stone-300 hover:border-indigo-500/40 hover:bg-stone-900`;
     }
   }
 
@@ -147,7 +147,7 @@ export default function QuizClient({
   return (
     <>
       {/* Quiz prompt */}
-      <p className="text-lg font-semibold text-slate-50">{prompt}</p>
+      <p className="text-lg font-semibold text-stone-50">{prompt}</p>
 
       {/* Choices */}
       <div className="mt-6 space-y-3" role="group" aria-label="Answer choices">
@@ -172,8 +172,8 @@ export default function QuizClient({
         <p
           className={`mt-4 rounded-lg px-4 py-3 text-sm ${
             result.correct
-              ? "bg-green-500/10 border border-green-500/20 text-green-300"
-              : "bg-red-500/10 border border-red-500/20 text-red-300"
+              ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-300"
+              : "bg-rose-500/10 border border-rose-500/20 text-rose-300"
           }`}
           role="status"
         >
@@ -185,14 +185,14 @@ export default function QuizClient({
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <button
           onClick={() => setShowCoach(true)}
-          className="border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
+          className="border border-teal-500/20 text-teal-400 hover:bg-teal-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
         >
           I&apos;m stuck
         </button>
 
         <div className="flex items-center gap-3">
           {error && (
-            <p className="text-sm text-red-400" role="alert">
+            <p className="text-sm text-rose-400" role="alert">
               {error}
             </p>
           )}
@@ -201,7 +201,7 @@ export default function QuizClient({
           {result && !result.correct && (
             <button
               onClick={handleRetry}
-              className="border border-white/10 text-slate-400 hover:bg-white/5 hover:text-slate-50 rounded-lg px-5 py-2.5 text-sm font-semibold transition"
+              className="border border-stone-700 text-stone-400 hover:bg-white/5 hover:text-stone-50 rounded-lg px-5 py-2.5 text-sm font-semibold transition"
             >
               Try Again
             </button>
@@ -212,7 +212,7 @@ export default function QuizClient({
             <button
               onClick={handleSubmit}
               disabled={!selectedId || loading}
-              className="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white rounded-lg px-6 py-2.5 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
+              className="bg-teal-500 hover:bg-teal-400 text-stone-950 rounded-lg px-6 py-2.5 text-sm font-semibold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Checking…" : "Submit Answer"}
             </button>
