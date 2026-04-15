@@ -17,6 +17,7 @@ export default function TopNavBar() {
 
   async function handleReset() {
     setResetting(true);
+    setMenuOpen(false);
     try {
       await fetch("/api/demo-reset", { method: "POST" });
       router.push("/");
