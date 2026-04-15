@@ -28,10 +28,10 @@ export default function ProgressBar({
       aria-valuemax={100}
       {...(label && { "aria-label": label })}
       {...(labelledBy && { "aria-labelledby": labelledBy })}
-      className="w-full h-1 bg-slate-800 rounded-full overflow-hidden"
+      className="w-full h-1.5 bg-stone-800 rounded-full overflow-hidden"
     >
       <div
-        className="h-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)] transition-all duration-300"
+        className="h-full bg-teal-500 shadow-[0_0_8px_rgba(45,212,191,0.4)] transition-all duration-300"
         style={{ width: `${clamped}%` }}
       />
     </div>

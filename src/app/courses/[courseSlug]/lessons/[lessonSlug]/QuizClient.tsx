@@ -128,15 +128,15 @@ export default function QuizClient({
     const state = getChoiceState(choiceId);
     switch (state) {
       case "selected":
-        return `${base} border-indigo-500 bg-teal-500/15 text-indigo-200`;
+        return `${base} border-teal-500 bg-teal-500/15 text-teal-200`;
       case "correct":
-        return `${base} border-green-500 bg-emerald-500/15 text-emerald-300`;
+        return `${base} border-emerald-500 bg-emerald-500/15 text-emerald-300`;
       case "incorrect":
-        return `${base} border-red-500 bg-rose-500/15 text-rose-300`;
+        return `${base} border-rose-500 bg-rose-500/15 text-rose-300`;
       case "neutral":
         return `${base} border-stone-800 bg-stone-900/30 text-stone-500`;
       default:
-        return `${base} border-stone-700 bg-stone-900/80 text-stone-300 hover:border-indigo-500/40 hover:bg-stone-900`;
+        return `${base} border-stone-700 bg-stone-900/80 text-stone-300 hover:border-teal-500/40 hover:bg-stone-900`;
     }
   }
 

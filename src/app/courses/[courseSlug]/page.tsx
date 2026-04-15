@@ -50,7 +50,7 @@ function CheckIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="h-4 w-4 shrink-0 text-green-400"
+      className="h-4 w-4 shrink-0 text-emerald-400"
     >
       <path
         fillRule="evenodd"
