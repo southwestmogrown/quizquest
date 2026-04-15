@@ -22,13 +22,13 @@ export default function DemoResetButton() {
   }
 
   return (
-    <div className="mt-16 border-t border-white/5 pt-8 text-center">
-      <p className="text-xs text-slate-600">
+    <div className="mt-16 border-t border-stone-800 pt-8 text-center">
+      <p className="text-xs text-stone-600">
         Demo app — progress is shared.{" "}
         <button
           onClick={handleReset}
           disabled={resetting || done}
-          className="text-slate-500 underline underline-offset-2 hover:text-slate-400 transition-colors disabled:cursor-not-allowed"
+          className="text-stone-500 underline underline-offset-2 hover:text-stone-400 transition-colors disabled:cursor-not-allowed"
         >
           {done ? "Done!" : resetting ? "Resetting…" : "Reset progress"}
         </button>

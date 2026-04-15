@@ -31,8 +31,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${jakarta.variable} ${jetbrains.variable}`}>
       <body className="antialiased flex flex-col min-h-screen">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-lg focus:bg-teal-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+        >
+          Skip to content
+        </a>
         <TopNavBar />
-        <div className="flex-1">{children}</div>
+        <div id="main-content" className="flex-1">{children}</div>
       </body>
     </html>
   );

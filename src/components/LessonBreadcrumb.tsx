@@ -33,25 +33,25 @@ export default function LessonBreadcrumb({
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
-    <div className="mb-6 rounded-xl border border-white/5 bg-slate-900/40 backdrop-blur-md px-4 py-3">
+    <div className="mb-6 rounded-xl border border-stone-800 bg-stone-900/80 px-4 py-3">
       {/* Label row */}
-      <div className="mb-2.5 flex items-center justify-between text-xs text-slate-500">
+      <div className="mb-2.5 flex items-center justify-between text-xs text-stone-500">
         <span>
           Lesson {currentIndex + 1} of {totalCount}
         </span>
-        <span>{progressPercent}% complete</span>
+        <span className="font-mono">{progressPercent}% complete</span>
       </div>
 
       {/* Dot track */}
       <div className="relative flex items-center">
         {/* Background line */}
         <div
-          className="pointer-events-none absolute inset-x-0 h-px bg-slate-700/60"
+          className="pointer-events-none absolute inset-x-0 h-px bg-stone-700/60"
           aria-hidden="true"
         />
         {/* Progress fill */}
         <div
-          className="pointer-events-none absolute left-0 h-px bg-indigo-600/50 transition-all duration-500"
+          className="pointer-events-none absolute left-0 h-px bg-teal-600/50 transition-all duration-500"
           style={{ width: `${progressPercent}%` }}
           aria-hidden="true"
         />
@@ -68,12 +68,12 @@ export default function LessonBreadcrumb({
                 className={[
                   "flex h-2.5 w-2.5 shrink-0 rounded-full transition-all duration-200",
                   lesson.isCurrent
-                    ? "scale-125 bg-indigo-400 ring-2 ring-indigo-400/40 ring-offset-1 ring-offset-slate-900"
+                    ? "scale-125 bg-teal-400 ring-2 ring-teal-400/40 ring-offset-1 ring-offset-stone-900"
                     : lesson.state === "completed"
-                      ? "bg-indigo-500 hover:bg-indigo-400"
+                      ? "bg-teal-500 hover:bg-teal-400"
                       : lesson.state === "available" || lesson.state === "in_progress"
-                        ? "bg-slate-500 hover:bg-slate-300"
-                        : "bg-slate-700",
+                        ? "bg-stone-500 hover:bg-stone-300"
+                        : "bg-stone-700",
                 ].join(" ")}
               />
             );

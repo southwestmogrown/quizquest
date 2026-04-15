@@ -190,23 +190,23 @@ export default function SocraticCoach({
 
   return (
     <div
-      className="mt-4 rounded-xl border border-indigo-500/20 bg-slate-900/80 backdrop-blur-sm"
+      className="mt-4 rounded-xl border border-teal-500/20 bg-stone-900/80"
       role="complementary"
       aria-label="Socratic coach"
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-white/5 px-4 py-3">
+      <div className="flex items-center justify-between border-b border-stone-800 px-4 py-3">
         <div className="flex items-center gap-2">
-          <MessageCircle size={15} className="text-indigo-400" aria-hidden="true" />
-          <p className="text-sm font-semibold text-slate-200">Coach</p>
-          <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-xs text-indigo-300 border border-indigo-500/30">
+          <MessageCircle size={15} className="text-teal-400" aria-hidden="true" />
+          <p className="text-sm font-semibold text-stone-200">Coach</p>
+          <span className="rounded-full bg-teal-500/15 px-2 py-0.5 text-xs text-teal-300 border border-teal-500/30">
             {lessonType === "reading" ? "Q&A" : "Socratic"}
           </span>
         </div>
         <button
           onClick={onClose}
           aria-label="Close coach"
-          className="text-slate-500 hover:text-slate-300 transition text-lg leading-none"
+          className="text-stone-500 hover:text-stone-300 transition text-lg leading-none"
         >
           ×
         </button>
@@ -215,7 +215,7 @@ export default function SocraticCoach({
       {/* Message list */}
       <div className="max-h-72 overflow-y-auto px-4 py-3 space-y-3">
         {messages.length === 0 && (
-          <p className="text-sm italic text-slate-500">
+          <p className="text-sm italic text-stone-500">
             {lessonType === "reading"
               ? "Ask anything about this lesson…"
               : "Thinking of a question for you…"}
@@ -229,8 +229,8 @@ export default function SocraticCoach({
             <div
               className={`max-w-[85%] rounded-lg px-3 py-2 text-sm leading-relaxed ${
                 msg.role === "user"
-                  ? "bg-indigo-600/30 text-slate-200 border border-indigo-500/20"
-                  : "bg-slate-800/60 text-slate-300 border border-white/5"
+                  ? "bg-teal-600/30 text-stone-200 border border-teal-500/20"
+                  : "bg-stone-800/60 text-stone-300 border border-stone-700"
               }`}
             >
               {msg.content ? (
@@ -241,8 +241,8 @@ export default function SocraticCoach({
                       ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
                       ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
                       li: ({ children }) => <li>{children}</li>,
-                      strong: ({ children }) => <strong className="font-semibold text-slate-100">{children}</strong>,
-                      code: ({ children }) => <code className="rounded bg-slate-700 px-1 py-0.5 font-mono text-xs text-indigo-300">{children}</code>,
+                      strong: ({ children }) => <strong className="font-semibold text-stone-100">{children}</strong>,
+                      code: ({ children }) => <code className="rounded bg-stone-700 px-1 py-0.5 font-mono text-xs text-teal-300">{children}</code>,
                     }}
                   >
                     {msg.content}
@@ -251,7 +251,7 @@ export default function SocraticCoach({
                   msg.content
                 )
               ) : (
-                <span className="animate-pulse text-slate-500">▍</span>
+                <span className="animate-pulse text-stone-500">▍</span>
               )}
             </div>
 
@@ -266,7 +266,7 @@ export default function SocraticCoach({
                   className={`rounded p-1 transition-all ${
                     msg.rating === 1
                       ? "text-emerald-400 bg-emerald-500/15"
-                      : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
+                      : "text-stone-500 hover:text-stone-300 hover:bg-stone-800"
                   }`}
                 >
                   <ThumbsUp size={13} />
@@ -279,7 +279,7 @@ export default function SocraticCoach({
                   className={`rounded p-1 transition-all ${
                     msg.rating === -1
                       ? "text-rose-400 bg-rose-500/15"
-                      : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
+                      : "text-stone-500 hover:text-stone-300 hover:bg-stone-800"
                   }`}
                 >
                   <ThumbsDown size={13} />
@@ -292,7 +292,7 @@ export default function SocraticCoach({
       </div>
 
       {/* Input */}
-      <div className="border-t border-white/5 px-4 py-3 flex gap-2 items-end">
+      <div className="border-t border-stone-800 px-4 py-3 flex gap-2 items-end">
         <textarea
           ref={inputRef}
           value={input}
@@ -301,12 +301,12 @@ export default function SocraticCoach({
           disabled={streaming}
           placeholder={lessonType === "reading" ? "Ask a question…" : "Reply to the coach…"}
           rows={2}
-          className="flex-1 resize-none rounded-lg border border-white/10 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:opacity-50"
+          className="flex-1 resize-none rounded-lg border border-stone-700 bg-stone-800 px-3 py-2 text-sm text-stone-200 placeholder-stone-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 disabled:opacity-50"
         />
         <button
           onClick={() => void handleSend()}
           disabled={streaming || !input.trim()}
-          className="shrink-0 rounded-lg bg-indigo-600 hover:bg-indigo-500 px-4 py-2 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
+          className="shrink-0 rounded-lg bg-teal-500 hover:bg-teal-400 px-4 py-2 text-sm font-semibold text-stone-950 transition disabled:cursor-not-allowed disabled:opacity-50"
         >
           Send
         </button>

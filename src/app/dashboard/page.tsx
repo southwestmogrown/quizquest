@@ -62,7 +62,7 @@ function StarIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="h-5 w-5 text-yellow-400"
+      className="h-5 w-5 text-amber-400"
     >
       <path
         fillRule="evenodd"
@@ -98,7 +98,7 @@ function CheckCircleIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="h-5 w-5 text-green-400"
+      className="h-5 w-5 text-emerald-400"
     >
       <path
         fillRule="evenodd"
@@ -116,7 +116,7 @@ function TrophyIcon() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="h-5 w-5 text-purple-400"
+      className="h-5 w-5 text-teal-400"
     >
       <path
         fillRule="evenodd"
@@ -319,9 +319,9 @@ export default async function DashboardPage() {
   // -------------------------------------------------------------------------
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-12">
+    <main className="mx-auto max-w-7xl px-6 py-12">
       {/* Welcome */}
-      <h1 className="mb-8 text-3xl font-bold tracking-tight text-slate-50">
+      <h1 className="mb-8 text-3xl font-bold tracking-tight text-stone-50" style={{ letterSpacing: "-0.02em" }}>
         Welcome back, Learner!
       </h1>
 
@@ -331,50 +331,90 @@ export default async function DashboardPage() {
         /* ------------------------------------------------------------------ */
         <section
           aria-label="Get started"
-          className="mb-10 rounded-xl border border-indigo-500/20 bg-indigo-500/10 p-8 text-center"
+          className="mb-10 rounded-xl border border-teal-500/20 bg-teal-500/10 p-8 text-center"
         >
-          <h2 className="mb-3 text-xl font-semibold text-slate-50">
+          <h2 className="mb-3 text-xl font-semibold text-stone-50">
             Ready to start learning?
           </h2>
-          <p className="mb-6 text-slate-400">
+          <p className="mb-6 text-stone-400">
             Pick your first course and start earning XP!
           </p>
           <Link
             href="/courses"
-            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-5 py-2.5 text-sm font-semibold text-white hover:from-indigo-500 hover:to-indigo-400"
+            className="inline-flex items-center gap-2 rounded-lg bg-teal-500 px-5 py-2.5 text-sm font-semibold text-stone-950 hover:bg-teal-400 transition"
           >
             Browse Courses →
           </Link>
         </section>
       ) : (
         /* ------------------------------------------------------------------ */
-        /* Returning user — top row: Continue Learning + Stats                 */
+        /* Returning user — stat cards across top + continue learning          */
         /* ------------------------------------------------------------------ */
-        <div className="mb-10 grid gap-6 lg:grid-cols-[1fr_280px]">
-          {/* Continue Learning */}
+        <>
+          {/* Stats row — 4 cards across */}
+          <section aria-label="Your stats" className="mb-8">
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              <div className="rounded-xl border border-stone-800 bg-stone-900/80 p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <StarIcon />
+                  <span className="text-sm text-stone-400">Total XP</span>
+                </div>
+                <p className="text-2xl font-bold font-mono text-amber-400">
+                  {totalXp.toLocaleString()}
+                </p>
+              </div>
+              <div className="rounded-xl border border-stone-800 bg-stone-900/80 p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <FlameIcon />
+                  <span className="text-sm text-stone-400">Streak</span>
+                </div>
+                <p className="text-2xl font-bold font-mono text-orange-400">
+                  {currentStreak} <span className="text-sm font-sans font-normal text-stone-500">{currentStreak === 1 ? "day" : "days"}</span>
+                </p>
+              </div>
+              <div className="rounded-xl border border-stone-800 bg-stone-900/80 p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircleIcon />
+                  <span className="text-sm text-stone-400">Lessons</span>
+                </div>
+                <p className="text-2xl font-bold font-mono text-emerald-400">
+                  {totalCompletedLessons} <span className="text-sm font-sans font-normal text-stone-500">done</span>
+                </p>
+              </div>
+              <div className="rounded-xl border border-stone-800 bg-stone-900/80 p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <TrophyIcon />
+                  <span className="text-sm text-stone-400">Rank</span>
+                </div>
+                <p className="text-2xl font-bold text-teal-400">{rank}</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Continue Learning — full-width banner */}
           <section
             aria-label="Continue learning"
-            className="rounded-xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-xl shadow-indigo-950/20"
+            className="mb-10 rounded-xl border border-stone-800 bg-stone-900/80 p-6"
           >
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500">
+            <h2 className="mb-4 text-sm font-bold text-stone-400">
               Continue Learning
             </h2>
 
             {continueLearning ? (
               <>
-                <p className="text-lg font-semibold text-slate-50">
+                <p className="text-lg font-semibold text-stone-50">
                   {continueLearning.courseTitle}
                 </p>
-                <p className="mt-0.5 text-sm text-slate-400">
+                <p className="mt-0.5 text-sm text-stone-400">
                   Ch {continueLearning.chapterIndex},{" "}
                   Lesson {continueLearning.lessonIndexInChapter}:{" "}
                   {continueLearning.lessonTitle}
                 </p>
 
                 <div className="mt-4">
-                  <div className="mb-1 flex items-center justify-between text-xs text-slate-400">
+                  <div className="mb-1 flex items-center justify-between text-xs text-stone-400">
                     <span id="continue-progress-label">Progress</span>
-                    <span>
+                    <span className="font-mono">
                       {continueLearning.completedLessons}/
                       {continueLearning.totalLessons} lessons
                     </span>
@@ -386,7 +426,7 @@ export default async function DashboardPage() {
                 </div>
 
                 {continueLearning.lastActiveAt && (
-                  <p className="mt-3 text-xs text-slate-500">
+                  <p className="mt-3 text-xs text-stone-500">
                     Last active:{" "}
                     {relativeTime(continueLearning.lastActiveAt)}
                   </p>
@@ -394,7 +434,7 @@ export default async function DashboardPage() {
 
                 <Link
                   href={continueLearning.href}
-                  className="mt-5 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:from-indigo-500 hover:to-indigo-400"
+                  className="mt-5 inline-flex items-center gap-2 rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-stone-950 hover:bg-teal-400 transition"
                 >
                   Resume Lesson →
                 </Link>
@@ -402,66 +442,20 @@ export default async function DashboardPage() {
             ) : (
               /* All lessons completed in this course */
               <div>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-stone-400">
                   You&apos;ve completed all available lessons. Check back soon
                   for new content!
                 </p>
                 <Link
                   href="/courses"
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:from-indigo-500 hover:to-indigo-400"
+                  className="mt-4 inline-flex items-center gap-2 rounded-lg bg-teal-500 px-4 py-2 text-sm font-semibold text-stone-950 hover:bg-teal-400 transition"
                 >
                   Browse More Courses →
                 </Link>
               </div>
             )}
           </section>
-
-          {/* Stats card */}
-          <section
-            aria-label="Your stats"
-            className="rounded-xl border border-white/5 bg-slate-900/40 p-6 backdrop-blur-md shadow-xl shadow-indigo-950/20"
-          >
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500">
-              Your Stats
-            </h2>
-            <ul className="flex flex-col gap-4" role="list">
-              <li className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-2 text-sm text-slate-400">
-                  <StarIcon />
-                  Total XP
-                </span>
-                <span className="font-semibold text-slate-50">
-                  {totalXp.toLocaleString()}
-                </span>
-              </li>
-              <li className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-2 text-sm text-slate-400">
-                  <FlameIcon />
-                  Streak
-                </span>
-                <span className="font-semibold text-slate-50">
-                  {currentStreak} {currentStreak === 1 ? "day" : "days"}
-                </span>
-              </li>
-              <li className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-2 text-sm text-slate-400">
-                  <CheckCircleIcon />
-                  Lessons
-                </span>
-                <span className="font-semibold text-slate-50">
-                  {totalCompletedLessons} done
-                </span>
-              </li>
-              <li className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-2 text-sm text-slate-400">
-                  <TrophyIcon />
-                  Rank
-                </span>
-                <span className="font-semibold text-slate-50">{rank}</span>
-              </li>
-            </ul>
-          </section>
-        </div>
+        </>
       )}
 
       {/* -------------------------------------------------------------------- */}
@@ -471,7 +465,7 @@ export default async function DashboardPage() {
         <section aria-labelledby="my-courses-heading" className="mb-10">
           <h2
             id="my-courses-heading"
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500"
+            className="mb-4 text-sm font-bold text-stone-400"
           >
             My Courses
           </h2>
@@ -481,14 +475,14 @@ export default async function DashboardPage() {
                 <Link
                   key={course.courseSlug}
                   href={`/courses/${course.courseSlug}`}
-                  className="rounded-xl border border-white/5 bg-slate-900/40 p-5 backdrop-blur-md shadow-xl shadow-indigo-950/20 transition hover:border-indigo-500/30 hover:bg-slate-900/60"
+                  className="rounded-xl border border-stone-800 bg-stone-900/80 p-5 transition hover:border-teal-500/30 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-teal-950/10"
                   aria-label={`${course.title} — ${progressPercent}% complete`}
                 >
-                  <p className="font-semibold text-slate-50">{course.title}</p>
+                  <p className="font-semibold text-stone-50">{course.title}</p>
                   <div className="mt-3">
-                    <div className="mb-1 flex items-center justify-between text-xs text-slate-400">
-                      <span>{progressPercent}%</span>
-                      <span>
+                    <div className="mb-1 flex items-center justify-between text-xs text-stone-400">
+                      <span className="font-mono">{progressPercent}%</span>
+                      <span className="font-mono">
                         {completedLessons}/{totalLessons} lessons
                       </span>
                     </div>
@@ -498,7 +492,7 @@ export default async function DashboardPage() {
                     />
                   </div>
                   {lastActiveAt && (
-                    <p className="mt-2 text-xs text-slate-500">
+                    <p className="mt-2 text-xs text-stone-500">
                       Last: {relativeTime(lastActiveAt)}
                     </p>
                   )}
@@ -516,40 +510,51 @@ export default async function DashboardPage() {
         <section aria-labelledby="recent-activity-heading" className="mb-10">
           <h2
             id="recent-activity-heading"
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500"
+            className="mb-4 text-sm font-bold text-stone-400"
           >
             Recent Activity
           </h2>
-          <div className="rounded-xl border border-white/5 bg-slate-900/40 backdrop-blur-md shadow-xl shadow-indigo-950/20">
-            <ul role="list">
-              {recentActivity.map((event, i) => {
-                const lessonTitle =
-                  lessonTitleMap.get(event.lessonSlug) ?? event.lessonSlug;
-                return (
-                  <li
-                    key={event.id}
-                    className={`flex items-center justify-between gap-3 px-4 py-3 sm:px-5 sm:gap-4 ${
-                      i < recentActivity.length - 1
-                        ? "border-b border-white/5"
-                        : ""
-                    }`}
+          {/* Timeline list */}
+          <ul role="list" className="relative flex flex-col gap-0">
+            {recentActivity.map((event, i) => {
+              const lessonTitle =
+                lessonTitleMap.get(event.lessonSlug) ?? event.lessonSlug;
+              const isLast = i === recentActivity.length - 1;
+              return (
+                <li key={event.id} className="relative flex items-start gap-4 pl-6">
+                  {/* Vertical connector line */}
+                  {!isLast && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute left-[10px] top-5 h-full w-px bg-stone-800"
+                    />
+                  )}
+                  {/* Timeline dot */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-0 top-2 flex h-5 w-5 items-center justify-center"
                   >
-                    <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                      <span className="shrink-0 rounded-full border border-indigo-500/30 bg-indigo-500/20 px-2 py-0.5 text-xs font-semibold text-indigo-300">
-                        +{event.xpDelta} XP
+                    <span className="h-2.5 w-2.5 rounded-full bg-teal-500 ring-4 ring-teal-500/10" />
+                  </span>
+
+                  {/* Content */}
+                  <div className="mb-4 flex min-w-0 flex-1 items-center justify-between gap-3">
+                    <div className="flex min-w-0 flex-col gap-0.5">
+                      <span className="truncate text-sm text-stone-200">
+                        {lessonTitle}
                       </span>
-                      <span className="truncate text-sm text-slate-300">
-                        Completed &quot;{lessonTitle}&quot;
+                      <span className="text-xs text-stone-500">
+                        {relativeTime(event.createdAt)}
                       </span>
                     </div>
-                    <span className="shrink-0 text-xs text-slate-500">
-                      {relativeTime(event.createdAt)}
+                    <span className="shrink-0 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs font-semibold font-mono text-amber-400">
+                      +{event.xpDelta} XP
                     </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </section>
       )}
 
@@ -560,7 +565,7 @@ export default async function DashboardPage() {
         <section aria-labelledby="explore-heading" className="mb-4">
           <h2
             id="explore-heading"
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500"
+            className="mb-4 text-sm font-bold text-stone-400"
           >
             Explore More Courses
           </h2>
@@ -568,18 +573,18 @@ export default async function DashboardPage() {
             {exploreCourses.map(({ course }) => (
               <div
                 key={course.courseSlug}
-                className="flex flex-col gap-3 rounded-xl border border-white/5 bg-slate-900/40 p-5 backdrop-blur-md shadow-xl shadow-indigo-950/20"
+                className="flex flex-col gap-3 rounded-xl border border-stone-800 bg-stone-900/80 p-5"
               >
-                <p className="font-semibold text-slate-50">{course.title}</p>
-                <p className="text-xs text-slate-400 capitalize">
+                <p className="font-semibold text-stone-50">{course.title}</p>
+                <p className="text-xs text-stone-400 capitalize">
                   {course.difficulty} · {course.estimatedHours}h
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs font-mono text-stone-500">
                   {course.totalXp.toLocaleString()} XP to earn
                 </p>
                 <Link
                   href={`/courses/${course.courseSlug}`}
-                  className="mt-auto inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-3 py-1.5 text-xs font-semibold text-white hover:from-indigo-500 hover:to-indigo-400"
+                  className="mt-auto inline-flex items-center gap-1 rounded-lg bg-teal-500 px-3 py-1.5 text-xs font-semibold text-stone-950 hover:bg-teal-400 transition"
                 >
                   Start →
                 </Link>
@@ -589,7 +594,7 @@ export default async function DashboardPage() {
           <div className="mt-4 text-right">
             <Link
               href="/courses"
-              className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+              className="text-sm font-medium text-teal-400 hover:text-teal-300 transition-colors"
             >
               Browse All Courses →
             </Link>
@@ -602,7 +607,7 @@ export default async function DashboardPage() {
         <section aria-labelledby="explore-new-heading">
           <h2
             id="explore-new-heading"
-            className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-500"
+            className="mb-4 text-sm font-bold text-stone-400"
           >
             Explore Courses
           </h2>
@@ -610,18 +615,18 @@ export default async function DashboardPage() {
             {allCourses.slice(0, 6).map((course) => (
               <div
                 key={course.courseSlug}
-                className="flex flex-col gap-3 rounded-xl border border-white/5 bg-slate-900/40 p-5 backdrop-blur-md shadow-xl shadow-indigo-950/20"
+                className="flex flex-col gap-3 rounded-xl border border-stone-800 bg-stone-900/80 p-5"
               >
-                <p className="font-semibold text-slate-50">{course.title}</p>
-                <p className="text-xs text-slate-400 capitalize">
+                <p className="font-semibold text-stone-50">{course.title}</p>
+                <p className="text-xs text-stone-400 capitalize">
                   {course.difficulty} · {course.estimatedHours}h
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs font-mono text-stone-500">
                   {course.totalXp.toLocaleString()} XP to earn
                 </p>
                 <Link
                   href={`/courses/${course.courseSlug}`}
-                  className="mt-auto inline-flex items-center gap-1 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-3 py-1.5 text-xs font-semibold text-white hover:from-indigo-500 hover:to-indigo-400"
+                  className="mt-auto inline-flex items-center gap-1 rounded-lg bg-teal-500 px-3 py-1.5 text-xs font-semibold text-stone-950 hover:bg-teal-400 transition"
                 >
                   Start →
                 </Link>
@@ -632,7 +637,7 @@ export default async function DashboardPage() {
             <div className="mt-4 text-right">
               <Link
                 href="/courses"
-                className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+                className="text-sm font-medium text-teal-400 hover:text-teal-300 transition-colors"
               >
                 Browse All Courses →
               </Link>

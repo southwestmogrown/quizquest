@@ -10,19 +10,19 @@ export default function LessonNav({ prevHref, nextHref, courseHref }: LessonNavP
   return (
     <nav
       aria-label="Lesson navigation"
-      className="mt-12 flex items-center justify-between gap-4 border-t border-white/10 pt-6"
+      className="mt-12 flex items-center justify-between gap-4 border-t border-stone-800 pt-6"
     >
       {prevHref ? (
         <Link
           href={prevHref}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-slate-400 transition-colors hover:border-white/20 hover:text-slate-50"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-stone-700 px-4 py-2 text-sm font-medium text-stone-400 transition-colors hover:border-stone-500 hover:text-stone-50"
         >
           ← Previous
         </Link>
       ) : (
         <Link
           href={courseHref}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-slate-400 transition-colors hover:border-white/20 hover:text-slate-50"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-stone-700 px-4 py-2 text-sm font-medium text-stone-400 transition-colors hover:border-stone-500 hover:text-stone-50"
         >
           ← Course Outline
         </Link>
@@ -31,14 +31,14 @@ export default function LessonNav({ prevHref, nextHref, courseHref }: LessonNavP
       {nextHref ? (
         <Link
           href={nextHref}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-teal-500 hover:bg-teal-400 px-4 py-2 text-sm font-semibold text-stone-950 shadow-sm transition-colors"
         >
           Next →
         </Link>
       ) : (
         <Link
           href={courseHref}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-teal-500 hover:bg-teal-400 px-4 py-2 text-sm font-semibold text-stone-950 shadow-sm transition-colors"
         >
           Finish Course →
         </Link>

@@ -101,13 +101,13 @@ export default function MarkCompleteClient({
       <div className="mt-10 flex flex-wrap items-center justify-between gap-3">
         <button
           onClick={() => setShowCoach((v) => !v)}
-          className="border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
+          className="border border-teal-500/20 text-teal-400 hover:bg-teal-500/10 rounded-lg px-3 py-2 text-sm font-medium transition"
         >
           Ask the Coach
         </button>
         <div className="flex items-center gap-3">
           {error && (
-            <p className="text-sm text-red-400" role="alert">
+            <p className="text-sm text-rose-400" role="alert">
               {error}
             </p>
           )}
@@ -115,7 +115,7 @@ export default function MarkCompleteClient({
             onClick={handleMarkComplete}
             disabled={loading || result !== null}
             data-testid="mark-complete-btn"
-            className="rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-500 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-indigo-500 hover:to-indigo-400 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-teal-500 px-6 py-2.5 text-sm font-semibold text-stone-950 shadow-sm transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Saving…" : result !== null ? <><Check size={14} className="inline-block mr-1" aria-hidden="true" />Completed</> : "Mark Complete"}
           </button>
