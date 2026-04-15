@@ -109,7 +109,7 @@ export default function CodeClient({
   const [runOutput, setRunOutput] = useState<RunOutput | null>(null);
   const [submitResult, setSubmitResult] = useState<SubmitResult | null>(null);
   const [showFlash, setShowFlash] = useState(false);
-  const [failCount, setFailCount] = useState(0);
+  const [, setFailCount] = useState(0);
   const [showCoach, setShowCoach] = useState(false);
   const outputRef = useRef<HTMLDivElement>(null);
 

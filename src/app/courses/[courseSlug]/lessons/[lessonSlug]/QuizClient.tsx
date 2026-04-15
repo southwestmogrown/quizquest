@@ -67,7 +67,7 @@ export default function QuizClient({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<QuizSubmitResponse | null>(null);
-  const [failCount, setFailCount] = useState(0);
+  const [, setFailCount] = useState(0);
   const [showCoach, setShowCoach] = useState(false);
 
   // Reset state so the user can try again after an incorrect answer.
