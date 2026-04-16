@@ -222,7 +222,7 @@ export default function CodeClient({
   return (
     <>
       {/* Split-panel layout — stacked on mobile, side-by-side on md+ */}
-      <div className="flex flex-col gap-4 md:flex-row md:min-h-[600px]">
+      <div className="flex flex-col gap-4 md:flex-row md:min-h-[800px]">
         {/* Left panel — lesson description */}
         <div className="md:w-2/5 overflow-y-auto rounded-xl border border-stone-800 bg-stone-900/80 p-6">
           <div
@@ -296,7 +296,7 @@ export default function CodeClient({
               onChange={(val) => setCode(val)}
               extensions={[go()]}
               theme={vscodeDark}
-              height="400px"
+              height="600px"
               basicSetup={{ lineNumbers: true, foldGutter: false }}
               editable={!isRunning}
             />
