@@ -43,7 +43,7 @@ code:
             expected: "XP: 150"
           - id: streak
             type: stdout_contains
-            expected: "Streak: 5"
+            expected: "Streak: 5 days"
 ---
 
 # Code Challenge: Hello JavaScript
