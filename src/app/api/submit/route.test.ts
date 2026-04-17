@@ -191,6 +191,102 @@ const COURSE_WITH_READING: Course = {
   ],
 };
 
+/** A course with a Python code lesson. */
+const MOCK_PYTHON_COURSE: Course = {
+  courseSlug: "learn-python",
+  title: "Learn Python",
+  description: "Python basics",
+  difficulty: "beginner",
+  estimatedHours: 5,
+  totalXp: 200,
+  chapters: [
+    {
+      chapterSlug: "ch1",
+      title: "Chapter 1",
+      lessons: [
+        {
+          type: "code",
+          lessonSlug: "hello-python",
+          title: "Hello Python",
+          xpReward: 100,
+          body: "",
+          code: {
+            language: "python",
+            starterFiles: [],
+            run: { entrypoint: "main.py" },
+            grading: {
+              passingScorePercent: 100,
+              groups: [
+                {
+                  id: "output",
+                  name: "Output",
+                  weight: 100,
+                  visibility: "summary",
+                  tests: [
+                    {
+                      id: "eq",
+                      type: "stdout_equals",
+                      expected: "Hello, World!\n",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      ],
+    },
+  ],
+};
+
+/** A course with a JavaScript code lesson. */
+const MOCK_JS_COURSE: Course = {
+  courseSlug: "learn-javascript",
+  title: "Learn JavaScript",
+  description: "JavaScript basics",
+  difficulty: "beginner",
+  estimatedHours: 5,
+  totalXp: 200,
+  chapters: [
+    {
+      chapterSlug: "ch1",
+      title: "Chapter 1",
+      lessons: [
+        {
+          type: "code",
+          lessonSlug: "hello-js",
+          title: "Hello JS",
+          xpReward: 100,
+          body: "",
+          code: {
+            language: "javascript",
+            starterFiles: [],
+            run: { entrypoint: "main.js" },
+            grading: {
+              passingScorePercent: 100,
+              groups: [
+                {
+                  id: "output",
+                  name: "Output",
+                  weight: 100,
+                  visibility: "summary",
+                  tests: [
+                    {
+                      id: "eq",
+                      type: "stdout_equals",
+                      expected: "Hello, World!\n",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      ],
+    },
+  ],
+};
+
 // ---------------------------------------------------------------------------
 // Setup / teardown
 // ---------------------------------------------------------------------------
@@ -499,6 +595,40 @@ describe("POST /api/submit — grading result (HTTP 200)", () => {
     expect(body).toHaveProperty("newTotalXp");
     expect(body).toHaveProperty("newStreak");
     expect(body).toHaveProperty("lessonCompleted");
+  });
+
+  it("accepts and grades a python submission", async () => {
+    vi.mocked(loadCourse).mockReturnValue(MOCK_PYTHON_COURSE);
+    mockRunnerOk(makeRunnerResponse({ stdout: "Hello, World!\n", exitCode: 0 }));
+    const res = await POST(
+      makeRequest({
+        courseSlug: "learn-python",
+        lessonSlug: "hello-python",
+        language: "python",
+        code: "print('Hello, World!')",
+      })
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.scorePercent).toBe(100);
+    expect(body.passed).toBe(true);
+  });
+
+  it("accepts and grades a javascript submission", async () => {
+    vi.mocked(loadCourse).mockReturnValue(MOCK_JS_COURSE);
+    mockRunnerOk(makeRunnerResponse({ stdout: "Hello, World!\n", exitCode: 0 }));
+    const res = await POST(
+      makeRequest({
+        courseSlug: "learn-javascript",
+        lessonSlug: "hello-js",
+        language: "javascript",
+        code: "console.log('Hello, World!')",
+      })
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.scorePercent).toBe(100);
+    expect(body.passed).toBe(true);
   });
 });
 

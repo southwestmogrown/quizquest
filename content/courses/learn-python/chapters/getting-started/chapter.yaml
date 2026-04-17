@@ -1,0 +1,9 @@
+chapterSlug: getting-started
+title: Getting Started
+lessons:
+  - lessonSlug: welcome-to-python
+    title: Welcome to Python
+    type: reading
+  - lessonSlug: hello-python
+    title: "Code Challenge: Hello Python"
+    type: code

@@ -1,0 +1,9 @@
+chapterSlug: getting-started
+title: Getting Started
+lessons:
+  - lessonSlug: welcome-to-javascript
+    title: Welcome to JavaScript
+    type: reading
+  - lessonSlug: hello-javascript
+    title: "Code Challenge: Hello JavaScript"
+    type: code
