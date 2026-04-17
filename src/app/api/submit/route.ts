@@ -40,8 +40,8 @@ export const dynamic = "force-dynamic";
 /** Hard-coded demo user for the MVP. */
 const DEMO_USER_ID = "demo-user";
 
-/** Languages supported by the MVP runner (contract §5). */
-const SUPPORTED_LANGUAGES = new Set(["go"]);
+/** Languages supported by the runner (contract §5). */
+const SUPPORTED_LANGUAGES = new Set(["go", "python", "javascript"]);
 
 /** Base URL of the code-runner service (trailing slashes normalised). */
 const CODE_RUNNER_URL = getCodeRunnerBaseUrl();

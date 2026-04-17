@@ -10,11 +10,15 @@ RUN go build -o runner .
 
 # -----------------------------------------------------------------------
 # Stage 2 — runtime image
-# Includes the Go toolchain so we can compile/run user-submitted Go code.
+# Includes the Go toolchain so we can compile/run user-submitted Go code,
+# plus Python 3 and Node.js for interpreted language support.
 # -----------------------------------------------------------------------
 FROM golang:1.22-alpine
 
 COPY --from=builder /build/runner /usr/local/bin/runner
+
+# Install Python 3 and Node.js for multi-language support.
+RUN apk add --no-cache python3 nodejs
 
 # Non-root user for defence-in-depth.
 RUN adduser -D -u 1001 runner
