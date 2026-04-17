@@ -126,6 +126,32 @@ describe("POST /api/run — successful execution (HTTP 200)", () => {
     expect(res.status).toBe(200);
   });
 
+  it("returns 200 for a valid python request", async () => {
+    const res = await POST(makeRequest({ language: "python", code: "print('hello')" }));
+    expect(res.status).toBe(200);
+  });
+
+  it("returns 200 for a valid javascript request", async () => {
+    const res = await POST(makeRequest({ language: "javascript", code: "console.log('hello')" }));
+    expect(res.status).toBe(200);
+  });
+
+  it("forwards python language to the runner", async () => {
+    await POST(makeRequest({ language: "python", code: "print('hello')" }));
+    const fetchMock = getStubFetch();
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(JSON.parse(init.body as string).language).toBe("python");
+  });
+
+  it("forwards javascript language to the runner", async () => {
+    await POST(makeRequest({ language: "javascript", code: "console.log('hello')" }));
+    const fetchMock = getStubFetch();
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(JSON.parse(init.body as string).language).toBe("javascript");
+  });
+
   it("response body contains stdout, stderr, exitCode", async () => {
     const res = await POST(makeRequest({ language: "go", code: "package main\nfunc main(){}" }));
     const body = await res.json();

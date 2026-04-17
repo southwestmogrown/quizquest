@@ -1,9 +1,11 @@
 // Code runner service for QuizQuest.
 // Implements POST /run per docs/api/code-runner-contract.md.
 //
-// Execution model (Go):
+// Supported languages: Go, Python, JavaScript (Node.js).
+//
+// Execution model:
 //   1. Write user code to a temp directory.
-//   2. Run "go run main.go" with stdin piped, stdout/stderr captured.
+//   2. Run the language-specific command with stdin piped, stdout/stderr captured.
 //   3. Kill the process if it exceeds timeoutSeconds.
 //   4. Return { stdout, stderr, exitCode, timedOut }.
 package main
@@ -47,7 +49,9 @@ const (
 )
 
 var supportedLanguages = map[string]bool{
-	"go": true,
+	"go":         true,
+	"python":     true,
+	"javascript": true,
 }
 
 func main() {
@@ -129,6 +133,10 @@ func handleRun(w http.ResponseWriter, r *http.Request) {
 	switch req.Language {
 	case "go":
 		resp = executeGo(req.Code, req.Stdin, timeout)
+	case "python":
+		resp = executePython(req.Code, req.Stdin, timeout)
+	case "javascript":
+		resp = executeJavaScript(req.Code, req.Stdin, timeout)
 	default:
 		// Guarded above — should never reach here.
 		writeError(w, http.StatusUnprocessableEntity, "unsupported language")
@@ -253,9 +261,91 @@ func goEnv(dir string) []string {
 	}
 }
 
+// executePython writes code to a temp dir, runs "python3 main.py", and returns the result.
+func executePython(code, stdin string, timeoutSeconds int) runResponse {
+	return executeSimple("python3", "main.py", code, stdin, timeoutSeconds)
+}
+
+// executeJavaScript writes code to a temp dir, runs "node main.js", and returns the result.
+func executeJavaScript(code, stdin string, timeoutSeconds int) runResponse {
+	return executeSimple("node", "main.js", code, stdin, timeoutSeconds)
+}
+
+// executeSimple is a generic executor for interpreted languages that need only
+// a single command invocation (binary + source file).
+func executeSimple(binary, filename, code, stdin string, timeoutSeconds int) runResponse {
+	tmpBase := os.Getenv("RUNNER_TMPDIR")
+	if tmpBase == "" {
+		tmpBase = os.TempDir()
+	}
+
+	dir, err := os.MkdirTemp(tmpBase, "quizquest-runner-*")
+	if err != nil {
+		log.Printf("executeSimple(%s): MkdirTemp(%q) failed: %v", binary, tmpBase, err)
+		return infraError(fmt.Sprintf("failed to create temp dir: %v", err))
+	}
+	defer os.RemoveAll(dir)
+
+	srcPath := filepath.Join(dir, filename)
+	if err := os.WriteFile(srcPath, []byte(code), 0600); err != nil {
+		log.Printf("executeSimple(%s): write source file failed: %v", binary, err)
+		return infraError(fmt.Sprintf("failed to write source file: %v", err))
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeoutSeconds)*time.Second)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, binary, srcPath)
+	cmd.Stdin = strings.NewReader(stdin)
+
+	var stdoutBuf, stderrBuf limitedBuffer
+	cmd.Stdout = &stdoutBuf
+	cmd.Stderr = &stderrBuf
+
+	cmd.Env = simpleEnv(dir)
+	cmd.Dir = dir
+
+	runErr := cmd.Run()
+
+	timedOut := ctx.Err() == context.DeadlineExceeded
+	exitCode := 0
+	if runErr != nil {
+		if exitErr, ok := runErr.(*exec.ExitError); ok {
+			exitCode = exitErr.ExitCode()
+		} else if timedOut {
+			exitCode = -1
+		} else {
+			log.Printf("executeSimple(%s): cmd.Run non-exit error: %v", binary, runErr)
+			exitCode = -1
+			if stderrBuf.String() == "" {
+				stderrBuf.Write([]byte(runErr.Error()))
+			}
+		}
+	}
+	if timedOut {
+		exitCode = -1
+	}
+
+	return runResponse{
+		Stdout:   stdoutBuf.String(),
+		Stderr:   stderrBuf.String(),
+		ExitCode: exitCode,
+		TimedOut: timedOut,
+	}
+}
+
+// simpleEnv returns a minimal environment for interpreted language execution.
+func simpleEnv(dir string) []string {
+	return []string{
+		"HOME=" + dir,
+		"PATH=/usr/local/bin:/usr/bin:/bin",
+		"TMPDIR=" + dir,
+	}
+}
+
 // verifyEnvironment runs a quick self-check on startup to confirm the runner
-// can create temp dirs and invoke the Go toolchain. Fails fast with logs if
-// something is wrong.
+// can create temp dirs and invoke all supported language toolchains.
+// Fails fast with logs if something is wrong.
 func verifyEnvironment() {
 	tmpBase := os.Getenv("RUNNER_TMPDIR")
 	if tmpBase == "" {
@@ -263,6 +353,7 @@ func verifyEnvironment() {
 	}
 	log.Printf("verify: RUNNER_TMPDIR=%q (resolved tmpBase=%q)", os.Getenv("RUNNER_TMPDIR"), tmpBase)
 
+	// --- Go self-test ---
 	dir, err := os.MkdirTemp(tmpBase, "verify-*")
 	if err != nil {
 		log.Fatalf("STARTUP CHECK FAILED: cannot create temp dir in %q: %v", tmpBase, err)
@@ -292,6 +383,41 @@ func verifyEnvironment() {
 	}
 
 	log.Printf("verify: startup self-test passed (go run works, temp dirs writable)")
+
+	// --- Python self-test ---
+	verifySimple(tmpBase, "python3", "verify.py", "print('ok',end='')", "python")
+
+	// --- JavaScript (Node.js) self-test ---
+	verifySimple(tmpBase, "node", "verify.js", "process.stdout.write('ok')", "javascript")
+}
+
+// verifySimple runs a single-command self-test for an interpreted language.
+func verifySimple(tmpBase, binary, filename, code, label string) {
+	dir, err := os.MkdirTemp(tmpBase, "verify-"+label+"-*")
+	if err != nil {
+		log.Fatalf("STARTUP CHECK FAILED (%s): cannot create temp dir: %v", label, err)
+	}
+	defer os.RemoveAll(dir)
+
+	srcPath := filepath.Join(dir, filename)
+	if err := os.WriteFile(srcPath, []byte(code), 0600); err != nil {
+		log.Fatalf("STARTUP CHECK FAILED (%s): cannot write source file: %v", label, err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, binary, srcPath)
+	cmd.Env = simpleEnv(dir)
+	cmd.Dir = dir
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("STARTUP CHECK FAILED (%s): '%s' returned error: %v\noutput: %s", label, binary, err, string(out))
+	}
+	if string(out) != "ok" {
+		log.Fatalf("STARTUP CHECK FAILED (%s): expected 'ok', got %q", label, string(out))
+	}
+
+	log.Printf("verify: %s self-test passed (%s works)", label, binary)
 }
 
 // infraError returns a runResponse representing an infrastructure-level failure.

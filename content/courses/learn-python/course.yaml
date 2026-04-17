@@ -1,0 +1,9 @@
+courseSlug: learn-python
+title: Learn Python
+description: Get started with Python — the world's most popular beginner-friendly language. Write your first program, learn variables and types, and build up from there.
+difficulty: beginner
+estimatedHours: 2
+totalXp: 60
+chapters:
+  - chapterSlug: getting-started
+    title: Getting Started

@@ -14,6 +14,8 @@
 import { useState, useEffect, useRef } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { go } from "@codemirror/lang-go";
+import { python } from "@codemirror/lang-python";
+import { javascript } from "@codemirror/lang-javascript";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import CompletionOverlay from "@/components/CompletionOverlay";
 import SocraticCoach from "@/components/SocraticCoach";
@@ -82,8 +84,19 @@ const LANGUAGE_LABELS: Record<string, string> = {
   javascript: "JavaScript",
 };
 
-/** Languages available in the MVP runner. */
-const MVP_LANGUAGES = new Set(["go"]);
+/** Map language identifiers to CodeMirror extensions. */
+function getLanguageExtension(lang: string) {
+  switch (lang) {
+    case "go":
+      return go();
+    case "python":
+      return python();
+    case "javascript":
+      return javascript();
+    default:
+      return go();
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -243,15 +256,11 @@ export default function CodeClient({
               aria-label="Language"
               className="rounded-md border border-stone-700 bg-stone-800 px-3 py-1.5 text-sm text-stone-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
             >
-              {Object.entries(LANGUAGE_LABELS).map(([val, label]) => {
-                const available = MVP_LANGUAGES.has(val);
-                return (
-                  <option key={val} value={val} disabled={!available}>
-                    {label}
-                    {!available ? " (coming soon)" : ""}
-                  </option>
-                );
-              })}
+              {Object.entries(LANGUAGE_LABELS).map(([val, label]) => (
+                <option key={val} value={val}>
+                  {label}
+                </option>
+              ))}
             </select>
 
             <div className="ml-auto flex items-center gap-2">
@@ -294,7 +303,7 @@ export default function CodeClient({
             <CodeMirror
               value={code}
               onChange={(val) => setCode(val)}
-              extensions={[go()]}
+              extensions={[getLanguageExtension(language)]}
               theme={vscodeDark}
               height="600px"
               basicSetup={{ lineNumbers: true, foldGutter: false }}

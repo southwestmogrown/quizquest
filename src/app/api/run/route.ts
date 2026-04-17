@@ -17,8 +17,8 @@ import {
   getCodeRunnerBaseUrl,
 } from "@/lib/code-runner/client";
 
-/** Languages supported by the MVP runner (contract §5). */
-const SUPPORTED_LANGUAGES = new Set(["go"]);
+/** Languages supported by the runner (contract §5). */
+const SUPPORTED_LANGUAGES = new Set(["go", "python", "javascript"]);
 
 /** Base URL of the code-runner service (trailing slashes normalised). */
 const CODE_RUNNER_URL = getCodeRunnerBaseUrl();
