@@ -1,0 +1,15 @@
+chapterSlug: making-decisions
+title: Making Decisions
+lessons:
+  - lessonSlug: comparison-operators
+    title: Comparison Operators
+    type: reading
+  - lessonSlug: if-statements
+    title: If Statements
+    type: reading
+  - lessonSlug: quiz-making-decisions
+    title: "Quiz: Making Decisions"
+    type: quiz
+  - lessonSlug: password-checker
+    title: "Code Challenge: Password Checker"
+    type: code

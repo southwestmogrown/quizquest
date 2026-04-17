@@ -1,0 +1,18 @@
+chapterSlug: lists
+title: Lists
+lessons:
+  - lessonSlug: intro-to-lists
+    title: Intro to Lists
+    type: reading
+  - lessonSlug: list-methods
+    title: List Methods
+    type: reading
+  - lessonSlug: looping-through-lists
+    title: Looping Through Lists
+    type: reading
+  - lessonSlug: quiz-lists
+    title: "Quiz: Lists"
+    type: quiz
+  - lessonSlug: high-score-tracker
+    title: "Code Challenge: High Score Tracker"
+    type: code

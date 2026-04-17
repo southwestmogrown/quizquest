@@ -1,0 +1,16 @@
+chapterSlug: regular-expressions
+title: Regular Expressions
+order: 5
+lessons:
+  - lessonSlug: regex-findall-and-search
+    title: Regex — findall and search
+    type: reading
+  - lessonSlug: regex-patterns-and-groups
+    title: Patterns and Groups
+    type: reading
+  - lessonSlug: regex-in-python
+    title: Practical Regex in Python
+    type: reading
+  - lessonSlug: regex-code-challenge
+    title: "Code Challenge: Log Parser"
+    type: code

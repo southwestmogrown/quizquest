@@ -1,0 +1,16 @@
+chapterSlug: async-with-asyncio
+title: Async with asyncio
+order: 5
+lessons:
+  - lessonSlug: async-and-await
+    title: async and await
+    type: reading
+  - lessonSlug: gather-and-task-scheduling
+    title: gather and Task Scheduling
+    type: reading
+  - lessonSlug: async-http-with-aiohttp
+    title: Async HTTP with aiohttp
+    type: reading
+  - lessonSlug: async-code-challenge
+    title: "Code Challenge: Async URL Fetcher"
+    type: code

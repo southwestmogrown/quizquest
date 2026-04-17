@@ -1,0 +1,7 @@
+chapterSlug: advanced-capstone
+title: Capstone Project
+order: 8
+lessons:
+  - lessonSlug: capstone-csv-reporter
+    title: "Capstone: CSV Data Reporter"
+    type: code

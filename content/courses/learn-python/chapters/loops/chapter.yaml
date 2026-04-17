@@ -1,0 +1,18 @@
+chapterSlug: loops
+title: Loops
+lessons:
+  - lessonSlug: the-for-loop
+    title: The for Loop
+    type: reading
+  - lessonSlug: looping-through-strings
+    title: Looping Through Strings
+    type: reading
+  - lessonSlug: the-while-loop
+    title: The while Loop
+    type: reading
+  - lessonSlug: quiz-loops
+    title: "Quiz: Loops"
+    type: quiz
+  - lessonSlug: countdown-challenge
+    title: "Code Challenge: Countdown"
+    type: code

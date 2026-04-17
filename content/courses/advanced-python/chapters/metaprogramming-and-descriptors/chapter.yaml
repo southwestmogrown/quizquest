@@ -1,0 +1,13 @@
+chapterSlug: metaprogramming-and-descriptors
+title: Metaprogramming & Descriptors
+order: 6
+lessons:
+  - lessonSlug: getattr-and-setattr
+    title: __getattr__ and __setattr__
+    type: reading
+  - lessonSlug: descriptors-and-property
+    title: Descriptors and @property
+    type: reading
+  - lessonSlug: metaprogramming-code-challenge
+    title: "Code Challenge: Validation Descriptor"
+    type: code

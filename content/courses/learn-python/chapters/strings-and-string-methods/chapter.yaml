@@ -1,0 +1,15 @@
+chapterSlug: strings-and-string-methods
+title: Strings & String Methods
+lessons:
+  - lessonSlug: working-with-strings
+    title: Working with Strings
+    type: reading
+  - lessonSlug: string-methods
+    title: String Methods
+    type: reading
+  - lessonSlug: quiz-strings
+    title: "Quiz: Strings"
+    type: quiz
+  - lessonSlug: build-a-template
+    title: "Code Challenge: Build a Template"
+    type: code

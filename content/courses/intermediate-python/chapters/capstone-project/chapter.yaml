@@ -1,0 +1,7 @@
+chapterSlug: capstone-project
+title: Capstone Project
+order: 7
+lessons:
+  - lessonSlug: gui-weather-app-capstone
+    title: "Capstone: GUI Weather Lookup"
+    type: code

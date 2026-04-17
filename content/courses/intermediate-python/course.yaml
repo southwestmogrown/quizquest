@@ -1,0 +1,21 @@
+courseSlug: intermediate-python
+title: Intermediate Python
+description: Level up your Python — build GUI applications, master decorators and closures, work with asynchronous code, and consume APIs like a pro.
+difficulty: intermediate
+estimatedHours: 5
+totalXp: 425
+chapters:
+  - chapterSlug: gui-basics-with-tkinter
+    title: GUI Basics with Tkinter
+  - chapterSlug: event-driven-programming
+    title: Event-Driven Programming
+  - chapterSlug: comprehensions-and-built-ins
+    title: Comprehensions & Built-ins
+  - chapterSlug: closures-and-decorators
+    title: Closures & Decorators
+  - chapterSlug: async-with-asyncio
+    title: Async with asyncio
+  - chapterSlug: http-with-requests
+    title: HTTP with requests
+  - chapterSlug: capstone-project
+    title: Capstone Project

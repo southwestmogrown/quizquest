@@ -1,0 +1,13 @@
+chapterSlug: datetime-and-timezones
+title: Datetime & Timezones
+order: 7
+lessons:
+  - lessonSlug: datetime-date-and-time
+    title: datetime, date, and time
+    type: reading
+  - lessonSlug: timezone-handling
+    title: Timezone Handling
+    type: reading
+  - lessonSlug: datetime-code-challenge
+    title: "Code Challenge: Meeting Scheduler"
+    type: code

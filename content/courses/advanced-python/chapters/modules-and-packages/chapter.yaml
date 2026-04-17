@@ -1,0 +1,13 @@
+chapterSlug: modules-and-packages
+title: Modules & Packages
+order: 2
+lessons:
+  - lessonSlug: import-and-from
+    title: import and from
+    type: reading
+  - lessonSlug: creating-packages
+    title: Creating Packages
+    type: reading
+  - lessonSlug: modules-code-challenge
+    title: "Code Challenge: Utility Package"
+    type: code

@@ -1,0 +1,23 @@
+courseSlug: advanced-python
+title: Advanced Python
+description: Master advanced Python — classes and metaclasses, iterators, exceptions and testing, regular expressions, metaprogramming, and datetime.
+difficulty: advanced
+estimatedHours: 6
+totalXp: 425
+chapters:
+  - chapterSlug: classes-and-metaclasses
+    title: Classes & Metaclasses
+  - chapterSlug: modules-and-packages
+    title: Modules & Packages
+  - chapterSlug: iterators-and-generators
+    title: Iterators & Generators
+  - chapterSlug: exceptions-and-testing
+    title: Exceptions & Testing
+  - chapterSlug: regular-expressions
+    title: Regular Expressions
+  - chapterSlug: metaprogramming-and-descriptors
+    title: Metaprogramming & Descriptors
+  - chapterSlug: datetime-and-timezones
+    title: Datetime & Timezones
+  - chapterSlug: advanced-capstone
+    title: Capstone Project

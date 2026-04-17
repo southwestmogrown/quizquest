@@ -1,0 +1,16 @@
+chapterSlug: http-with-requests
+title: HTTP with requests
+order: 6
+lessons:
+  - lessonSlug: requests-get-and-post
+    title: requests — GET and POST
+    type: reading
+  - lessonSlug: json-and-error-handling
+    title: JSON and Error Handling
+    type: reading
+  - lessonSlug: public-apis-practice
+    title: Public APIs Practice
+    type: reading
+  - lessonSlug: api-code-challenge
+    title: "Code Challenge: API Data Fetcher"
+    type: code

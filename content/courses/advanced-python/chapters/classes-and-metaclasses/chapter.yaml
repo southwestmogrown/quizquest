@@ -1,0 +1,16 @@
+chapterSlug: classes-and-metaclasses
+title: Classes & Metaclasses
+order: 1
+lessons:
+  - lessonSlug: class-definition-and-init
+    title: Class Definition and init
+    type: reading
+  - lessonSlug: inheritance-and-mixins
+    title: Inheritance and Mixins
+    type: reading
+  - lessonSlug: dataclasses-and-attrs
+    title: Dataclasses
+    type: reading
+  - lessonSlug: classes-code-challenge
+    title: "Code Challenge: Animal Class Hierarchy"
+    type: code

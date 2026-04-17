@@ -1,0 +1,15 @@
+chapterSlug: dictionaries
+title: Dictionaries
+lessons:
+  - lessonSlug: python-dictionaries
+    title: Python Dictionaries
+    type: reading
+  - lessonSlug: dictionary-methods
+    title: Dictionary Methods
+    type: reading
+  - lessonSlug: quiz-dictionaries
+    title: "Quiz: Dictionaries"
+    type: quiz
+  - lessonSlug: student-profile
+    title: "Code Challenge: Student Profile"
+    type: code

@@ -1,0 +1,16 @@
+chapterSlug: closures-and-decorators
+title: Closures & Decorators
+order: 4
+lessons:
+  - lessonSlug: scope-and-the-legb-rule
+    title: Scope and the LEGB Rule
+    type: reading
+  - lessonSlug: writing-decorators
+    title: Writing Decorators
+    type: reading
+  - lessonSlug: decorators-in-practice
+    title: Decorators in Practice
+    type: reading
+  - lessonSlug: closure-decorator-challenge
+    title: "Code Challenge: Timer Decorator"
+    type: code

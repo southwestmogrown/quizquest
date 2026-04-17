@@ -1,0 +1,13 @@
+chapterSlug: exceptions-and-testing
+title: Exceptions & Testing
+order: 4
+lessons:
+  - lessonSlug: try-except-else-finally
+    title: try, except, else, and finally
+    type: reading
+  - lessonSlug: unit-testing-with-unittest
+    title: Unit Testing with unittest
+    type: reading
+  - lessonSlug: error-handling-code-challenge
+    title: "Code Challenge: Validation and Testing"
+    type: code

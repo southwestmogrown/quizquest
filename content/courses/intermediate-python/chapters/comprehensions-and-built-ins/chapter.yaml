@@ -1,0 +1,16 @@
+chapterSlug: comprehensions-and-built-ins
+title: Comprehensions & Built-ins
+order: 3
+lessons:
+  - lessonSlug: list-and-dict-comprehensions
+    title: List and Dict Comprehensions
+    type: reading
+  - lessonSlug: enumerate-zip-and-other-iterables
+    title: enumerate, zip, and Other Iterables
+    type: reading
+  - lessonSlug: generator-expressions
+    title: Generator Expressions
+    type: reading
+  - lessonSlug: comprehensions-code-challenge
+    title: "Code Challenge: Data Transformer"
+    type: code

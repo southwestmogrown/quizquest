@@ -1,0 +1,16 @@
+chapterSlug: event-driven-programming
+title: Event-Driven Programming
+order: 2
+lessons:
+  - lessonSlug: button-clicks-and-binding
+    title: Button Clicks and Binding
+    type: reading
+  - lessonSlug: keyboard-events-and-focus
+    title: Keyboard Events and Focus
+    type: reading
+  - lessonSlug: interactive-forms
+    title: Interactive Forms
+    type: reading
+  - lessonSlug: clicker-game-challenge
+    title: "Code Challenge: Clicker Game"
+    type: code

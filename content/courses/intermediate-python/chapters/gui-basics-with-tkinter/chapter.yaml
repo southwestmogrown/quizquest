@@ -1,0 +1,16 @@
+chapterSlug: gui-basics-with-tkinter
+title: GUI Basics with Tkinter
+order: 1
+lessons:
+  - lessonSlug: intro-to-tkinter
+    title: Introduction to Tkinter
+    type: reading
+  - lessonSlug: widget-configuration-and-layout
+    title: Widget Configuration and Layout
+    type: reading
+  - lessonSlug: callbacks-and-events
+    title: Callbacks and Events
+    type: reading
+  - lessonSlug: tkinter-code-challenge
+    title: "Code Challenge: Counter App"
+    type: code

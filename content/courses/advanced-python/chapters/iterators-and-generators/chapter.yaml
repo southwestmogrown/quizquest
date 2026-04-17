@@ -1,0 +1,16 @@
+chapterSlug: iterators-and-generators
+title: Iterators & Generators
+order: 3
+lessons:
+  - lessonSlug: the-iterator-protocol
+    title: The Iterator Protocol
+    type: reading
+  - lessonSlug: generators-with-yield
+    title: Generators with yield
+    type: reading
+  - lessonSlug: iterators-and-infinite-sequences
+    title: Infinite Sequences and itertools
+    type: reading
+  - lessonSlug: iterator-code-challenge
+    title: "Code Challenge: Custom Iterator and Generator"
+    type: code
