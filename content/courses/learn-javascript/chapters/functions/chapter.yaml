@@ -1,0 +1,18 @@
+chapterSlug: functions
+title: Functions
+lessons:
+  - lessonSlug: declaring-functions
+    title: Declaring Functions
+    type: reading
+  - lessonSlug: parameters-and-return-values
+    title: Parameters & Return Values
+    type: reading
+  - lessonSlug: arrow-functions-intro
+    title: Arrow Functions
+    type: reading
+  - lessonSlug: quiz-functions
+    title: "Quiz: Functions"
+    type: quiz
+  - lessonSlug: temperature-converter
+    title: "Code Challenge: Temperature Converter"
+    type: code

@@ -1,0 +1,15 @@
+chapterSlug: closures-and-scope
+title: Closures & Scope
+lessons:
+  - lessonSlug: scope-and-closures
+    title: Scope and Closures
+    type: reading
+  - lessonSlug: closures-in-practice
+    title: Closures in Practice
+    type: reading
+  - lessonSlug: lexical-scoping
+    title: Lexical Scoping
+    type: reading
+  - lessonSlug: closure-code-challenge
+    title: "Code Challenge: Counter Factory"
+    type: code

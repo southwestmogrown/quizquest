@@ -1,0 +1,12 @@
+chapterSlug: modules
+title: Modules
+lessons:
+  - lessonSlug: module-basics
+    title: Module Basics
+    type: reading
+  - lessonSlug: named-vs-default-exports
+    title: Named vs Default Exports
+    type: reading
+  - lessonSlug: modules-code-challenge
+    title: "Code Challenge: Math Utilities"
+    type: code

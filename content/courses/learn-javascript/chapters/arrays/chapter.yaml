@@ -1,0 +1,18 @@
+chapterSlug: arrays
+title: Arrays
+lessons:
+  - lessonSlug: intro-to-arrays
+    title: Intro to Arrays
+    type: reading
+  - lessonSlug: array-methods
+    title: Array Methods
+    type: reading
+  - lessonSlug: looping-arrays
+    title: Looping Through Arrays
+    type: reading
+  - lessonSlug: quiz-arrays
+    title: "Quiz: Arrays"
+    type: quiz
+  - lessonSlug: high-score-tracker
+    title: "Code Challenge: High Score Tracker"
+    type: code

@@ -1,0 +1,6 @@
+chapterSlug: advanced-capstone
+title: Capstone Project
+lessons:
+  - lessonSlug: advanced-capstone-challenge
+    title: "Code Challenge: Event Emitter"
+    type: code

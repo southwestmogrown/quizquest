@@ -1,0 +1,12 @@
+chapterSlug: error-handling
+title: Error Handling
+lessons:
+  - lessonSlug: try-catch-and-throw
+    title: try, catch, and throw
+    type: reading
+  - lessonSlug: custom-error-classes
+    title: Custom Error Classes
+    type: reading
+  - lessonSlug: error-handling-code-challenge
+    title: "Code Challenge: Validated Parser"
+    type: code

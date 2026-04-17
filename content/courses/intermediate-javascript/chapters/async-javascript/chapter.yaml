@@ -1,0 +1,15 @@
+chapterSlug: async-javascript
+title: Async JavaScript
+lessons:
+  - lessonSlug: callbacks
+    title: Callbacks
+    type: reading
+  - lessonSlug: promises
+    title: Promises
+    type: reading
+  - lessonSlug: async-await
+    title: async and await
+    type: reading
+  - lessonSlug: async-code-challenge
+    title: "Code Challenge: Async Simulator"
+    type: code

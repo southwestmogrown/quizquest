@@ -2,8 +2,24 @@ courseSlug: learn-javascript
 title: Learn JavaScript
 description: Start coding with JavaScript — the language of the web. Write your first program, learn the fundamentals, and build interactive projects.
 difficulty: beginner
-estimatedHours: 2
-totalXp: 60
+estimatedHours: 4
+totalXp: 460
 chapters:
   - chapterSlug: getting-started
     title: Getting Started
+  - chapterSlug: variables-and-types
+    title: Variables & Types
+  - chapterSlug: strings-and-string-methods
+    title: Strings & String Methods
+  - chapterSlug: making-decisions
+    title: Making Decisions
+  - chapterSlug: loops
+    title: Loops
+  - chapterSlug: functions
+    title: Functions
+  - chapterSlug: arrays
+    title: Arrays
+  - chapterSlug: objects
+    title: Objects
+  - chapterSlug: capstone
+    title: Capstone Project

@@ -1,0 +1,6 @@
+chapterSlug: capstone-task-list
+title: Capstone Project
+lessons:
+  - lessonSlug: task-list-capstone
+    title: "Code Challenge: Task List App"
+    type: code

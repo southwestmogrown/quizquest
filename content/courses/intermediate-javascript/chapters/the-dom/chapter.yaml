@@ -1,0 +1,15 @@
+chapterSlug: the-dom
+title: The DOM
+lessons:
+  - lessonSlug: what-is-the-dom
+    title: What Is the DOM?
+    type: reading
+  - lessonSlug: selecting-elements
+    title: Selecting Elements
+    type: reading
+  - lessonSlug: modifying-elements
+    title: Modifying Elements
+    type: reading
+  - lessonSlug: dom-code-challenge
+    title: "Code Challenge: DOM Manipulator"
+    type: code

@@ -1,0 +1,12 @@
+chapterSlug: proxy-and-reflect
+title: Proxy & Reflect
+lessons:
+  - lessonSlug: proxy-api
+    title: The Proxy API
+    type: reading
+  - lessonSlug: reflect-api
+    title: The Reflect API
+    type: reading
+  - lessonSlug: proxy-code-challenge
+    title: "Code Challenge: Tracked Object"
+    type: code

@@ -1,0 +1,15 @@
+chapterSlug: objects
+title: Objects
+lessons:
+  - lessonSlug: javascript-objects
+    title: JavaScript Objects
+    type: reading
+  - lessonSlug: object-methods
+    title: Object Methods
+    type: reading
+  - lessonSlug: quiz-objects
+    title: "Quiz: Objects"
+    type: quiz
+  - lessonSlug: student-profile
+    title: "Code Challenge: Student Profile"
+    type: code

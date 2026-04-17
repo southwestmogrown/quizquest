@@ -1,0 +1,15 @@
+chapterSlug: variables-and-types
+title: Variables & Types
+lessons:
+  - lessonSlug: declaring-variables
+    title: Declaring Variables
+    type: reading
+  - lessonSlug: javascript-data-types
+    title: JavaScript Data Types
+    type: reading
+  - lessonSlug: quiz-variables-and-types
+    title: "Quiz: Variables & Types"
+    type: quiz
+  - lessonSlug: variables-code-challenge
+    title: "Code Challenge: Variable Lab"
+    type: code

@@ -1,0 +1,15 @@
+chapterSlug: iterators-and-generators
+title: Iterators & Generators
+lessons:
+  - lessonSlug: iterators
+    title: Iterators
+    type: reading
+  - lessonSlug: generators
+    title: Generators
+    type: reading
+  - lessonSlug: symbol-and-iteration-protocol
+    title: Symbol and the Iteration Protocol
+    type: reading
+  - lessonSlug: iterators-code-challenge
+    title: "Code Challenge: Custom Range"
+    type: code

@@ -1,0 +1,6 @@
+chapterSlug: capstone
+title: Capstone Project
+lessons:
+  - lessonSlug: recipe-card-challenge
+    title: "Code Challenge: Recipe Card"
+    type: code

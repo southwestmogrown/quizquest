@@ -1,0 +1,15 @@
+chapterSlug: array-methods-in-depth
+title: Array Methods in Depth
+lessons:
+  - lessonSlug: map-and-filter
+    title: map and filter
+    type: reading
+  - lessonSlug: reduce
+    title: The reduce Method
+    type: reading
+  - lessonSlug: chaining-methods
+    title: Chaining Array Methods
+    type: reading
+  - lessonSlug: array-methods-code-challenge
+    title: "Code Challenge: Data Pipeline"
+    type: code

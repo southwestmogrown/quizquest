@@ -126,6 +126,19 @@ content/courses/<courseSlug>/
 
 Validate content: `pnpm validate-content`
 
+## Course Catalog
+
+| Course | Difficulty | Hours | XP | Lessons | Chapters |
+|---|---|---|---|---|---|
+| `learn-javascript` | beginner | 4 | 460 | 34 | 9 |
+| `intermediate-javascript` | intermediate | 5 | 425 | 27 | 7 |
+| `advanced-javascript` | advanced | 6 | 425 | 25 | 8 |
+| `learn-python` | beginner | 2 | 60 | 2 | 1 |
+| `learn-go` | beginner | 1 | 55 | 2 | 2 |
+| `get-to-know-go` | beginner | 2 | 60 | 16 | 4 |
+| `ai-assisted-dev` | intermediate | 3 | 180 | 26 | 6 |
+| `test-course` | — | — | — | — | — | (filtered from catalog/dashboard)
+
 ## Key Design Decisions
 
 - **Lazy Prisma proxy** (`src/lib/db.ts`): `PrismaClient` only instantiated on first property access — allows `pnpm build` without `DATABASE_URL`.
@@ -189,8 +202,9 @@ Key implementation files:
 - `src/lib/code-runner/client.ts` — URL normalization (`host:port` → `http://host:port`), shared timeout constants
 - `runner/Dockerfile` — multi-stage build; pre-warms Go build cache **as the runner user** (`RUNNER_TMPDIR=/home/runner/work`) so files are writable at runtime
 - `runner/main.go` — startup self-test (`verifyEnvironment()`) runs `go run` before accepting traffic; fails fast with a clear log if the environment is broken; per-request logging
+- `quizquest-tests/playwright.config.ts` — Playwright E2E config; `waitUntil: 'networkidle'` removed (incompatible with Playwright v1.x, causes build failure)
 
-**Test count: 214/214 passing (unit). Build clean.**
+**Test count: 264/264 passing (unit). Build clean.**
 
 ### Design system (complete)
 
@@ -263,36 +277,29 @@ There is/was a public web service named `quizquest-runner` (separate from `quizq
 
 ## Remaining / Next Steps (priority order)
 
-**Done**
-- Full Render deployment (web + private runner + managed Postgres)
-- M1: Lesson breadcrumb, CodeMirror editor, completion flash, confetti overlay, rank rebalance
-- AI-Assisted Development course (26 lessons, 6 chapters)
-- Socratic Coach — available on all lesson types:
-  - Code + quiz: Socratic mode ("I'm stuck" button → guided questioning)
-  - Reading: Q&A mode ("Ask the Coach" button → answers questions about lesson content)
-  - `ANTHROPIC_API_KEY` wired on Render; gemma3:4b as local eval model
-- Design system applied sitewide (landing page, courses, dashboard, lessons)
-- Coach interaction logging (`CoachLog` table) — every response persisted with sessionId, systemPrompt, userMessage, coachResponse, model, provider; thumbs up/down rating UI on each message bubble; `PATCH /api/coach/[logId]/rate` endpoint
-- `render.yaml` build command runs `prisma migrate deploy` before `pnpm build` — schema migrations apply automatically on every deploy
-- SVG logo/favicon (`src/app/icon.svg`) — hexagon mark (outer hex + inner hex + center node + diagonal); TopNavBar uses simplified bold variant (hex + diagonal only)
-- Coach responses rendered as Markdown (react-markdown) — bold, lists, inline code styled to match dark theme
-- README for recruiters — live demo link, architecture diagram, all key tech decisions documented
-- Socratic Coach eval — red-teamed live app; Claude held firm across 5 escalating attempts; one near-miss snippet; Gemma (gemma3:4b) could not follow the Socratic rules reliably
-- Coach prompt hardened: docs-first rule added ("point to docs, don't summarize them"); no-snippet rule made explicit ("plain English only, no backticks")
-- Responsive audit — all pages mobile-friendly at 375px: code lesson split-panel stacks vertically on mobile, lesson headers wrap, nav scales, activity feed truncates; desktop layouts unchanged
-- Test backfill — 50 new tests: `src/lib/db.test.ts` (lazy proxy), `src/lib/content/validate-content.test.ts` (all validation error paths + fixtures), `src/lib/coach/prompt.test.ts` (all three builders); **264/264 passing**
-- `POST /api/demo-reset` — always-on endpoint that wipes demo-user progress/XP/streak; powers the "Reset Demo" button in the navbar so recruiters can restart the experience. Distinct from `POST /api/test-reset` (gated by `ENABLE_TEST_API=1`, used by Playwright E2E)
-- Emoji purge — all emoji replaced with `lucide-react` icon components: `ThumbsUp`/`ThumbsDown` (coach rating), `MessageCircle` (coach header), `Trophy`/`Flame`/`Sparkles` (CompletionOverlay), `Check` (MarkCompleteClient)
-- Coach rating UX — buttons now visible at rest (`text-slate-500`); active state has tinted background pill (`bg-emerald-500/15` / `bg-rose-500/15`); clicking active rating toggles it off (sends `null` to API); `aria-pressed` added; `/api/coach/[logId]/rate` updated to accept `null` for clearing
-- Docs cleanup — removed `docs/stitch-extracted/`, `docs/logo-extracted/`, `docs/agent-1-tasks/`, `docs/icon.html`, `docs/screen.png`, `docs/screen-2`, `docs/code.html`
+**JavaScript Track (2026-04-17)**
+
+| Course | Status | Notes |
+|---|---|---|
+| Learn JavaScript (beginner) | Complete | 34 lessons, 460 XP, 9 chapters |
+| Intermediate JavaScript | Complete | 27 lessons, 425 XP, 7 chapters |
+| Advanced JavaScript | Complete | 25 lessons, 425 XP, 8 chapters |
+
+**Full JavaScript track: 86 lessons, 1,310 XP across 3 courses**
+
+Other courses (`learn-python`, `learn-go`, `get-to-know-go`, `ai-assisted-dev`) are functional stubs with 2-16 lessons. The Python and JavaScript stubs were expanded to full beginner courses as of 2026-04-17.
+
+**Python track:** `learn-python` (2 lessons) needs the same treatment as `learn-javascript` — 9 chapters of substantive content.
 
 ## Current state
 
 **The project is handoff-ready.** Live at https://quizquest-5g96.onrender.com.
 264/264 unit tests passing. Build clean. All pages responsive at 375px.
+8 courses in catalog (1 filtered: `test-course`). All content passes `pnpm validate-content`.
 
 **Only stretch work remains:**
 - Auth — NextAuth.js v5 + GitHub OAuth (replaces hardcoded `demo-user`; significant scope, not needed for recruiter demo)
+- Python beginner course — expand `learn-python` to full 9-chapter track (see JavaScript plan for structure template)
 
 ## Commands Reference
 

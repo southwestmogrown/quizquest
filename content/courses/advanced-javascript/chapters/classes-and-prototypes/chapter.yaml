@@ -1,0 +1,15 @@
+chapterSlug: classes-and-prototypes
+title: Classes & Prototypes
+lessons:
+  - lessonSlug: prototype-inheritance
+    title: Prototype Inheritance
+    type: reading
+  - lessonSlug: class-syntax
+    title: Class Syntax
+    type: reading
+  - lessonSlug: mixins-and-extends
+    title: Mixins and extends
+    type: reading
+  - lessonSlug: classes-code-challenge
+    title: "Code Challenge: Shape Classes"
+    type: code

@@ -1,0 +1,23 @@
+courseSlug: advanced-javascript
+title: Advanced JavaScript
+description: Master the advanced side of JavaScript — classes, modules, generators, regular expressions, proxies, and robust error handling.
+difficulty: advanced
+estimatedHours: 6
+totalXp: 425
+chapters:
+  - chapterSlug: classes-and-prototypes
+    title: Classes & Prototypes
+  - chapterSlug: modules
+    title: Modules
+  - chapterSlug: iterators-and-generators
+    title: Iterators & Generators
+  - chapterSlug: error-handling
+    title: Error Handling
+  - chapterSlug: regular-expressions
+    title: Regular Expressions
+  - chapterSlug: proxy-and-reflect
+    title: Proxy & Reflect
+  - chapterSlug: dates-and-times
+    title: Dates and Times
+  - chapterSlug: advanced-capstone
+    title: Capstone Project

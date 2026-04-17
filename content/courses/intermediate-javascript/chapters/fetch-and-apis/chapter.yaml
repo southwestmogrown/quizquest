@@ -1,0 +1,15 @@
+chapterSlug: fetch-and-apis
+title: Fetch & APIs
+lessons:
+  - lessonSlug: the-fetch-api
+    title: The Fetch API
+    type: reading
+  - lessonSlug: working-with-json
+    title: Working with JSON
+    type: reading
+  - lessonSlug: real-world-api-calls
+    title: Real-World API Calls
+    type: reading
+  - lessonSlug: fetch-code-challenge
+    title: "Code Challenge: Data Fetcher"
+    type: code

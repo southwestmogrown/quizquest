@@ -1,0 +1,12 @@
+chapterSlug: dates-and-times
+title: Dates and Times
+lessons:
+  - lessonSlug: working-with-dates
+    title: Working with Dates
+    type: reading
+  - lessonSlug: date-formatting-and-parsing
+    title: Date Formatting and Parsing
+    type: reading
+  - lessonSlug: dates-code-challenge
+    title: "Code Challenge: Date Calculator"
+    type: code

@@ -1,0 +1,15 @@
+chapterSlug: regular-expressions
+title: Regular Expressions
+lessons:
+  - lessonSlug: regex-basics
+    title: Regex Basics
+    type: reading
+  - lessonSlug: regex-patterns
+    title: Regex Patterns
+    type: reading
+  - lessonSlug: regex-in-javascript
+    title: Regex in JavaScript
+    type: reading
+  - lessonSlug: regex-code-challenge
+    title: "Code Challenge: Pattern Matcher"
+    type: code

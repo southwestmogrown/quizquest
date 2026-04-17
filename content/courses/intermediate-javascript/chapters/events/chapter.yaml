@@ -1,0 +1,15 @@
+chapterSlug: events
+title: Events
+lessons:
+  - lessonSlug: event-listeners
+    title: Event Listeners
+    type: reading
+  - lessonSlug: the-event-object
+    title: The Event Object
+    type: reading
+  - lessonSlug: handling-forms
+    title: Handling Forms
+    type: reading
+  - lessonSlug: events-code-challenge
+    title: "Code Challenge: Interactive Counter"
+    type: code
