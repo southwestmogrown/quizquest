@@ -4,6 +4,7 @@ description: A beginner-friendly introduction to Go — no prior programming exp
 difficulty: beginner
 estimatedHours: 4
 totalXp: 290
+track: go
 chapters:
   - chapterSlug: why-go
     title: Why Go?

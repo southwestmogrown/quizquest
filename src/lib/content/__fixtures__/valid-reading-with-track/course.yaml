@@ -1,0 +1,10 @@
+courseSlug: valid-reading-with-track
+title: Valid Reading With Track
+description: A valid reading course with a track field.
+difficulty: intermediate
+estimatedHours: 1
+totalXp: 10
+track: javascript
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One

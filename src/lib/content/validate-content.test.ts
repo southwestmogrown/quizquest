@@ -19,6 +19,11 @@ const FIXTURES_ROOT = path.join(
   "src/lib/content/__fixtures__"
 );
 
+const BROKEN_FIXTURES_ROOT = path.join(
+  process.cwd(),
+  "src/lib/content/__fixtures__-broken"
+);
+
 // ---------------------------------------------------------------------------
 // Happy-path fixture: a valid reading course
 // ---------------------------------------------------------------------------
@@ -121,7 +126,7 @@ describe("content validation — code lessons", () => {
 
 describe("content validation — broken-course fixture", () => {
   it("throws when a referenced lesson .md file does not exist", () => {
-    expect(() => loadCourse("broken-course", FIXTURES_ROOT)).toThrow(
+    expect(() => loadCourse("broken-course", BROKEN_FIXTURES_ROOT)).toThrow(
       /Lesson file not found.*ghost-lesson/
     );
   });

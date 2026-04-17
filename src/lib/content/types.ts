@@ -127,5 +127,13 @@ export interface Course {
   difficulty: DifficultyLevel;
   estimatedHours: number;
   totalXp: number;
+  track?: string;
   chapters: Chapter[];
+}
+
+export interface Track {
+  trackSlug: string;
+  title: string;
+  description: string;
+  order: number;
 }

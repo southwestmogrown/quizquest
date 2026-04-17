@@ -4,6 +4,7 @@ description: Level up your JavaScript — manipulate the DOM, handle events, mas
 difficulty: intermediate
 estimatedHours: 5
 totalXp: 425
+track: javascript
 chapters:
   - chapterSlug: the-dom
     title: The DOM

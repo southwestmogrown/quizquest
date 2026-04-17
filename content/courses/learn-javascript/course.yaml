@@ -4,6 +4,7 @@ description: Start coding with JavaScript — the language of the web. Write you
 difficulty: beginner
 estimatedHours: 4
 totalXp: 460
+track: javascript
 chapters:
   - chapterSlug: getting-started
     title: Getting Started

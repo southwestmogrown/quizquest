@@ -4,6 +4,7 @@ description: "Learn to build software faster and smarter using AI tools. From pr
 difficulty: intermediate
 estimatedHours: 4
 totalXp: 550
+track: ai
 chapters:
   - chapterSlug: the-ai-mindset
     title: The AI Developer Mindset

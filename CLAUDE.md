@@ -117,12 +117,16 @@ src/
 ## Content Structure
 
 ```
-content/courses/<courseSlug>/
-  course.yaml
-  chapters/<chapterSlug>/
-    chapter.yaml
-    lessons/<lessonSlug>.md
+content/courses/
+  tracks.yaml        # track registry (slug, title, description, order)
+  <courseSlug>/
+    course.yaml      # has optional `track` field linking to a track slug
+    chapters/<chapterSlug>/
+      chapter.yaml
+      lessons/<lessonSlug>.md
 ```
+
+**Track system:** Courses are grouped into learning tracks (Python, JavaScript, Go, AI). Each `course.yaml` has an optional `track: <slug>` field. The catalog page (`/courses`) displays track sections with track titles and descriptions, sorted by difficulty within each track. Courses without a `track` field appear in an "Other" section.
 
 Validate content: `pnpm validate-content`
 
@@ -131,13 +135,18 @@ Validate content: `pnpm validate-content`
 | Course | Difficulty | Hours | XP | Lessons | Chapters |
 |---|---|---|---|---|---|
 | `learn-javascript` | beginner | 4 | 460 | 34 | 9 |
-| `intermediate-javascript` | intermediate | 5 | 425 | 27 | 7 |
+| `intermediate-javascript` | intermediate | 5 | 425 | 25 | 7 |
 | `advanced-javascript` | advanced | 6 | 425 | 25 | 8 |
-| `learn-python` | beginner | 2 | 60 | 2 | 1 |
+| `learn-python` | beginner | 4 | 460 | 34 | 9 |
+| `intermediate-python` | intermediate | 5 | 425 | 25 | 7 |
+| `advanced-python` | advanced | 6 | 425 | 25 | 8 |
 | `learn-go` | beginner | 1 | 55 | 2 | 2 |
 | `get-to-know-go` | beginner | 2 | 60 | 16 | 4 |
 | `ai-assisted-dev` | intermediate | 3 | 180 | 26 | 6 |
 | `test-course` | — | — | — | — | — | (filtered from catalog/dashboard)
+
+**Python track: 84 lessons, 1,310 XP across 3 courses**
+**JavaScript track: 84 lessons, 1,310 XP across 3 courses**
 
 ## Key Design Decisions
 
@@ -147,7 +156,14 @@ Validate content: `pnpm validate-content`
 - **Anti-farming**: XP delta = `max(0, xpForScore - bestXpAwarded)` — re-submitting same score awards 0 XP.
 - **Demo user**: app is hardcoded to `demo-user` — no auth system.
 
-## Current State (as of 2026-04-09, updated post-M4)
+## Current State (as of 2026-04-17)
+
+**289/289 unit tests passing. Build clean. All pages responsive at 375px.**
+10 courses in catalog (1 filtered: `test-course`). All content passes `pnpm validate-content`.
+
+### Track system (complete, added 2026-04-17)
+
+`content/courses/tracks.yaml` — central registry with 4 tracks: Python (1), JavaScript (2), Go (3), AI & Development (4). Courses have optional `track: <slug>` in `course.yaml`. Catalog groups by track with section headers; courses within each track sorted beginner → intermediate → advanced. Orphan tracks (course with a `track` not in `tracks.yaml`) and courses with no `track` field both route to "Other".
 
 ### Completed backlog (21 original issues)
 
@@ -204,7 +220,7 @@ Key implementation files:
 - `runner/main.go` — startup self-test (`verifyEnvironment()`) runs `go run` before accepting traffic; fails fast with a clear log if the environment is broken; per-request logging
 - `quizquest-tests/playwright.config.ts` — Playwright E2E config; `waitUntil: 'networkidle'` removed (incompatible with Playwright v1.x, causes build failure)
 
-**Test count: 264/264 passing (unit). Build clean.**
+**Test count: 289/289 passing (unit). Build clean.**
 
 ### Design system (complete)
 
@@ -275,31 +291,31 @@ npx prisma migrate deploy
 
 There is/was a public web service named `quizquest-runner` (separate from `quizquest-runner-internal`). It can be suspended or deleted — the app no longer references it.
 
-## Remaining / Next Steps (priority order)
+## Remaining / Next Steps
 
-**JavaScript Track (2026-04-17)**
+**Python Track (completed 2026-04-17)**
 
 | Course | Status | Notes |
 |---|---|---|
-| Learn JavaScript (beginner) | Complete | 34 lessons, 460 XP, 9 chapters |
-| Intermediate JavaScript | Complete | 27 lessons, 425 XP, 7 chapters |
-| Advanced JavaScript | Complete | 25 lessons, 425 XP, 8 chapters |
+| Learn Python (beginner) | Complete | 34 lessons, 460 XP, 9 chapters |
+| Intermediate Python | Complete | 25 lessons, 425 XP, 7 chapters |
+| Advanced Python | Complete | 25 lessons, 425 XP, 8 chapters |
 
-**Full JavaScript track: 86 lessons, 1,310 XP across 3 courses**
+**Full Python track: 84 lessons, 1,310 XP across 3 courses**
 
-Other courses (`learn-python`, `learn-go`, `get-to-know-go`, `ai-assisted-dev`) are functional stubs with 2-16 lessons. The Python and JavaScript stubs were expanded to full beginner courses as of 2026-04-17.
-
-**Python track:** `learn-python` (2 lessons) needs the same treatment as `learn-javascript` — 9 chapters of substantive content.
-
-## Current state
+## Current state (2026-04-17)
 
 **The project is handoff-ready.** Live at https://quizquest-5g96.onrender.com.
-264/264 unit tests passing. Build clean. All pages responsive at 375px.
-8 courses in catalog (1 filtered: `test-course`). All content passes `pnpm validate-content`.
+289/289 unit tests passing. Build clean. All pages responsive at 375px.
+10 courses in catalog (1 filtered: `test-course`). All content passes `pnpm validate-content`.
+
+**Python track complete:** Learn Python (34 lessons), Intermediate Python (25 lessons), Advanced Python (25 lessons) — 84 lessons, 1,310 XP. Matches the JavaScript track in depth and structure.
+**JavaScript track complete:** Same structure as Python (84 lessons, 1,310 XP).
+**Go track:** `learn-go` + `get-to-know-go` (beginner, 18 lessons combined).
+**AI & Development:** `ai-assisted-dev` (intermediate, 26 lessons).
 
 **Only stretch work remains:**
 - Auth — NextAuth.js v5 + GitHub OAuth (replaces hardcoded `demo-user`; significant scope, not needed for recruiter demo)
-- Python beginner course — expand `learn-python` to full 9-chapter track (see JavaScript plan for structure template)
 
 ## Commands Reference
 

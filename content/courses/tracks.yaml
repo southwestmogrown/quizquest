@@ -1,0 +1,17 @@
+tracks:
+  - trackSlug: python
+    title: Python
+    description: From beginner to advanced — master Python programming
+    order: 1
+  - trackSlug: javascript
+    title: JavaScript
+    description: The complete JavaScript learning path — web and beyond
+    order: 2
+  - trackSlug: go
+    title: Go
+    description: Fast, reliable, scalable — learn Go from the ground up
+    order: 3
+  - trackSlug: ai
+    title: AI & Development
+    description: Leverage AI tools to build better software faster
+    order: 4

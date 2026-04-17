@@ -4,6 +4,7 @@ description: Master the advanced side of JavaScript — classes, modules, genera
 difficulty: advanced
 estimatedHours: 6
 totalXp: 425
+track: javascript
 chapters:
   - chapterSlug: classes-and-prototypes
     title: Classes & Prototypes

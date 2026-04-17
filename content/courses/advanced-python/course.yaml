@@ -4,6 +4,7 @@ description: Master advanced Python — classes and metaclasses, iterators, exce
 difficulty: advanced
 estimatedHours: 6
 totalXp: 425
+track: python
 chapters:
   - chapterSlug: classes-and-metaclasses
     title: Classes & Metaclasses

@@ -1,0 +1,13 @@
+tracks:
+  - trackSlug: python
+    title: Python
+    description: Learn Python
+    order: 1
+  - trackSlug: javascript
+    title: JavaScript
+    description: Learn JavaScript
+    order: 2
+  - trackSlug: go
+    title: Go
+    description: Learn Go
+    order: 3

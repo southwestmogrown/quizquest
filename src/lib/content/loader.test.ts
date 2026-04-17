@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import path from "path";
-import { loadCourse, loadAllCourses } from "./loader";
+import { loadCourse, loadAllCourses, loadTracks } from "./loader";
 import type {
   ReadingLesson,
   QuizLesson,
@@ -13,6 +13,11 @@ const TEST_COURSE_SLUG = "test-course";
 const FIXTURES_ROOT = path.join(
   process.cwd(),
   "src/lib/content/__fixtures__"
+);
+
+const BROKEN_FIXTURES_ROOT = path.join(
+  process.cwd(),
+  "src/lib/content/__fixtures__-broken"
 );
 
 describe("loadCourse", () => {
@@ -105,7 +110,7 @@ describe("loadCourse", () => {
 
   it("throws a descriptive error when a lesson .md file is missing", () => {
     // broken-course has a chapter.yaml that references ghost-lesson.md which does not exist
-    expect(() => loadCourse("broken-course", FIXTURES_ROOT)).toThrow(
+    expect(() => loadCourse("broken-course", BROKEN_FIXTURES_ROOT)).toThrow(
       /Lesson file not found.*ghost-lesson/
     );
   });
@@ -129,5 +134,57 @@ describe("loadAllCourses", () => {
 
   it("returns an empty array when the content root does not exist", () => {
     expect(loadAllCourses("/tmp/does-not-exist")).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// loadTracks()
+// ---------------------------------------------------------------------------
+
+describe("loadTracks()", () => {
+  it("returns tracks sorted by order ascending", () => {
+    const tracks = loadTracks(FIXTURES_ROOT);
+    expect(tracks).toHaveLength(3);
+    expect(tracks[0].trackSlug).toBe("python");
+    expect(tracks[1].trackSlug).toBe("javascript");
+    expect(tracks[2].trackSlug).toBe("go");
+  });
+
+  it("returns tracks with all expected fields", () => {
+    const tracks = loadTracks(FIXTURES_ROOT);
+    expect(tracks[0]).toMatchObject({
+      trackSlug: "python",
+      title: "Python",
+      description: "Learn Python",
+      order: 1,
+    });
+  });
+
+  it("returns empty array when tracks.yaml does not exist", () => {
+    const tracks = loadTracks("/tmp/__no_such_dir__");
+    expect(tracks).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Course.track field
+// ---------------------------------------------------------------------------
+
+describe("Course.track field", () => {
+  it("returns the track field when set in course.yaml", () => {
+    const course = loadCourse("valid-reading-with-track", FIXTURES_ROOT);
+    expect(course.track).toBe("javascript");
+  });
+
+  it("returns undefined when course.yaml has no track field", () => {
+    const course = loadCourse("valid-reading", FIXTURES_ROOT);
+    expect(course.track).toBeUndefined();
+  });
+
+  it("course with track loads alongside courses without one", () => {
+    const withTrack = loadCourse("valid-reading-with-track", FIXTURES_ROOT);
+    const withoutTrack = loadCourse("valid-reading", FIXTURES_ROOT);
+    expect(withTrack.track).toBe("javascript");
+    expect(withoutTrack.track).toBeUndefined();
   });
 });

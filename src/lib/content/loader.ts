@@ -14,6 +14,7 @@ import type {
   DifficultyLevel,
   LessonType,
   CodeLanguage,
+  Track,
 } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -310,6 +311,7 @@ interface RawCourseYaml {
   difficulty: string;
   estimatedHours: number;
   totalXp: number;
+  track?: string;
   chapters: ChapterRef[];
 }
 
@@ -344,8 +346,37 @@ export function loadCourse(
     difficulty,
     estimatedHours: raw.estimatedHours,
     totalXp: raw.totalXp,
+    track: raw.track,
     chapters,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Track loader
+// ---------------------------------------------------------------------------
+
+interface RawTracksYaml {
+  tracks: Array<{
+    trackSlug: string;
+    title: string;
+    description: string;
+    order: number;
+  }>;
+}
+
+/**
+ * Load all tracks from tracks.yaml.
+ *
+ * @param contentRoot Override the content root directory (default: `content/courses/`).
+ * @returns Track[] sorted by order, or empty array if tracks.yaml doesn't exist.
+ */
+export function loadTracks(contentRoot = DEFAULT_CONTENT_ROOT): Track[] {
+  const tracksPath = path.join(contentRoot, "tracks.yaml");
+  if (!fs.existsSync(tracksPath)) {
+    return [];
+  }
+  const raw = yaml.load(fs.readFileSync(tracksPath, "utf-8")) as RawTracksYaml;
+  return raw.tracks.sort((a, b) => a.order - b.order);
 }
 
 /**

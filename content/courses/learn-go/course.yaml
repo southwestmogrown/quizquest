@@ -4,6 +4,7 @@ description: A guided walkthrough of every learning feature — reading lessons,
 difficulty: beginner
 estimatedHours: 1
 totalXp: 55
+track: go
 chapters:
   - chapterSlug: getting-started
     title: Getting Started

@@ -4,6 +4,7 @@ description: Level up your Python — build GUI applications, master decorators 
 difficulty: intermediate
 estimatedHours: 5
 totalXp: 425
+track: python
 chapters:
   - chapterSlug: gui-basics-with-tkinter
     title: GUI Basics with Tkinter

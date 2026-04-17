@@ -4,6 +4,7 @@ description: Get started with Python — the world's most popular beginner-frien
 difficulty: beginner
 estimatedHours: 4
 totalXp: 460
+track: python
 chapters:
   - chapterSlug: getting-started
     title: Getting Started

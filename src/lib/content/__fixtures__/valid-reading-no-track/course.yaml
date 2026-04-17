@@ -1,0 +1,9 @@
+courseSlug: valid-reading-no-track
+title: Valid Reading No Track
+description: A valid reading course without a track field.
+difficulty: advanced
+estimatedHours: 1
+totalXp: 10
+chapters:
+  - chapterSlug: ch-one
+    title: Chapter One
